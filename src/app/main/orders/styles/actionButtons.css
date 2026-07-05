@@ -1,0 +1,39 @@
+.action-button {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.action-button .MuiSvgIcon-root {
+  font-size: 20px !important;
+  color: var(--mui-palette-primary-main) !important;
+}
+
+.action-button:hover {
+  background-color: var(--mui-palette-primary-light) !important;
+  transform: translateX(4px);
+}
+
+.action-button.download .MuiSvgIcon-root {
+  color: var(--mui-palette-success-main) !important;
+}
+
+.action-button.download:hover {
+  background-color: var(--mui-palette-success-light) !important;
+}
+
+.action-button.delete .MuiSvgIcon-root {
+  color: var(--mui-palette-error-main) !important;
+}
+
+.action-button.delete:hover {
+  background-color: var(--mui-palette-error-light) !important;
+}
+
+.action-button.Mui-disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.action-button.Mui-disabled:hover {
+  background-color: transparent !important;
+}
