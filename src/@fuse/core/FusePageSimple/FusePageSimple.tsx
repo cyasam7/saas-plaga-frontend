@@ -3,18 +3,22 @@ import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { forwardRef, memo, ReactNode, useImperativeHandle, useRef } from 'react';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx';
-import { Theme } from '@mui/system';
 import FusePageSimpleHeader from './FusePageSimpleHeader';
 import FusePageSimpleSidebar from './FusePageSimpleSidebar';
 
 const headerHeight = 120;
 const toolbarHeight = 64;
 
+type RootProps = {
+	scroll?: 'normal' | 'page' | 'content';
+	leftSidebarWidth?: number;
+	rightSidebarWidth?: number;
+};
+
 /**
  * Props for the FusePageSimple component.
  */
-type FusePageSimpleProps = SystemStyleObject<Theme> & {
+type FusePageSimpleProps = {
 	className?: string;
 	leftSidebarContent?: ReactNode;
 	leftSidebarVariant?: 'permanent' | 'persistent' | 'temporary';
@@ -34,7 +38,7 @@ type FusePageSimpleProps = SystemStyleObject<Theme> & {
 /**
  * The Root styled component is the top-level container for the FusePageSimple component.
  */
-const Root = styled('div')<FusePageSimpleProps>(({ theme, ...props }) => ({
+const Root = styled('div')<RootProps>(({ theme, ...props }) => ({
 	display: 'flex',
 	flexDirection: 'column',
 	minWidth: 0,

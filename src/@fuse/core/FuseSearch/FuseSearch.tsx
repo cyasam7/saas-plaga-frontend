@@ -62,7 +62,7 @@ type RenderInputComponentType = {
 };
 
 function renderInputComponent(props: RenderInputComponentProps) {
-	const { variant, ref, inputRef = () => {}, ...other } = props as RenderInputComponentType;
+	const { variant, ref, inputRef = () => { }, ...other } = props as RenderInputComponentType;
 	return (
 		<div className="relative w-full">
 			{variant === 'basic' ? (
@@ -365,6 +365,8 @@ function FuseSearch(props: FuseSearchProps) {
 					className={clsx('flex w-full items-center', className)}
 					ref={popperNode}
 				>
+					{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+					{/* @ts-ignore */}
 					<Autosuggest
 						renderInputComponent={renderInputComponent}
 						highlightFirstSuggestion
@@ -406,7 +408,7 @@ function FuseSearch(props: FuseSearchProps) {
 										}}
 										className="overflow-hidden rounded-8 shadow-lg"
 									>
-										{options.children}
+										{options.children as React.ReactNode}
 										{state.noSuggestions && (
 											<Typography className="px-16 py-12">{noResults}</Typography>
 										)}
@@ -446,6 +448,8 @@ function FuseSearch(props: FuseSearchProps) {
 									className="flex h-full w-full items-center"
 									ref={popperNode}
 								>
+									{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+									{/* @ts-ignore */}
 									<Autosuggest
 										renderInputComponent={renderInputComponent}
 										highlightFirstSuggestion
@@ -488,7 +492,7 @@ function FuseSearch(props: FuseSearchProps) {
 																: 'auto'
 														}}
 													>
-														{options.children}
+														{options.children as React.ReactNode}
 														{state.noSuggestions && (
 															<Typography className="px-16 py-12">{noResults}</Typography>
 														)}

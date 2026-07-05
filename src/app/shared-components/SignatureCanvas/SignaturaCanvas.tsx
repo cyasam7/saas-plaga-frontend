@@ -56,8 +56,10 @@ function SignaturaCanvas() {
 						</Stack>
 					</Stack>
 				</DialogTitle>
-				<DialogContent>
-					<SignaturePad
+			<DialogContent>
+				{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+				{/* @ts-ignore */}
+				<SignaturePad
 						ref={ref}
 						canvasProps={{
 							className: 'signatureCanvas',

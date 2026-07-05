@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-argument,@typescript-eslint/ban-ts-comment */
 
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
@@ -53,8 +53,9 @@ function WYSIWYGEditorComponent(props: WYSIWYGEditorComponentProps, ref: React.F
 		<Root
 			className={clsx('w-full overflow-hidden rounded-4 border-1', className)}
 			ref={ref}
-		>
-			<Editor
+	>
+		{/* @ts-ignore */}
+		<Editor
 				editorState={editorState}
 				onEditorStateChange={onEditorStateChange}
 			/>

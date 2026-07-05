@@ -26,8 +26,10 @@ function DialogSigner(props: IDialogSignerProps) {
 	return (
 		<Dialog open={open}>
 			<DialogTitle>Actualiza la firma</DialogTitle>
-			<DialogContent>
-				<SignaturePad
+		<DialogContent>
+			{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+			{/* @ts-ignore */}
+			<SignaturePad
 					ref={ref}
 					backgroundColor="white"
 					canvasProps={{

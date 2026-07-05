@@ -3,18 +3,19 @@ import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { forwardRef, memo, ReactNode, useImperativeHandle, useRef } from 'react';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import { SystemStyleObject } from '@mui/system/styleFunctionSx/styleFunctionSx';
-import { Theme } from '@mui/system';
 import FusePageCardedSidebar from './FusePageCardedSidebar';
 import FusePageCardedHeader from './FusePageCardedHeader';
 
 const headerHeight = 120;
 const toolbarHeight = 64;
 
-/**
- * Props for the FusePageCarded component.
- */
-type FusePageCardedProps = SystemStyleObject<Theme> & {
+type RootProps = {
+	scroll?: 'normal' | 'page' | 'content';
+	leftSidebarWidth?: number;
+	rightSidebarWidth?: number;
+};
+
+type FusePageCardedProps = {
 	className?: string;
 	leftSidebarContent?: ReactNode;
 	leftSidebarVariant?: 'permanent' | 'persistent' | 'temporary';
@@ -31,7 +32,7 @@ type FusePageCardedProps = SystemStyleObject<Theme> & {
 	leftSidebarOnClose?: () => void;
 };
 
-const Root = styled('div')<FusePageCardedProps>(({ theme, ...props }) => ({
+const Root = styled('div')<RootProps>(({ theme, ...props }) => ({
 	display: 'flex',
 	flexDirection: 'column',
 	minWidth: 0,
