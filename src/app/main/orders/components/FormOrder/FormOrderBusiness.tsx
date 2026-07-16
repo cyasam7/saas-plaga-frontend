@@ -12,8 +12,7 @@ import {
 	InputAdornment,
 	MenuItem,
 	Stack,
-	TextField,
-	Typography
+	TextField
 } from '@mui/material';
 import { Add, LocationOn, Search, Store } from '@mui/icons-material';
 import { UseFormReturn } from 'react-hook-form';
@@ -27,6 +26,7 @@ import { BranchService } from 'src/app/shared/services/BranchService';
 import { Branch } from 'src/app/main/clients/types';
 import { EBusinessMode, EClientType, IFormCreatePest } from './FormOrderProps';
 import { defaultValuesOrder } from './defaultValues';
+import SelectableCard from './SelectableCard';
 
 interface IFormOrderBusinessProps {
 	formHandler: UseFormReturn<IFormCreatePest>;
@@ -40,13 +40,15 @@ const businessModeOptions = [
 		value: EBusinessMode.EXISTING,
 		icon: <Search sx={{ fontSize: 28 }} />,
 		label: 'Cliente existente',
-		description: 'Seleccionar de la base de datos'
+		description: 'Seleccionar de la base de datos',
+		ariaLabel: 'Cliente existente'
 	},
 	{
 		value: EBusinessMode.NEW,
 		icon: <Add sx={{ fontSize: 28 }} />,
 		label: 'Nuevo cliente',
-		description: 'Registrar una empresa nueva'
+		description: 'Registrar una empresa nueva',
+		ariaLabel: 'Nuevo cliente'
 	}
 ] as const;
 
@@ -150,59 +152,23 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 				item
 				xs={12}
 			>
-				<Box sx={{ display: 'flex', gap: 1.5 }}>
-					{businessModeOptions.map((option) => {
-						const isSelected = businessMode === option.value;
-						return (
-							<Box
-								key={option.value}
-								onClick={() => {
-									if (!disabled) handleModeChange(option.value);
-								}}
-								sx={{
-									flex: 1,
-									display: 'flex',
-									alignItems: 'center',
-									gap: 1.5,
-									p: 1.5,
-									borderRadius: 1.5,
-									border: 1.5,
-									borderColor: isSelected ? 'primary.main' : 'divider',
-									bgcolor: isSelected ? 'action.selected' : 'background.paper',
-									cursor: disabled ? 'default' : 'pointer',
-									opacity: disabled ? 0.6 : 1,
-									transition: 'border-color 0.2s, background-color 0.2s',
-									'&:hover': {
-										borderColor: disabled ? undefined : 'primary.light'
-									}
-								}}
-							>
-								<Box
-									sx={{
-										color: isSelected ? 'primary.main' : 'text.secondary',
-										transition: 'color 0.2s',
-										display: 'flex'
-									}}
-								>
-									{option.icon}
-								</Box>
-								<Box>
-									<Typography
-										variant="body2"
-										sx={{ fontWeight: 600, lineHeight: 1.3 }}
-									>
-										{option.label}
-									</Typography>
-									<Typography
-										variant="caption"
-										color="text.secondary"
-									>
-										{option.description}
-									</Typography>
-								</Box>
-							</Box>
-						);
-					})}
+				<Box
+					role="radiogroup"
+					aria-label="Tipo de registro de cliente"
+					sx={{ display: 'flex', gap: 1.5 }}
+				>
+					{businessModeOptions.map((option) => (
+						<SelectableCard
+							key={option.value}
+							icon={option.icon}
+							label={option.label}
+							description={option.description}
+							ariaLabel={option.ariaLabel}
+							selected={businessMode === option.value}
+							disabled={disabled}
+							onSelect={() => handleModeChange(option.value)}
+						/>
+					))}
 				</Box>
 			</Grid>
 

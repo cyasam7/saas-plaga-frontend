@@ -7,7 +7,10 @@ import * as yup from 'yup';
 import { EBusinessMode, EClientType } from './FormOrderProps';
 
 export const createOrderSchema = yup.object().shape({
-	price: yup.string().min(1, 'Valor mínimo de 1 peso').required(FIELD_REQUIRED),
+	price: yup
+		.string()
+		.required(FIELD_REQUIRED)
+		.test('min-price', 'Valor mínimo de 1 peso', (value) => Number(value) >= 1),
 	clientType: yup.string().required(FIELD_REQUIRED),
 	businessMode: yup.string(),
 	// For an existing business client the id is required (the client + location are selected).

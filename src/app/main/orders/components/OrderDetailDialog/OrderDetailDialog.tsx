@@ -13,7 +13,7 @@ function OrderDetailDialog(props: IOrderDetailDialogProps) {
 	const { data: order, isLoading } = useQuery({
 		queryKey: ['get-order-detail-by-id', id],
 		queryFn: () => OrderService.getById(id),
-		enabled: Boolean(id)
+		enabled: Boolean(id) && open
 	});
 
 	const isFollowUp = !!order?.isFollowUp;

@@ -114,7 +114,7 @@ function FormOrderIndividual(props: IFormOrderIndividualProps) {
 							autoComplete="name"
 							spellCheck={false}
 							error={!!fieldState.error}
-							helperText={fieldState.error?.message && fieldState.error?.message}
+							helperText={fieldState.error?.message}
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">

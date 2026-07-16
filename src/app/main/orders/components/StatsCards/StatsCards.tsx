@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Box, Grid, Paper, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { ReceiptLong, PendingActions, Today, Autorenew } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { DatagridRowOrder, EStatusOrder } from 'src/app/shared/entities/OrderEntity';
@@ -28,7 +29,7 @@ export function StatsCards({ orders }: StatsCardsProps) {
 				value: orders.length,
 				icon: <ReceiptLong />,
 				color: theme.palette.primary.main,
-				bgColor: 'rgba(30, 41, 59, 0.08)'
+				bgColor: alpha(theme.palette.primary.main, 0.08)
 			},
 			{
 				label: 'Pendientes',
@@ -36,22 +37,22 @@ export function StatsCards({ orders }: StatsCardsProps) {
 					(o) => o.status === EStatusOrder.CREATED || o.status === EStatusOrder.ASSIGNED
 				).length,
 				icon: <PendingActions />,
-				color: '#f59e0b',
-				bgColor: 'rgba(245, 158, 11, 0.08)'
+				color: theme.palette.warning.main,
+				bgColor: alpha(theme.palette.warning.main, 0.12)
 			},
 			{
 				label: 'Hoy',
 				value: orders.filter((o) => dayjs(o.date).format('YYYY-MM-DD') === today).length,
 				icon: <Today />,
-				color: '#3b82f6',
-				bgColor: 'rgba(59, 130, 246, 0.08)'
+				color: theme.palette.info.main,
+				bgColor: alpha(theme.palette.info.main, 0.12)
 			},
 			{
 				label: 'En progreso',
 				value: orders.filter((o) => o.status === EStatusOrder.IN_PROGRESS).length,
 				icon: <Autorenew />,
 				color: theme.palette.secondary.main,
-				bgColor: 'rgba(79, 70, 229, 0.08)'
+				bgColor: alpha(theme.palette.secondary.main, 0.1)
 			}
 		];
 	}, [orders, theme]);

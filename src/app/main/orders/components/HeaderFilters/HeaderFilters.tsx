@@ -7,10 +7,10 @@ import { ETabsPlagues } from './HeaderFilterProps';
 import { translateOrderStatus } from '../../utils';
 
 const filterOptions = [
-	{ value: ETabsPlagues.ALL, label: 'TODAS' },
-	{ value: ETabsPlagues.TODAY, label: 'HOY' },
-	{ value: ETabsPlagues.TOMORROW, label: 'MAÑANA' },
-	{ value: ETabsPlagues.PENDING, label: 'PENDIENTES' }
+	{ value: ETabsPlagues.ALL, label: 'Todas' },
+	{ value: ETabsPlagues.TODAY, label: 'Hoy' },
+	{ value: ETabsPlagues.TOMORROW, label: 'Mañana' },
+	{ value: ETabsPlagues.PENDING, label: 'Pendientes' }
 ] as const;
 
 interface HeaderFiltersProps {

@@ -31,17 +31,13 @@ import './styles/actionButtons.css';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
-	height: '100%',
 	'& .FusePageSimple-header': {
 		backgroundColor: theme.palette.background.paper,
 		borderBottomWidth: 1,
 		borderStyle: 'solid',
 		borderColor: theme.palette.divider
 	},
-	'& .FusePageSimple-content': {
-		overflow: 'hidden',
-		minHeight: 0
-	},
+	'& .FusePageSimple-content': {},
 	'& .FusePageSimple-sidebarHeader': {},
 	'& .FusePageSimple-sidebarContent': {}
 }));
@@ -119,9 +115,10 @@ function Order() {
 	const columns: GridColDef<DatagridRowOrder>[] = [
 		...columnsOrders,
 		{
-			headerName: 'ACCIONES',
+			headerName: 'Acciones',
 			field: 'actions',
 			sortable: false,
+			flex: 0.8,
 			minWidth: 190,
 			align: 'center',
 			type: 'actions',
@@ -131,7 +128,7 @@ function Order() {
 				return [
 					<GridActionsCellItem
 						key="view"
-						label="VER"
+						label="Ver"
 						icon={<RemoveRedEyeIcon />}
 						onClick={() => {
 							setOrderId(params.row.id);
@@ -141,7 +138,7 @@ function Order() {
 					/>,
 					<GridActionsCellItem
 						key="assign"
-						label={assignedId ? 'RE-ASIGNAR' : 'ASIGNAR'}
+						label={assignedId ? 'Reasignar' : 'Asignar'}
 						icon={<AssignmentIndIcon />}
 						showInMenu
 						onClick={() => {
@@ -153,7 +150,7 @@ function Order() {
 					/>,
 					<GridActionsCellItem
 						key="modify"
-						label="MODIFICAR"
+						label="Modificar"
 						icon={<NoteAltIcon />}
 						showInMenu
 						onClick={() => {
@@ -165,7 +162,7 @@ function Order() {
 					/>,
 					<GridActionsCellItem
 						key="follow"
-						label="CREAR SEGUIMIENTO"
+						label="Crear seguimiento"
 						icon={<MoveUpIcon />}
 						showInMenu
 						onClick={() => {
@@ -176,7 +173,7 @@ function Order() {
 					/>,
 					<GridActionsCellItem
 						key="certificate"
-						label="GENERAR REPORTE"
+						label="Generar reporte"
 						icon={<FileDownload />}
 						disabled={![EStatusOrder.DONE, EStatusOrder.FINISHED].includes(params.row.status)}
 						onClick={async () => {
@@ -187,7 +184,7 @@ function Order() {
 					/>,
 					<GridActionsCellItem
 						key="delete"
-						label="ELIMINAR"
+						label="Eliminar"
 						icon={<Delete />}
 						showInMenu
 						onClick={() => {
@@ -470,32 +467,30 @@ function Order() {
 									</Typography>
 								</Box>
 							) : (
-								<Stack sx={{ flex: 1, minHeight: 0, maxHeight: "400px" }}>
-									<DataGrid
-										hideFooterPagination
-										hideFooter
-										loading={isLoading}
-										rows={filteredData}
-										columns={columns}
-										rowSelection={false}
-										density="comfortable"
-										getRowHeight={() => 'auto'}
-										sx={{
-											[`& .${gridClasses.main}`]: {
-												mt: 2,
-												border: 1,
-												borderColor: 'divider',
-												borderRadius: "10px"
-											},
-											height: "100% !important",
-											'& .MuiDataGrid-cell': {
-												py: 1,
-												px: 1,
-												wordBreak: 'break-word'
-											}
-										}}
-									/>
-								</Stack>
+								<DataGrid
+									autoHeight
+									hideFooterPagination
+									hideFooter
+									loading={isLoading}
+									rows={filteredData}
+									columns={columns}
+									rowSelection={false}
+									density="comfortable"
+									getRowHeight={() => 'auto'}
+									sx={{
+										[`& .${gridClasses.main}`]: {
+											mt: 2,
+											border: 1,
+											borderColor: 'divider',
+											borderRadius: 2
+										},
+										'& .MuiDataGrid-cell': {
+											py: 1,
+											px: 1,
+											wordBreak: 'break-word'
+										}
+									}}
+								/>
 							)
 						)}
 

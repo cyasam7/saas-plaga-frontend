@@ -84,6 +84,25 @@ describe('FormOrder', () => {
 		expect(screen.getByLabelText('Residencial')).toBeInTheDocument();
 	});
 
+	it('selects the client type via keyboard on the accessible radio cards', () => {
+		render(<Harness clientType={EClientType.INDIVIDUAL} />);
+
+		const residential = screen.getByLabelText('Residencial');
+		const business = screen.getByLabelText('Empresas (B2B)');
+
+		// Cards expose radio semantics and current selection state.
+		expect(residential).toHaveAttribute('role', 'radio');
+		expect(residential).toHaveAttribute('aria-checked', 'true');
+		expect(business).toHaveAttribute('aria-checked', 'false');
+
+		// Activating with the keyboard switches the selected option.
+		business.focus();
+		fireEvent.keyDown(business, { key: 'Enter' });
+
+		expect(screen.getByLabelText('Empresas (B2B)')).toHaveAttribute('aria-checked', 'true');
+		expect(screen.getByLabelText('Residencial')).toHaveAttribute('aria-checked', 'false');
+	});
+
 	it('opens the confirmation dialog and autocompletes when a residential client is found', async () => {
 		getClientInfoByPhone.mockResolvedValue(CLIENT_FOUND);
 		render(<Harness clientType={EClientType.INDIVIDUAL} />);

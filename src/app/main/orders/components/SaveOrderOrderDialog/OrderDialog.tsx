@@ -1,6 +1,17 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
+import {
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	IconButton,
+	Stack,
+	Typography
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQuery } from 'react-query';
@@ -28,7 +39,7 @@ function OrderDialog(props: OrderDialogProps) {
 	const { data } = useQuery({
 		queryKey: ['order-by-id', id],
 		queryFn: () => OrderService.getById(id),
-		enabled: Boolean(id)
+		enabled: Boolean(id) && open
 	});
 
 	useEffect(() => {
@@ -118,46 +129,53 @@ function OrderDialog(props: OrderDialogProps) {
 		onCancel();
 	}
 
+	const isSubmitting = formHandler.formState.isSubmitting;
+
 	return (
 		<Dialog
 			open={open}
 			TransitionComponent={Transition}
 			maxWidth="md"
+			fullWidth
+			PaperProps={{ sx: { borderRadius: 3 } }}
 		>
-			<DialogTitle>
+			<DialogTitle sx={{ pb: 1.5 }}>
 				<Stack
 					direction="row"
 					justifyContent="space-between"
-					alignItems="center"
+					alignItems="flex-start"
+					spacing={2}
 				>
-					<Typography variant="h6">Guardar order</Typography>
-					<Stack
-						direction="row"
-						spacing={1}
+					<Box>
+						<Typography
+							variant="h6"
+							sx={{ fontWeight: 700, lineHeight: 1.3 }}
+						>
+							{isUpdating ? 'Editar orden' : 'Nueva orden'}
+						</Typography>
+						<Typography
+							variant="body2"
+							color="text.secondary"
+						>
+							{isUpdating
+								? 'Actualiza los datos de la orden de servicio.'
+								: 'Registra el cliente y los detalles del servicio.'}
+						</Typography>
+					</Box>
+					<IconButton
+						aria-label="Cerrar"
+						onClick={handleCancel}
+						disabled={isSubmitting}
+						sx={{ mt: -0.5, mr: -0.5 }}
 					>
-						<Button
-							color="primary"
-							variant="outlined"
-							disabled={formHandler.formState.isSubmitting}
-							onClick={handleCancel}
-						>
-							Cancelar
-						</Button>
-						<LoadingButton
-							color="primary"
-							variant="contained"
-							loading={formHandler.formState.isSubmitting}
-							onClick={formHandler.handleSubmit(handleSubmit)}
-						>
-							Guardar
-						</LoadingButton>
-					</Stack>
+						<Close />
+					</IconButton>
 				</Stack>
 			</DialogTitle>
-			<DialogContent>
+			<DialogContent dividers>
 				<FormOrder
 					formHandler={formHandler}
-					disabled={formHandler.formState.isSubmitting}
+					disabled={isSubmitting}
 					isUpdating={isUpdating}
 					disableSpecificField={
 						isUpdating && {
@@ -169,6 +187,24 @@ function OrderDialog(props: OrderDialogProps) {
 					}
 				/>
 			</DialogContent>
+			<DialogActions sx={{ px: 3, py: 2 }}>
+				<Button
+					color="primary"
+					variant="outlined"
+					disabled={isSubmitting}
+					onClick={handleCancel}
+				>
+					Cancelar
+				</Button>
+				<LoadingButton
+					color="primary"
+					variant="contained"
+					loading={isSubmitting}
+					onClick={formHandler.handleSubmit(handleSubmit)}
+				>
+					{isUpdating ? 'Guardar cambios' : 'Crear orden'}
+				</LoadingButton>
+			</DialogActions>
 		</Dialog>
 	);
 }

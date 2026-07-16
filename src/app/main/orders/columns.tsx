@@ -10,12 +10,11 @@ import { statusLabel } from './utils';
 
 export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 	{
-		headerName: 'CLIENTE',
+		headerName: 'Cliente',
 		field: 'client',
 		sortable: false,
 		flex: 2,
 		minWidth: 180,
-		maxWidth: 300,
 		align: 'left',
 		disableColumnMenu: true,
 		renderCell: ({ row }) => {
@@ -39,12 +38,11 @@ export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 		}
 	},
 	{
-		headerName: 'ESTATUS',
+		headerName: 'Estatus',
 		field: 'status',
 		sortable: false,
 		flex: 0.8,
 		minWidth: 90,
-		maxWidth: 120,
 		align: 'left',
 		disableColumnMenu: true,
 		valueGetter: ({ row }) => statusLabel[row.status],
@@ -54,14 +52,13 @@ export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 		}
 	},
 	{
-		headerName: 'FECHA',
+		headerName: 'Fecha',
 		headerAlign: 'left',
 		field: 'date',
 		sortable: true,
 		flex: 1,
 		align: 'left',
 		minWidth: 120,
-		maxWidth: 160,
 		disableColumnMenu: true,
 		renderCell: ({ row }) => {
 			return (
@@ -81,16 +78,15 @@ export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 		}
 	},
 	{
-		headerName: 'FOLIO',
+		headerName: 'Folio',
 		field: 'folio',
 		sortable: false,
 		flex: 1,
 		minWidth: 120,
-		maxWidth: 180,
 		align: 'left',
 	},
 	{
-		headerName: 'ASIGNADA',
+		headerName: 'Asignado',
 		field: 'assignedName',
 		sortable: false,
 		align: 'left',
@@ -98,7 +94,6 @@ export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 		flex: 1,
 		hideSortIcons: true,
 		minWidth: 120,
-		maxWidth: 180,
 		disableColumnMenu: true,
 		valueGetter({ value }) {
 			return (value || 'Sin asignar') as string;
@@ -115,7 +110,7 @@ export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 		)
 	},
 	{
-		headerName: 'COSTO',
+		headerName: 'Costo',
 		field: 'price',
 		sortable: false,
 		align: 'right',
@@ -123,7 +118,6 @@ export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
 		flex: 0.8,
 		hideSortIcons: true,
 		minWidth: 90,
-		maxWidth: 120,
 		disableColumnMenu: true,
 		valueFormatter({ value }) {
 			return `$${formatCurrency(String(value))}`;

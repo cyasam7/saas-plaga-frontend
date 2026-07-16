@@ -34,7 +34,7 @@ function OrderChangeStatusDialog(props: IOrderChangeStatusDialogProps) {
 	const { data: order } = useQuery({
 		queryKey: ['get-order-status-by-id', id],
 		queryFn: () => OrderService.getById(id),
-		enabled: Boolean(id)
+		enabled: Boolean(id) && open
 	});
 	useEffect(() => {
 		if (order) {

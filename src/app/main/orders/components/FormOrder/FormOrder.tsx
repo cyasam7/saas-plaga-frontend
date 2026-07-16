@@ -1,20 +1,19 @@
+import { Box, Fade, Grid, InputAdornment, TextField } from '@mui/material';
 import {
-	Box,
-	Divider,
-	Fade,
-	Grid,
-	InputAdornment,
-	Paper,
-	TextField,
-	Typography
-} from '@mui/material';
-import { Business, Person } from '@mui/icons-material';
+	Business,
+	CalendarMonth,
+	ContactMail,
+	Groups,
+	Person
+} from '@mui/icons-material';
 import { Controller } from 'react-hook-form';
 import { NumericFormatAdapter } from 'app/shared-components/NumericFormatAdapter/NumericFormatAdapter';
 import { DateTimePickerField } from 'app/shared-components/DateTimePicker';
 import { EClientType, IFormOrderProps } from './FormOrderProps';
 import FormOrderIndividual from './FormOrderIndividual';
 import FormOrderBusiness from './FormOrderBusiness';
+import SelectableCard from './SelectableCard';
+import FormSection from './FormSection';
 import { defaultValuesOrder } from './defaultValues';
 
 const clientTypeOptions = [
@@ -22,13 +21,15 @@ const clientTypeOptions = [
 		value: EClientType.BUSINESS,
 		icon: <Business sx={{ fontSize: 32 }} />,
 		label: 'Empresas',
-		description: 'Cliente corporativo (B2B)'
+		description: 'Cliente corporativo (B2B)',
+		ariaLabel: 'Empresas (B2B)'
 	},
 	{
 		value: EClientType.INDIVIDUAL,
 		icon: <Person sx={{ fontSize: 32 }} />,
 		label: 'Residencial',
-		description: 'Cliente particular'
+		description: 'Cliente particular',
+		ariaLabel: 'Residencial'
 	}
 ] as const;
 
@@ -64,75 +65,30 @@ function FormOrder(props: IFormOrderProps) {
 				item
 				xs={12}
 			>
-				<Paper
-					variant="outlined"
-					sx={{ p: 2.5, borderRadius: 2 }}
+				<FormSection
+					icon={<Groups fontSize="small" />}
+					title="Tipo de cliente"
+					description="¿Para quién es esta orden de servicio?"
 				>
-					<Typography
-						variant="subtitle2"
-						color="text.secondary"
-						sx={{ mb: 2, textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem' }}
+					<Box
+						role="radiogroup"
+						aria-label="Tipo de cliente"
+						sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1.5 }}
 					>
-						Tipo de cliente
-					</Typography>
-
-					<Box sx={{ display: 'flex', gap: 1.5 }}>
-						{clientTypeOptions.map((option) => {
-							const isSelected = clientType === option.value;
-							return (
-								<Box
-									key={option.value}
-									onClick={() => {
-										if (!disabled && !clientTypeField) {
-											handleClientTypeChange(option.value);
-										}
-									}}
-									sx={{
-										flex: 1,
-										display: 'flex',
-										alignItems: 'center',
-										gap: 1.5,
-										p: 2,
-										borderRadius: 2,
-										border: 2,
-										borderColor: isSelected ? 'primary.main' : 'divider',
-										bgcolor: isSelected ? 'action.selected' : 'background.paper',
-										cursor: disabled || clientTypeField ? 'default' : 'pointer',
-										opacity: disabled || clientTypeField ? 0.6 : 1,
-										transition: 'border-color 0.2s, background-color 0.2s',
-										'&:hover': {
-											borderColor: disabled || clientTypeField ? undefined : 'primary.light'
-										}
-									}}
-								>
-									<Box
-										sx={{
-											color: isSelected ? 'primary.main' : 'text.secondary',
-											transition: 'color 0.2s',
-											display: 'flex'
-										}}
-									>
-										{option.icon}
-									</Box>
-									<Box>
-										<Typography
-											variant="body2"
-											sx={{ fontWeight: 600, lineHeight: 1.3 }}
-										>
-											{option.label}
-										</Typography>
-										<Typography
-											variant="caption"
-											color="text.secondary"
-										>
-											{option.description}
-										</Typography>
-									</Box>
-								</Box>
-							);
-						})}
+						{clientTypeOptions.map((option) => (
+							<SelectableCard
+								key={option.value}
+								icon={option.icon}
+								label={option.label}
+								description={option.description}
+								ariaLabel={option.ariaLabel}
+								selected={clientType === option.value}
+								disabled={disabled || clientTypeField}
+								onSelect={() => handleClientTypeChange(option.value)}
+							/>
+						))}
 					</Box>
-				</Paper>
+				</FormSection>
 			</Grid>
 
 			{/* Sección: Datos del cliente */}
@@ -140,18 +96,11 @@ function FormOrder(props: IFormOrderProps) {
 				item
 				xs={12}
 			>
-				<Paper
-					variant="outlined"
-					sx={{ p: 2.5, borderRadius: 2 }}
+				<FormSection
+					icon={<ContactMail fontSize="small" />}
+					title="Datos del cliente"
+					description="Información de contacto y ubicación del servicio."
 				>
-					<Typography
-						variant="subtitle2"
-						color="text.secondary"
-						sx={{ mb: 2, textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem' }}
-					>
-						Datos del cliente
-					</Typography>
-
 					<Fade
 						in
 						key={clientType}
@@ -176,14 +125,7 @@ function FormOrder(props: IFormOrderProps) {
 							)}
 						</Box>
 					</Fade>
-				</Paper>
-			</Grid>
-
-			<Grid
-				item
-				xs={12}
-			>
-				<Divider />
+				</FormSection>
 			</Grid>
 
 			{/* Sección: Fecha y costo */}
@@ -191,18 +133,11 @@ function FormOrder(props: IFormOrderProps) {
 				item
 				xs={12}
 			>
-				<Paper
-					variant="outlined"
-					sx={{ p: 2.5, borderRadius: 2 }}
+				<FormSection
+					icon={<CalendarMonth fontSize="small" />}
+					title="Fecha y costo"
+					description="Cuándo se realiza el servicio y su precio."
 				>
-					<Typography
-						variant="subtitle2"
-						color="text.secondary"
-						sx={{ mb: 2, textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem' }}
-					>
-						Fecha y costo
-					</Typography>
-
 					<Grid
 						container
 						spacing={2}
@@ -260,7 +195,7 @@ function FormOrder(props: IFormOrderProps) {
 							/>
 						</Grid>
 					</Grid>
-				</Paper>
+				</FormSection>
 			</Grid>
 		</Grid>
 	);
