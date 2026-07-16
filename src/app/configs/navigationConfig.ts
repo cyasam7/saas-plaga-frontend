@@ -42,7 +42,16 @@ const navigationConfig: FuseNavItemType[] = [
         icon: 'material-twotone:person_pin',
         url: '/clients',
         children: []
-      },
+      }
+    ]
+  },
+  {
+    id: 'configurations-app',
+    title: 'Configuración',
+    auth: ['staff'],
+    type: 'group',
+    icon: 'heroicons-solid:adjustments',
+    children: [
       {
         id: 'catalogs',
         title: 'Catálogos',
@@ -51,21 +60,13 @@ const navigationConfig: FuseNavItemType[] = [
         icon: 'heroicons-outline:archive',
         url: '/catalogs',
         children: []
-      }
-    ]
-  },
-  {
-    id: 'configurations-app',
-    title: 'Reportes',
-    auth: ['staff'],
-    type: 'group',
-    icon: 'heroicons-solid:adjustments',
-    children: [
+      },
       {
         id: 'configurations-account',
         title: 'Reportes',
         type: 'item',
         auth: ['staff'],
+        icon: 'heroicons-outline:document-report',
         url: '/configuration/reports'
       }
     ]
