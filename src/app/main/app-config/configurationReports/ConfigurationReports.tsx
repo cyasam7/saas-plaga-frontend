@@ -1,19 +1,35 @@
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import { styled } from '@mui/material/styles';
-import { Box, Button, Card, Stack, TextField, Typography, Skeleton } from '@mui/material';
-import { Palette, Upload } from '@mui/icons-material';
+import {
+	Box,
+	Button,
+	Card,
+	Chip,
+	Divider,
+	FormHelperText,
+	Stack,
+	ToggleButton,
+	ToggleButtonGroup,
+	Typography,
+	Skeleton
+} from '@mui/material';
+import { Palette, Upload, Business, Image as ImageIcon } from '@mui/icons-material';
 import { useQuery } from 'react-query';
 import { AppConfigService } from 'src/app/shared/services/AppConfig';
 import { useSelector } from 'react-redux';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { useForm } from 'react-hook-form';
 import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
-import { ChangeEvent, useEffect, useMemo } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
 import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
+import CertificatePreview from './components/CertificatePreview/CertificatePreview';
+import ServiceOrderPreview from './components/ServiceOrderPreview/ServiceOrderPreview';
+import ColorField from './components/ColorField/ColorField';
+import { REPORT_TYPE_OPTIONS, ReportType } from './entities/ReportPreview';
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
 	'& .FusePageSimple-header': {
@@ -27,12 +43,18 @@ const Root = styled(FusePageSimple)(({ theme }) => ({
 	'& .FusePageSimple-sidebarContent': {}
 }));
 
+const INVALID_COLOR = 'Usa un color en formato #RRGGBB';
+
+/** El backend todavía no valida el archivo: esto es sólo feedback, no una garantía. */
+const MAX_LOGO_BYTES = 2 * 1024 * 1024;
+const ACCEPTED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+
 const accountSchema = yup.object().shape({
 	name: yup.string().required(FIELD_REQUIRED),
 	address: yup.string().required(FIELD_REQUIRED),
 	logo: yup.mixed().nullable(),
-	primaryColor: yup.string().required(FIELD_REQUIRED),
-	secondaryColor: yup.string().required(FIELD_REQUIRED),
+	primaryColor: yup.string().required(FIELD_REQUIRED).matches(/^#[0-9a-fA-F]{6}$/, INVALID_COLOR),
+	secondaryColor: yup.string().required(FIELD_REQUIRED).matches(/^#[0-9a-fA-F]{6}$/, INVALID_COLOR),
 	licenseSanitary: yup.string().required(FIELD_REQUIRED)
 });
 
@@ -45,9 +67,55 @@ const defaultValuesAccountUser = {
 	licenseSanitary: ''
 };
 
+function validateLogo(file: File): string | null {
+	if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
+		return 'Formato no válido. Usa PNG, JPG, WEBP o SVG.';
+	}
+
+	if (file.size > MAX_LOGO_BYTES) {
+		return 'La imagen supera el tamaño máximo de 2MB.';
+	}
+
+	return null;
+}
+
+const PREVIEW_BY_REPORT_TYPE = {
+	certificate: CertificatePreview,
+	serviceOrder: ServiceOrderPreview
+};
+
+function Section({ title, icon, children }: { title: string; icon: ReactNode; children: ReactNode }) {
+	return (
+		<Box>
+			<Stack
+				direction="row"
+				spacing={1}
+				alignItems="center"
+				mb={2}
+			>
+				<Box
+					sx={{ color: 'text.secondary', display: 'flex' }}
+					aria-hidden
+				>
+					{icon}
+				</Box>
+				<Typography
+					variant="subtitle1"
+					fontWeight={600}
+				>
+					{title}
+				</Typography>
+			</Stack>
+			{children}
+		</Box>
+	);
+}
+
 function ConfigurationReports() {
 	const user = useSelector(selectUser);
 	const tenantId = user.data.tenant;
+	const [logoError, setLogoError] = useState<string | null>(null);
+	const [reportType, setReportType] = useState<ReportType>('certificate');
 
 	const { data, isLoading } = useQuery({
 		queryFn: () => AppConfigService.get({ tenantId }),
@@ -56,17 +124,27 @@ function ConfigurationReports() {
 
 	const formHandler = useForm<IFormSaveAccount>({
 		defaultValues: defaultValuesAccountUser,
-		resolver: yupResolver(accountSchema)
+		resolver: yupResolver(accountSchema),
+		mode: 'onChange'
 	});
 
-	const { logo } = formHandler.watch();
+	const { logo, name, address, licenseSanitary, primaryColor, secondaryColor } = formHandler.watch();
 
 	const imagePreview = useMemo(() => {
 		if (!logo) {
 			return undefined;
 		}
+
 		return URL.createObjectURL(logo);
 	}, [logo]);
+
+	useEffect(() => {
+		if (!imagePreview) {
+			return undefined;
+		}
+
+		return () => URL.revokeObjectURL(imagePreview);
+	}, [imagePreview]);
 
 	useEffect(() => {
 		if (data) {
@@ -87,20 +165,26 @@ function ConfigurationReports() {
 	function handleChangeImage(e: ChangeEvent<HTMLInputElement>): void {
 		const { files } = e.target;
 
-		if (files.length > 0) {
-			const [file] = files;
-
-			formHandler.setValue('logo', file);
+		if (files.length === 0) {
+			return;
 		}
-	}
 
-	function handleColorChange(e: ChangeEvent<HTMLInputElement>): void {
-		const { name, value } = e.target;
-		formHandler.setValue(name as 'primaryColor' | 'secondaryColor', value);
+		const [file] = files;
+		const error = validateLogo(file);
+
+		setLogoError(error);
+
+		if (!error) {
+			formHandler.setValue('logo', file, { shouldDirty: true });
+		}
+
+		/* Sin esto, volver a elegir el mismo archivo tras un error no dispara change. */
+		e.target.value = '';
 	}
 
 	async function handleSubmit(formValue: IFormSaveAccount): Promise<void> {
 		await AppConfigService.save(formValue);
+		formHandler.reset(formValue);
 		displayToast({
 			anchorOrigin: { horizontal: 'right', vertical: 'top' },
 			autoHideDuration: 1500,
@@ -109,52 +193,122 @@ function ConfigurationReports() {
 		});
 	}
 
+	function handleChangeReportType(_e: MouseEvent<HTMLElement>, value: ReportType | null): void {
+		/* value es null cuando se pulsa el botón ya activo: mantenemos siempre uno seleccionado. */
+		if (value) {
+			setReportType(value);
+		}
+	}
+
+	const { isSubmitting, isDirty, isValid } = formHandler.formState;
+	const logoUrl = imagePreview ?? data?.logo;
+	const PreviewComponent = PREVIEW_BY_REPORT_TYPE[reportType];
+
 	return (
 		<Root
+			scroll='content'
 			header={
-				<div className="p-24">
-					<Typography variant="h6">Configuración de reportes.</Typography>
-				</div>
+				<Stack
+					direction="row"
+					justifyContent="space-between"
+					alignItems="center"
+					spacing={2}
+					className="p-24"
+				>
+					<Box>
+						<Typography variant="h6">Configuración de reportes</Typography>
+						<Typography
+							variant="body2"
+							color="text.secondary"
+						>
+							Personaliza cómo se ve tu marca en los certificados y órdenes de servicio.
+						</Typography>
+					</Box>
+					<Stack
+						direction="row"
+						spacing={2}
+						alignItems="center"
+					>
+						{isDirty && (
+							<Chip
+								size="small"
+								label="Cambios sin guardar"
+								color="warning"
+								variant="outlined"
+							/>
+						)}
+						<Button
+							variant="contained"
+							color="primary"
+							disabled={isSubmitting || isLoading || !isValid || !isDirty}
+							onClick={formHandler.handleSubmit(handleSubmit)}
+						>
+							Guardar
+						</Button>
+					</Stack>
+				</Stack>
 			}
 			content={
-				<div className="p-24 w-full">
-					<Card>
+				<Stack
+					direction={{ xs: 'column', lg: 'row' }}
+					spacing={3}
+					alignItems="flex-start"
+					className="p-24 w-full"
+				>
+					<Card sx={{ flex: 1, width: '100%', maxWidth: { lg: 640 } }}>
 						<Stack
-							spacing={4}
+							spacing={3}
 							p={3}
+							divider={<Divider flexItem />}
 						>
-							<Box>
-								<Typography
-									variant="h6"
-									display="flex"
+							<Section
+								title="Logo"
+								icon={<ImageIcon fontSize="small" />}
+							>
+								<Stack
+									direction="row"
+									spacing={3}
 									alignItems="center"
-									gutterBottom
-								>
-									Logo de la compañía
-								</Typography>
-								<Box
-									display="flex"
-									gap={3}
 								>
 									{isLoading ? (
 										<Skeleton
 											variant="rectangular"
-											width={128}
-											height={128}
-											sx={{ borderRadius: 1 }}
+											width={112}
+											height={112}
+											sx={{ borderRadius: 1, flexShrink: 0 }}
 										/>
 									) : (
 										<Box
-											component="img"
-											src={imagePreview ?? data?.logo}
-											alt="Company logo"
 											sx={{
-												width: 128,
-												height: 128,
-												objectFit: 'cover',
-												borderRadius: 1
+												width: 112,
+												height: 112,
+												flexShrink: 0,
+												border: 1,
+												borderColor: 'divider',
+												borderRadius: 1,
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'center',
+												overflow: 'hidden',
+												backgroundColor: 'background.default'
 											}}
-										/>
+										>
+											{logoUrl ? (
+												<Box
+													component="img"
+													src={logoUrl}
+													alt="Logo de la compañía"
+													sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
+												/>
+											) : (
+												<Typography
+													variant="caption"
+													color="text.disabled"
+												>
+													Sin logo
+												</Typography>
+											)}
+										</Box>
 									)}
 									<Box>
 										<label htmlFor="logo-upload">
@@ -162,14 +316,14 @@ function ConfigurationReports() {
 												type="file"
 												id="logo-upload"
 												hidden
-												accept="image/*"
+												accept={ACCEPTED_LOGO_TYPES.join(',')}
 												onChange={handleChangeImage}
 												disabled={isLoading}
 											/>
 											<Button
 												variant="outlined"
 												component="span"
-												disabled={formHandler.formState.isSubmitting || isLoading}
+												disabled={isSubmitting || isLoading}
 												startIcon={<Upload />}
 											>
 												Subir nuevo logo
@@ -177,195 +331,159 @@ function ConfigurationReports() {
 										</label>
 										<Typography
 											variant="caption"
+											color="text.secondary"
 											display="block"
 											mt={1}
 										>
-											Tamaño recomendado: 300x300px. Tamaño máximo de archivo: 2MB.
+											PNG, JPG, WEBP o SVG. Recomendado 300x300px, máximo 2MB.
 										</Typography>
+										{logoError && <FormHelperText error>{logoError}</FormHelperText>}
 									</Box>
-								</Box>
-							</Box>
+								</Stack>
+							</Section>
 
-							<Box>
-								<Typography
-									variant="h6"
-									display="flex"
-									alignItems="center"
-									gutterBottom
-								>
-									Detalles de la compañía
-								</Typography>
+							<Section
+								title="Compañía"
+								icon={<Business fontSize="small" />}
+							>
 								<Stack spacing={2}>
 									{isLoading ? (
 										<>
 											<Skeleton height={56} />
 											<Skeleton height={56} />
-											<Skeleton height={56} />
 										</>
 									) : (
 										<>
+											<Stack
+												direction={{ xs: 'column', sm: 'row' }}
+												spacing={2}
+											>
+												<TextFieldForm
+													disabled={isSubmitting}
+													control={formHandler.control}
+													label="Nombre de la compañía"
+													name="name"
+													fullWidth
+												/>
+												<TextFieldForm
+													disabled={isSubmitting}
+													control={formHandler.control}
+													label="Licencia Sanitaria"
+													name="licenseSanitary"
+													fullWidth
+												/>
+											</Stack>
 											<TextFieldForm
-												disabled={formHandler.formState.isSubmitting}
+												disabled={isSubmitting}
 												control={formHandler.control}
-												label="Company Name"
-												name="name"
-												fullWidth
-											/>
-											<TextFieldForm
-												disabled={formHandler.formState.isSubmitting}
-												control={formHandler.control}
-												label="Address"
+												label="Dirección"
 												name="address"
-												fullWidth
-											/>
-											<TextFieldForm
-												disabled={formHandler.formState.isSubmitting}
-												control={formHandler.control}
-												label="Licencia Sanitaria"
-												name="licenseSanitary"
 												fullWidth
 											/>
 										</>
 									)}
 								</Stack>
-							</Box>
+							</Section>
 
-							<Box>
-								<Typography
-									variant="h6"
-									display="flex"
-									alignItems="center"
-									gutterBottom
-								>
-									<Palette sx={{ mr: 1 }} />
-									Colores de la empresa
-								</Typography>
+							<Section
+								title="Colores"
+								icon={<Palette fontSize="small" />}
+							>
 								<Stack
-									direction="row"
+									direction={{ xs: 'column', sm: 'row' }}
 									spacing={2}
 								>
 									{isLoading ? (
 										<>
-											<Box flex={1}>
-												<Typography
-													variant="subtitle2"
-													gutterBottom
-												>
-													Color primario
-												</Typography>
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<Skeleton
-														variant="rectangular"
-														width={40}
-														height={40}
-													/>
-													<Skeleton
-														height={40}
-														width="100%"
-													/>
-												</Stack>
-											</Box>
-											<Box flex={1}>
-												<Typography
-													variant="subtitle2"
-													gutterBottom
-												>
-													Color secundario
-												</Typography>
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<Skeleton
-														variant="rectangular"
-														width={40}
-														height={40}
-													/>
-													<Skeleton
-														height={40}
-														width="100%"
-													/>
-												</Stack>
-											</Box>
+											<Skeleton
+												height={64}
+												width="100%"
+											/>
+											<Skeleton
+												height={64}
+												width="100%"
+											/>
 										</>
 									) : (
 										<>
-											<Box flex={1}>
-												<Typography
-													variant="subtitle2"
-													gutterBottom
-												>
-													Color primario
-												</Typography>
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<input
-														type="color"
-														id="primary-color"
-														{...formHandler.register('primaryColor')}
-														style={{ width: 40, height: 40, padding: 0, border: 'none' }}
-														onChange={handleColorChange}
-													/>
-													<TextField
-														{...formHandler.register('primaryColor')}
-														fullWidth
-														size="small"
-														onChange={handleColorChange}
-													/>
-												</Stack>
-											</Box>
-											<Box flex={1}>
-												<Typography
-													variant="subtitle2"
-													gutterBottom
-												>
-													Color secundario
-												</Typography>
-												<Stack
-													direction="row"
-													spacing={1}
-												>
-													<input
-														type="color"
-														id="secondary-color"
-														{...formHandler.register('secondaryColor')}
-														style={{ width: 40, height: 40, padding: 0, border: 'none' }}
-														onChange={handleColorChange}
-													/>
-													<TextField
-														{...formHandler.register('secondaryColor')}
-														fullWidth
-														size="small"
-														onChange={handleColorChange}
-													/>
-												</Stack>
-											</Box>
+											<ColorField
+												control={formHandler.control}
+												name="primaryColor"
+												label="Color primario"
+												disabled={isSubmitting}
+											/>
+											<ColorField
+												control={formHandler.control}
+												name="secondaryColor"
+												label="Color secundario"
+												disabled={isSubmitting}
+											/>
 										</>
 									)}
 								</Stack>
-							</Box>
-							<Box justifyContent="flex-end">
-								<Button
-									variant="contained"
-									color="primary"
-									disabled={
-										formHandler.formState.isSubmitting ||
-										isLoading ||
-										!formHandler.formState.isValid
-									}
-									onClick={formHandler.handleSubmit(handleSubmit)}
-								>
-									Guardar
-								</Button>
-							</Box>
+							</Section>
 						</Stack>
 					</Card>
-				</div>
+
+					<Box sx={{ flex: 1, width: '100%', position: { lg: 'sticky' }, top: { lg: 24 } }}>
+						<Stack
+							direction={{ xs: 'column', sm: 'row' }}
+							spacing={1.5}
+							justifyContent="space-between"
+							alignItems={{ xs: 'flex-start', sm: 'center' }}
+							mb={1.5}
+						>
+							<Stack
+								direction="row"
+								spacing={1}
+								alignItems="center"
+							>
+								<Typography
+									variant="subtitle1"
+									fontWeight={600}
+								>
+									Vista previa
+								</Typography>
+								<Chip
+									size="small"
+									label="Datos de ejemplo"
+									variant="outlined"
+								/>
+							</Stack>
+							<ToggleButtonGroup
+								exclusive
+								size="small"
+								value={reportType}
+								aria-label="Tipo de reporte"
+								onChange={handleChangeReportType}
+							>
+								{REPORT_TYPE_OPTIONS.map((option) => (
+									<ToggleButton
+										key={option.value}
+										value={option.value}
+									>
+										{option.label}
+									</ToggleButton>
+								))}
+							</ToggleButtonGroup>
+						</Stack>
+						{isLoading ? (
+							<Skeleton
+								variant="rectangular"
+								sx={{ width: '100%', aspectRatio: '794 / 1123', borderRadius: 1 }}
+							/>
+						) : (
+							<PreviewComponent
+								name={name}
+								address={address}
+								licenseSanitary={licenseSanitary}
+								primaryColor={primaryColor}
+								secondaryColor={secondaryColor}
+								logoUrl={logoUrl}
+							/>
+						)}
+					</Box>
+				</Stack>
 			}
 		/>
 	);
