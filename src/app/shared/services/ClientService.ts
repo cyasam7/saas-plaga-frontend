@@ -1,6 +1,7 @@
 import { Client, ClientType } from "src/app/main/clients/types";
 import { AxiosFetcher } from "../fetcher";
 import { FormClientValues } from "src/app/main/clients/Forms/NewClientForm/types";
+import { ClientOrderHistoryResponse } from "../entities/ClientOrderHistory";
 
 
 export class ClientService {
@@ -30,6 +31,13 @@ export class ClientService {
   static async byId(id: string): Promise<Client> {
     return await AxiosFetcher<Client>({
       url: `/clients/${id}`,
+      method: "GET",
+    })
+  }
+
+  static async getOrdersHistory(clientId: string): Promise<ClientOrderHistoryResponse[]> {
+    return await AxiosFetcher<ClientOrderHistoryResponse[]>({
+      url: `/clients/${clientId}/orders`,
       method: "GET",
     })
   }

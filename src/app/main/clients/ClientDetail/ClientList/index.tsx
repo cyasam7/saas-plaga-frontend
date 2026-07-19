@@ -22,6 +22,7 @@ import { Client, ClientType } from '../../types';
 import { ClientListProps } from './types';
 import { NewClientForm } from '../../Forms/NewClientForm';
 import { FormClientValues } from '../../Forms/NewClientForm/types';
+import { clientToFormValues } from '../../Forms/NewClientForm/mapper';
 import { ClientCard } from '../../Cards/ClientCard';
 import { ClientService } from 'src/app/shared/services/ClientService';
 
@@ -251,32 +252,7 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
         open={showSaveClientForm}
         onClose={handleFormClose}
         onSubmit={handleFormSubmit}
-        defaultValues={editingClient ? {
-          type: editingClient.type,
-          name: editingClient.name,
-          legalName: editingClient.legalName ?? '',
-          taxpayerType: editingClient.taxpayerType,
-          rfc: editingClient.rfc ?? '',
-          businessActivity: editingClient.businessActivity ?? '',
-          requiresCompliance: editingClient.requiresCompliance ?? false,
-          locations: (editingClient.locations ?? []).map((location) => ({
-            id: location.id,
-            name: location.name,
-            address: location.address,
-            contactPhone: location.contactPhone,
-            contactPerson: location.contactPerson ?? '',
-            references: location.references ?? '',
-            areas: (location.areas ?? []).map((area) => ({
-              id: area.id,
-              name: area.name,
-              description: area.description ?? '',
-            })),
-          })),
-          email: editingClient.email,
-          phone: editingClient.phone ?? '',
-          ownerName: editingClient.ownerName ?? '',
-          propertyType: editingClient.propertyType,
-        } : undefined}
+        defaultValues={editingClient ? clientToFormValues(editingClient) : undefined}
       />
 
       {/* Dialog de confirmación para eliminar */}

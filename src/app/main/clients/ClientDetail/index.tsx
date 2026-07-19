@@ -13,6 +13,7 @@ import {
   Delete,
 } from "@mui/icons-material"
 import { useNavigate, useParams } from "react-router"
+import { useSearchParams } from "react-router-dom"
 import DetailTabs from "./DetailTabs"
 import { Branch } from "../types"
 import ClientInfo from "./ClientInfo"
@@ -25,6 +26,7 @@ import { HistoryTab } from "./Tabs/History"
 import { BranchesTab } from "./Tabs/Branches"
 import PageHeader from "../PageHeader"
 import { FormBranchValues } from "../Forms/BranchForm/types"
+import { FormClientValues } from "../Forms/NewClientForm/types"
 
 
 export function ClientDetail() {
@@ -32,7 +34,7 @@ export function ClientDetail() {
 
   const { clientId } = useParams()
 
-  const { data: client, isLoading, } = useQuery({
+  const { data: client, isLoading, refetch: refetchClient } = useQuery({
     queryKey: ["clients", clientId],
     queryFn: () => {
       return ClientService.byId(clientId)
@@ -40,6 +42,15 @@ export function ClientDetail() {
   })
 
   const isBusiness = client?.type === "business"
+
+  const handleSaveSection = async (values: FormClientValues) => {
+    if (!clientId) return
+    await ClientService.save(values, clientId)
+    await refetchClient()
+    if (values.type === "business") {
+      await refetchBranches()
+    }
+  }
 
   const { data: branches = [], isLoading: isLoadingBranches, refetch: refetchBranches } = useQuery({
     queryKey: ["branches", clientId],
@@ -49,14 +60,27 @@ export function ClientDetail() {
     enabled: isBusiness,
   })
 
-  const [activeTab, setActiveTab] = useState(0)
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showBranchForm, setShowBranchForm] = useState(false)
   const [currentBranch, setCurrentBranch] = useState<Branch | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
 
+  // Tab selection is driven by the `tabSelected` query param so it is linkable and
+  // survives refresh/back-navigation. Available tabs depend on the client type.
+  const tabKeys = isBusiness ? ["branches", "history"] : ["history"]
+  const activeTab = Math.max(0, tabKeys.indexOf(searchParams.get("tabSelected") ?? ""))
+  const resolvedTab = tabKeys[activeTab]
+
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set("tabSelected", tabKeys[newValue])
+        return next
+      },
+      { replace: true }
+    )
   }
 
   const handleAddBranch = () => {
@@ -109,7 +133,7 @@ export function ClientDetail() {
         title="Detalle del Cliente"
         onBack={() => navigate(-1)}
       />
-      <ClientInfo client={client} loading={isLoading} />
+      <ClientInfo client={client} loading={isLoading} onSave={handleSaveSection} />
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <DetailTabs
@@ -117,7 +141,7 @@ export function ClientDetail() {
             onTabChange={handleTabChange}
             showBranches={isBusiness}
           />
-          {isBusiness && activeTab === 0 && (
+          {isBusiness && resolvedTab === "branches" && (
             <BranchesTab
               branches={branches}
               isLoading={isLoadingBranches}
@@ -139,7 +163,7 @@ export function ClientDetail() {
                 </Box>}
             />
           )}
-          {((isBusiness && activeTab === 1) || (!isBusiness && activeTab === 0)) && (<HistoryTab />)}
+          {resolvedTab === "history" && (<HistoryTab clientId={clientId} />)}
         </CardContent>
       </Card>
       <Menu

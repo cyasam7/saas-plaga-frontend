@@ -11,6 +11,8 @@ import {
   Skeleton,
   Card,
   CardContent,
+  IconButton,
+  Tooltip,
   alpha,
 } from "@mui/material"
 import {
@@ -24,12 +26,17 @@ import {
   Work,
   VerifiedUser,
   HomeWork,
+  Edit,
 } from "@mui/icons-material"
+import { useState } from "react"
 import { Client, CLIENT_TYPE_LABELS, PROPERTY_TYPE_LABELS, TAXPAYER_TYPE_LABELS } from "../../types"
+import { FormClientValues } from "../../Forms/NewClientForm/types"
+import { EditSectionDialog, ClientSection } from "./EditSectionDialog"
 
 interface ClientInfoProps {
   client: Client | null
   loading: boolean
+  onSave?: (values: FormClientValues) => Promise<void> | void
 }
 
 type Accent = "primary" | "secondary"
@@ -59,22 +66,53 @@ function InfoItem({
   )
 }
 
-function InfoCard({ title, icon, accent, children }: { title: string; icon: React.ReactNode; accent: Accent; children: React.ReactNode }) {
+function InfoCard({
+  title,
+  icon,
+  accent,
+  action,
+  children,
+}: {
+  title: string
+  icon: React.ReactNode
+  accent: Accent
+  action?: React.ReactNode
+  children: React.ReactNode
+}) {
   return (
     <Card variant="outlined" sx={{ height: "100%" }}>
       <CardContent>
-        <Typography
-          variant="subtitle1"
-          sx={{ display: "flex", alignItems: "center", gap: 1, fontWeight: 600, color: `${accent}.main`, mb: 1 }}
-        >
-          {icon}
-          {title}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{ display: "flex", alignItems: "center", gap: 1, fontWeight: 600, color: `${accent}.main` }}
+          >
+            {icon}
+            {title}
+          </Typography>
+          {action}
+        </Box>
         <List dense disablePadding>
           {children}
         </List>
       </CardContent>
     </Card>
+  )
+}
+
+function EditButton({ onClick, accent, label }: { onClick: () => void; accent: Accent; label: string }) {
+  return (
+    <Tooltip title={label}>
+      <IconButton
+        size="small"
+        color={accent}
+        onClick={onClick}
+        aria-label={label}
+        sx={{ transition: "transform 160ms cubic-bezier(0.23, 1, 0.32, 1)", "&:active": { transform: "scale(0.92)" } }}
+      >
+        <Edit fontSize="small" />
+      </IconButton>
+    </Tooltip>
   )
 }
 
@@ -114,13 +152,16 @@ function ClientInfoSkeleton() {
   )
 }
 
-export function ClientInfo({ client, loading }: ClientInfoProps) {
+export function ClientInfo({ client, loading, onSave }: ClientInfoProps) {
+  const [editingSection, setEditingSection] = useState<ClientSection | null>(null)
+
   if (loading || !client) {
     return <ClientInfoSkeleton />
   }
 
   const isBusiness = client.type === "business"
   const accent: Accent = isBusiness ? "primary" : "secondary"
+  const canEdit = Boolean(onSave)
 
   return (
     <Box paddingBottom={2}>
@@ -146,7 +187,7 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
           >
             {isBusiness ? <Business sx={{ fontSize: 32 }} /> : <Person sx={{ fontSize: 32 }} />}
           </Box>
-          <Box>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography variant="h5" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
               {client.name}
             </Typography>
@@ -162,19 +203,37 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
                   "& .MuiChip-label": { px: 1 },
                 }}
               />
-              {client.legalName && (
-                <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  {client.legalName}
-                </Typography>
-              )}
             </Box>
           </Box>
+          {canEdit && (
+            <Tooltip title="Editar información general">
+              <IconButton
+                aria-label="Editar información general"
+                onClick={() => setEditingSection("general")}
+                sx={{
+                  color: "common.white",
+                  bgcolor: (theme) => alpha(theme.palette.common.white, 0.15),
+                  transition: "transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms ease",
+                  "&:hover": { bgcolor: (theme) => alpha(theme.palette.common.white, 0.28) },
+                  "&:active": { transform: "scale(0.92)" },
+                }}
+              >
+                <Edit fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Box>
       </Paper>
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <InfoCard title="Información fiscal" icon={<Badge fontSize="small" />} accent={accent}>
+          <InfoCard
+            title="Información fiscal"
+            icon={<Badge fontSize="small" />}
+            accent={accent}
+            action={canEdit && <EditButton accent={accent} label="Editar información fiscal" onClick={() => setEditingSection("fiscal")} />}
+          >
+            <InfoItem accent={accent} icon={<Business fontSize="small" />} primary={client.legalName} secondary="Razón social" />
             <InfoItem accent={accent} icon={<AccountBalance fontSize="small" />} primary={client.rfc} secondary="RFC" />
             <InfoItem
               accent={accent}
@@ -182,7 +241,7 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
               primary={client.taxpayerType ? TAXPAYER_TYPE_LABELS[client.taxpayerType] : undefined}
               secondary="Tipo de persona"
             />
-            {!client.rfc && !client.taxpayerType && (
+            {!client.legalName && !client.rfc && !client.taxpayerType && (
               <Typography variant="body2" color="text.secondary">
                 Sin información fiscal registrada.
               </Typography>
@@ -192,7 +251,12 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
 
         <Grid item xs={12} md={6}>
           {isBusiness ? (
-            <InfoCard title="Detalles de la empresa" icon={<Business fontSize="small" />} accent={accent}>
+            <InfoCard
+              title="Detalles de la empresa"
+              icon={<Business fontSize="small" />}
+              accent={accent}
+              action={canEdit && <EditButton accent={accent} label="Editar detalles de la empresa" onClick={() => setEditingSection("business")} />}
+            >
               <InfoItem accent={accent} icon={<Work fontSize="small" />} primary={client.businessActivity} secondary="Giro" />
               <InfoItem
                 accent={accent}
@@ -202,7 +266,12 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
               />
             </InfoCard>
           ) : (
-            <InfoCard title="Información de contacto" icon={<LocationOn fontSize="small" />} accent={accent}>
+            <InfoCard
+              title="Información de contacto"
+              icon={<LocationOn fontSize="small" />}
+              accent={accent}
+              action={canEdit && <EditButton accent={accent} label="Editar información de contacto" onClick={() => setEditingSection("contact")} />}
+            >
               <InfoItem accent={accent} icon={<Phone fontSize="small" />} primary={client.phone} secondary="Teléfono" />
               <InfoItem accent={accent} icon={<Email fontSize="small" />} primary={client.email} secondary="Correo electrónico" />
               <InfoItem accent={accent} icon={<Person fontSize="small" />} primary={client.ownerName || "No especificado"} secondary="Dueño de la propiedad" />
@@ -216,6 +285,16 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
           )}
         </Grid>
       </Grid>
+
+      {onSave && (
+        <EditSectionDialog
+          open={editingSection !== null}
+          section={editingSection}
+          client={client}
+          onClose={() => setEditingSection(null)}
+          onSave={onSave}
+        />
+      )}
     </Box>
   )
 }

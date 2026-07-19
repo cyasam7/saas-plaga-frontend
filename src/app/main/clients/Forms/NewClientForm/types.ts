@@ -19,28 +19,31 @@ const locationSchema = z.object({
   areas: z.array(areaSchema),
 })
 
-export const formSchema = z
-  .object({
-    type: z.enum(["business", "individual"], {
-      required_error: "Seleccione el tipo de cliente",
-    }),
-    name: z.string().min(2, {
-      message: "El nombre debe tener al menos 2 caracteres",
-    }),
-    // General optional fiscal data
-    legalName: z.string().optional(),
-    taxpayerType: emptyToUndefined(z.enum(["fisica", "moral"]).optional()),
-    rfc: z.string().optional(),
-    // Business (B2B)
-    businessActivity: z.string().optional(),
-    requiresCompliance: z.boolean().default(false),
-    locations: z.array(locationSchema).default([]),
-    // Residential (individual)
-    email: emptyToUndefined(z.string().email({ message: "Ingrese un correo electrónico válido" }).optional()),
-    phone: z.string().optional(),
-    ownerName: z.string().optional(),
-    propertyType: emptyToUndefined(z.enum(["house", "apartment"]).optional()),
-  })
+// Base object (pre-refinement) so individual sections can derive sub-schemas
+// via `.pick()` for per-section editing on the client detail page.
+export const baseClientObject = z.object({
+  type: z.enum(["business", "individual"], {
+    required_error: "Seleccione el tipo de cliente",
+  }),
+  name: z.string().min(2, {
+    message: "El nombre debe tener al menos 2 caracteres",
+  }),
+  // General optional fiscal data
+  legalName: z.string().optional(),
+  taxpayerType: emptyToUndefined(z.enum(["fisica", "moral"]).optional()),
+  rfc: z.string().optional(),
+  // Business (B2B)
+  businessActivity: z.string().optional(),
+  requiresCompliance: z.boolean().default(false),
+  locations: z.array(locationSchema).default([]),
+  // Residential (individual)
+  email: emptyToUndefined(z.string().email({ message: "Ingrese un correo electrónico válido" }).optional()),
+  phone: z.string().optional(),
+  ownerName: z.string().optional(),
+  propertyType: emptyToUndefined(z.enum(["house", "apartment"]).optional()),
+})
+
+export const formSchema = baseClientObject
   .superRefine((data, ctx) => {
     if (data.type === "business") {
       if (data.locations.length === 0) {
