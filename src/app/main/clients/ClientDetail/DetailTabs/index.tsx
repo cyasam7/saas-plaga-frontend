@@ -8,15 +8,20 @@ import {
 export interface DetailTabsProps {
   activeTab: number
   onTabChange: (event: React.SyntheticEvent, newValue: number) => void
+  showBranches?: boolean
 }
 
-export function DetailTabs({ activeTab, onTabChange }: DetailTabsProps) {
+export function DetailTabs({ activeTab, onTabChange, showBranches = true }: DetailTabsProps) {
   const getTabs = [
-    {
-      icon: <Store />,
-      label: "Sucursales",
-      color: "primary.main",
-    },
+    ...(showBranches
+      ? [
+        {
+          icon: <Store />,
+          label: "Sucursales",
+          color: "primary.main",
+        },
+      ]
+      : []),
     {
       icon: <CalendarMonth />,
       label: "Historial",

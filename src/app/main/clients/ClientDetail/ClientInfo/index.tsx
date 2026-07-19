@@ -205,11 +205,11 @@ export function ClientInfo({ client, loading }: ClientInfoProps) {
             <InfoCard title="Información de contacto" icon={<LocationOn fontSize="small" />} accent={accent}>
               <InfoItem accent={accent} icon={<Phone fontSize="small" />} primary={client.phone} secondary="Teléfono" />
               <InfoItem accent={accent} icon={<Email fontSize="small" />} primary={client.email} secondary="Correo electrónico" />
-              <InfoItem accent={accent} icon={<Person fontSize="small" />} primary={client.ownerName} secondary="Dueño de la propiedad" />
+              <InfoItem accent={accent} icon={<Person fontSize="small" />} primary={client.ownerName || "No especificado"} secondary="Dueño de la propiedad" />
               <InfoItem
                 accent={accent}
                 icon={<HomeWork fontSize="small" />}
-                primary={client.propertyType ? PROPERTY_TYPE_LABELS[client.propertyType] : undefined}
+                primary={client.propertyType ? PROPERTY_TYPE_LABELS[client.propertyType] : "No especificado"}
                 secondary="Tipo de propiedad"
               />
             </InfoCard>

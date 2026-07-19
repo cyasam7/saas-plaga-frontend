@@ -39,11 +39,14 @@ export function ClientDetail() {
     }
   })
 
+  const isBusiness = client?.type === "business"
+
   const { data: branches = [], isLoading: isLoadingBranches, refetch: refetchBranches } = useQuery({
     queryKey: ["branches", clientId],
     queryFn: () => {
       return BranchService.byQuery({ clientId: clientId })
-    }
+    },
+    enabled: isBusiness,
   })
 
   const [activeTab, setActiveTab] = useState(0)
@@ -112,8 +115,9 @@ export function ClientDetail() {
           <DetailTabs
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            showBranches={isBusiness}
           />
-          {activeTab === 0 && (
+          {isBusiness && activeTab === 0 && (
             <BranchesTab
               branches={branches}
               isLoading={isLoadingBranches}
@@ -135,7 +139,7 @@ export function ClientDetail() {
                 </Box>}
             />
           )}
-          {activeTab === 1 && (<HistoryTab />)}
+          {((isBusiness && activeTab === 1) || (!isBusiness && activeTab === 0)) && (<HistoryTab />)}
         </CardContent>
       </Card>
       <Menu
