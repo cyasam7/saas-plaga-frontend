@@ -375,7 +375,7 @@ export function NewClientForm({ open, onClose, onSubmit, defaultValues }: NewCli
             </Box>
 
             <Box>
-              <SectionTitle>Información general</SectionTitle>
+              <SectionTitle>Información fiscal</SectionTitle>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                   <TextFieldForm
@@ -429,7 +429,7 @@ export function NewClientForm({ open, onClose, onSubmit, defaultValues }: NewCli
             {isBusiness ? (
               <>
                 <Box>
-                  <SectionTitle>Información empresarial</SectionTitle>
+                  <SectionTitle>Detalles de la empresa</SectionTitle>
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={6}>
                       <TextFieldForm
@@ -456,7 +456,7 @@ export function NewClientForm({ open, onClose, onSubmit, defaultValues }: NewCli
               </>
             ) : (
               <Box>
-                <SectionTitle>Información residencial</SectionTitle>
+                <SectionTitle>Información de contacto</SectionTitle>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
                     <PhoneInputForm

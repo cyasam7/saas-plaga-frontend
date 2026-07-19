@@ -44,6 +44,7 @@ export function ClientsApp() {
 
 	return (
 		<Root
+			scroll="content"
 			header={
 				<FusePageSimpleHeader
 					header={
@@ -55,7 +56,7 @@ export function ClientsApp() {
 				/>
 			}
 			content={
-				<Container maxWidth="xl" sx={{ py: 4 }}>
+				<Container maxWidth="xl" sx={{ pb: 4 }}>
 					<ClientList
 						clients={data}
 						onSaveClient={handleSaveClient}
