@@ -4,10 +4,6 @@ import { AxiosFetcher } from '../fetcher';
 import { ResponseId } from '../entities/UserEntity';
 import { Paginated } from 'src/app/shared-interfaces/Paginated';
 
-export interface IQueryOrder {
-  clientId?: string;
-}
-
 export enum EOrdersDayFilter {
   ALL = 'all',
   TODAY = 'today',
@@ -63,14 +59,6 @@ export interface IClientDataByPhone {
 }
 
 export class OrderService {
-  static async getAll(query?: IQueryOrder): Promise<OrderEntity[]> {
-    return await AxiosFetcher<OrderEntity[]>({
-      url: '/order',
-      params: query ?? {},
-      method: 'GET'
-    });
-  }
-
   /** Updates an existing order (requires id). */
   static async updateOrder(data: any): Promise<ResponseId> {
     return await AxiosFetcher<ResponseId>({
