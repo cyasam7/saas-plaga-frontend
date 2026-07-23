@@ -116,16 +116,6 @@ export class OrderService {
     });
   }
 
-  static async updateStatus(id: string, status: EStatusOrder): Promise<void> {
-    await AxiosFetcher({
-      url: `/order/status/${id}`,
-      method: 'PATCH',
-      data: {
-        status
-      }
-    });
-  }
-
   static async updateOrderAssigned(data: { orderId: string; userId: string }): Promise<void> {
     await AxiosFetcher({
       url: `/order/assign-user/${data.orderId}`,

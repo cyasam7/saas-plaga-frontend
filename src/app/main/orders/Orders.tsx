@@ -17,7 +17,6 @@ import { EOrdersDayFilter, OrderService } from '../../shared/services/OrderServi
 import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
 import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
-import OrderChangeStatusDialog from './components/OrderChangeStatusDialog/OrderChangeStatusDialog';
 import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
@@ -55,7 +54,6 @@ function Order() {
 	const [calendarFilter, setCalendarFilter] = useState<Dayjs | undefined>(null);
 	const [open, setOpen] = useState<boolean>(false);
 	const [openDetails, setOpenDetails] = useState<boolean>(false);
-	const [openStatus, setOpenStatus] = useState<boolean>(false);
 	const [openAssign, setOpenAssign] = useState<boolean>(false);
 	const [openFollow, setOpenFollow] = useState<boolean>(false);
 	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
@@ -270,15 +268,6 @@ function Order() {
 							setOpenDetails(false);
 						}}
 					/>
-					<OrderChangeStatusDialog
-						open={openStatus}
-						id={orderId}
-						onClose={() => {
-							setOrderId('');
-							setOpenStatus(false);
-						}}
-					/>
-
 					<Paper
 						elevation={0}
 						sx={{
