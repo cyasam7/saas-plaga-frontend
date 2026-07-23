@@ -9,12 +9,10 @@ export enum EClientType {
 export enum EStatusOrder {
   CREATED = 'CREATED',
   ASSIGNED = 'ASSIGNED',
-  IN_REVIEW = 'IN_REVIEW',
-  REVIEWED = 'REVIEWED',
   IN_PROGRESS = 'IN_PROGRESS',
+  PASSED = 'PASSED',
   DONE = 'DONE',
-  FINISHED = 'FINISHED',
-  CANCELED = 'CANCELED'
+  FINISHED = 'FINISHED'
 }
 
 export interface OrderEntity {

@@ -3,28 +3,23 @@ import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
 export const statusLabel = {
 	CREATED: 'Creada',
 	ASSIGNED: 'Asignada',
-	IN_REVIEW: 'En revision',
-	REVIEWED: 'Revisada',
 	IN_PROGRESS: 'En progreso',
+	PASSED: 'No visitada',
 	DONE: 'Hecha',
-	FINISHED: 'Terminada',
-	CANCELED: 'Cancelada'
+	FINISHED: 'Terminada'
 };
 
-export type StatusOrderColors = 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
-
-export const statusColor: Record<string, StatusOrderColors> = {
-	CREATED: 'default',
-	ASSIGNED: 'primary',
-	IN_REVIEW: 'secondary',
-	REVIEWED: 'secondary',
-	IN_PROGRESS: 'warning',
-	DONE: 'info',
-	FINISHED: 'success',
-	CANCELED: 'error'
+// Mismos valores que api/src/shared/utils/translateOrderStatus.ts (sin paquete compartido entre apps).
+export const statusColor: Record<string, string> = {
+	CREATED: '#3B82F6',
+	ASSIGNED: '#2563EB',
+	IN_PROGRESS: '#06B6D4',
+	PASSED: '#F97316',
+	DONE: '#10B981',
+	FINISHED: '#047857'
 };
 
-const finalStatus = [EStatusOrder.DONE, EStatusOrder.FINISHED, EStatusOrder.CANCELED];
+const finalStatus = [EStatusOrder.DONE, EStatusOrder.FINISHED];
 export function validateIfOrderIsPending(value: EStatusOrder): boolean {
 	return !finalStatus.includes(value);
 }

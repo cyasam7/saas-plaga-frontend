@@ -1,7 +1,9 @@
 import { Box, Grid, Paper, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { ReceiptLong, PendingActions, Today } from '@mui/icons-material';
+import { ReceiptLong, PendingActions, Today, EventBusy } from '@mui/icons-material';
 import { OrdersDatagridStats } from 'src/app/shared/services/OrderService';
+import { statusColor } from '../../utils';
+import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
 
 interface StatsCardsProps {
 	stats: OrdersDatagridStats;
@@ -39,6 +41,13 @@ export function StatsCards({ stats }: StatsCardsProps) {
 			icon: <ReceiptLong />,
 			color: theme.palette.primary.main,
 			bgColor: alpha(theme.palette.primary.main, 0.08)
+		},
+		{
+			label: 'Pasadas',
+			value: stats.passed,
+			icon: <EventBusy />,
+			color: statusColor[EStatusOrder.PASSED],
+			bgColor: alpha(statusColor[EStatusOrder.PASSED], 0.12)
 		}
 	];
 
@@ -51,8 +60,8 @@ export function StatsCards({ stats }: StatsCardsProps) {
 			{cards.map((stat) => (
 				<Grid
 					item
-					xs={12}
-					sm={4}
+					xs={6}
+					sm={3}
 					key={stat.label}
 				>
 					<Paper

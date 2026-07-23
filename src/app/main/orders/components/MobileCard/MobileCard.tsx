@@ -82,7 +82,7 @@ export function MobileCard({
 										size="small"
 										aria-label="Modificar"
 										onClick={() => onEdit(order.id)}
-										disabled={[EStatusOrder.FINISHED, EStatusOrder.CANCELED].includes(order.status)}
+										disabled={[EStatusOrder.FINISHED].includes(order.status)}
 									>
 										<NoteAltIcon fontSize="small" />
 									</IconButton>
@@ -94,9 +94,7 @@ export function MobileCard({
 										size="small"
 										aria-label="Asignar"
 										onClick={() => onAssign(order.id)}
-										disabled={[EStatusOrder.DONE, EStatusOrder.FINISHED, EStatusOrder.CANCELED].includes(
-											order.status
-										)}
+										disabled={[EStatusOrder.DONE, EStatusOrder.FINISHED].includes(order.status)}
 									>
 										<AssignmentIndIcon fontSize="small" />
 									</IconButton>

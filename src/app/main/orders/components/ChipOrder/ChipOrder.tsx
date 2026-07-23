@@ -1,7 +1,7 @@
 import { Chip } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
-import { statusColor, statusLabel, StatusOrderColors } from '../../utils';
+import { statusColor, statusLabel } from '../../utils';
 
 export interface IChipOrderProps {
 	status: EStatusOrder;
@@ -9,9 +9,7 @@ export interface IChipOrderProps {
 
 function ChipOrder({ status }: IChipOrderProps) {
 	const theme = useTheme();
-	const colorKey: StatusOrderColors = statusColor[status] ?? 'default';
-	const main =
-		colorKey === 'default' ? theme.palette.text.secondary : theme.palette[colorKey].main;
+	const main = statusColor[status] ?? theme.palette.text.secondary;
 
 	return (
 		<Chip

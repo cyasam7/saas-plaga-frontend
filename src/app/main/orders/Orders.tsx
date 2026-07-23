@@ -66,7 +66,7 @@ function Order() {
 	const dateParam = calendarFilter ? calendarFilter.toISOString() : undefined;
 
 	const {
-		data = { orders: [], stats: { total: 0, today: 0, pending: 0 } },
+		data = { orders: [], stats: { total: 0, today: 0, pending: 0, passed: 0 } },
 		isLoading,
 		refetch
 	} = useQuery({
@@ -109,7 +109,7 @@ function Order() {
 							setOrderId(params.row.id);
 							setOpenAssign(true);
 						}}
-						disabled={[EStatusOrder.DONE, EStatusOrder.FINISHED, EStatusOrder.CANCELED].includes(status)}
+						disabled={[EStatusOrder.DONE, EStatusOrder.FINISHED].includes(status)}
 						className="action-button"
 					/>,
 					<GridActionsCellItem
@@ -121,7 +121,7 @@ function Order() {
 							setOrderId(params.row.id);
 							setOpen(true);
 						}}
-						disabled={[EStatusOrder.FINISHED, EStatusOrder.CANCELED].includes(status)}
+						disabled={[EStatusOrder.FINISHED].includes(status)}
 						className="action-button"
 					/>,
 					<GridActionsCellItem

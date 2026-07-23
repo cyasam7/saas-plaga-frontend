@@ -20,6 +20,7 @@ export interface OrdersDatagridStats {
   total: number;
   today: number;
   pending: number;
+  passed: number;
 }
 
 /** Respuesta de GET /order/datagrid: filas (creadas + asignadas) + resumen. */
