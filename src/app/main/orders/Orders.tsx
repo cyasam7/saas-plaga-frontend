@@ -1,10 +1,10 @@
 import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from 'react-query';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import NoteAltIcon from '@mui/icons-material/NoteAlt';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import { styled } from '@mui/material/styles';
@@ -13,14 +13,13 @@ import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-m
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
 import { columnsOrders } from './columns';
-import { OrderService } from '../../shared/services/OrderService';
+import { EOrdersDayFilter, OrderService } from '../../shared/services/OrderService';
 import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
 import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
 import OrderChangeStatusDialog from './components/OrderChangeStatusDialog/OrderChangeStatusDialog';
 import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
-import { validateIfOrderIsPending } from './utils';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
 import { ETabsPlagues } from './components/HeaderFilters/HeaderFilterProps';
 import { MobileCard } from './components/MobileCard/MobileCard';
@@ -29,6 +28,13 @@ import SimpleHeader from 'app/shared-components/SimpleHeader';
 import { StatsCards } from './components/StatsCards/StatsCards';
 import './styles/actionButtons.css';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
+
+const TAB_TO_DAY_FILTER: Record<ETabsPlagues, EOrdersDayFilter> = {
+	[ETabsPlagues.ALL]: EOrdersDayFilter.ALL,
+	[ETabsPlagues.TODAY]: EOrdersDayFilter.TODAY,
+	[ETabsPlagues.TOMORROW]: EOrdersDayFilter.TOMORROW,
+	[ETabsPlagues.PENDING]: EOrdersDayFilter.PENDING
+};
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
 	'& .FusePageSimple-header': {
@@ -46,7 +52,6 @@ function Order() {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [tabFilter, setTabFilter] = useState<ETabsPlagues>(ETabsPlagues.ALL);
-	const [statusFilter, setStatusFilter] = useState<EStatusOrder | undefined>();
 	const [calendarFilter, setCalendarFilter] = useState<Dayjs | undefined>(null);
 	const [open, setOpen] = useState<boolean>(false);
 	const [openDetails, setOpenDetails] = useState<boolean>(false);
@@ -58,59 +63,20 @@ function Order() {
 	const [orderId, setOrderId] = useState<string>('');
 	const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
 
+	// Los filtros de la tabla se resuelven en el backend: se mandan como query params.
+	const dayFilter = TAB_TO_DAY_FILTER[tabFilter];
+	const dateParam = calendarFilter ? calendarFilter.toISOString() : undefined;
+
 	const {
-		data = [],
+		data = { orders: [], stats: { total: 0, today: 0, pending: 0 } },
 		isLoading,
 		refetch
 	} = useQuery({
-		queryKey: 'orders',
-		queryFn: () => OrderService.getDatagridOrders()
+		queryKey: ['orders', dayFilter, dateParam],
+		queryFn: () => OrderService.getDatagridOrders({ dayFilter, date: dateParam })
 	});
 
-	const filteredData = useMemo(() => {
-		let result = data;
-
-		if (tabFilter === ETabsPlagues.TODAY) {
-			result = result.filter((i) => {
-				const date = dayjs(i.date);
-				const startDay = dayjs().startOf('day');
-				const finalDay = dayjs().endOf('day');
-				return date.isAfter(startDay) && date.isBefore(finalDay);
-			});
-		}
-
-		if (tabFilter === ETabsPlagues.TOMORROW) {
-			result = result.filter((i) => {
-				const date = dayjs(i.date);
-				const startDay = dayjs().startOf('day').add(1, 'day');
-				const finalDay = dayjs().endOf('day').add(1, 'day');
-				return (date.isAfter(startDay) || date.isSame(startDay)) && date.isBefore(finalDay);
-			});
-		}
-
-		if (tabFilter === ETabsPlagues.PENDING) {
-			result = result.filter((i) => {
-				const dateOrder = dayjs(i.date);
-				const today = dayjs();
-				return dateOrder.isAfter(today) && validateIfOrderIsPending(i.status);
-			});
-		}
-
-		if (calendarFilter) {
-			result = result.filter((i) => {
-				const date = dayjs(i.date);
-				const startDate = dayjs(calendarFilter).startOf('day');
-				const finalDate = dayjs(calendarFilter).endOf('day');
-				return (date.isAfter(startDate) || date.isSame(startDate)) && date.isBefore(finalDate);
-			});
-		}
-
-		if (statusFilter) {
-			result = result.filter((i) => i.status === statusFilter);
-		}
-
-		return result;
-	}, [data, tabFilter, calendarFilter, statusFilter]);
+	const orders = data.orders;
 
 	const columns: GridColDef<DatagridRowOrder>[] = [
 		...columnsOrders,
@@ -216,16 +182,15 @@ function Order() {
 	const renderFilters = () => (
 		<HeaderFilters
 			selectedTab={tabFilter}
-			selectedStatus={statusFilter}
 			selectedDate={calendarFilter}
 			onTabChange={setTabFilter}
-			onStatusChange={setStatusFilter}
 			onDateChange={setCalendarFilter}
 		/>
 	);
 
 	return (
 		<Root
+			scroll='content'
 			header={
 				<FusePageSimpleHeader
 					header={
@@ -251,7 +216,7 @@ function Order() {
 			}
 			content={
 				<div className="p-16 sm:p-24 w-full flex flex-col flex-1 min-h-0">
-					<StatsCards orders={data} />
+					<StatsCards stats={data.stats} />
 
 					<GenerateReportDialog
 						id={orderId}
@@ -358,7 +323,7 @@ function Order() {
 						)}
 
 						{isMobile ? (
-							filteredData.length === 0 ? (
+							orders.length === 0 ? (
 								<Box
 									sx={{
 										display: 'flex',
@@ -404,7 +369,7 @@ function Order() {
 										scrollbarColor: (theme) => `${theme.palette.divider} transparent`
 									}}
 								>
-									{filteredData.map((order) => (
+									{orders.map((order) => (
 										<MobileCard
 											key={order.id}
 											order={order}
@@ -439,7 +404,7 @@ function Order() {
 								</Stack>
 							)
 						) : (
-							filteredData.length === 0 ? (
+							orders.length === 0 ? (
 								<Box
 									sx={{
 										display: 'flex',
@@ -472,7 +437,7 @@ function Order() {
 									hideFooterPagination
 									hideFooter
 									loading={isLoading}
-									rows={filteredData}
+									rows={orders}
 									columns={columns}
 									rowSelection={false}
 									density="comfortable"
@@ -494,7 +459,7 @@ function Order() {
 							)
 						)}
 
-						{filteredData.length > 0 && (
+						{orders.length > 0 && (
 							<Box
 								sx={{
 									pt: 1.5,
@@ -510,7 +475,7 @@ function Order() {
 									variant="caption"
 									color="text.secondary"
 								>
-									Mostrando {filteredData.length} de {data.length} órdenes
+									Mostrando {orders.length} de {data.stats.total} órdenes
 								</Typography>
 							</Box>
 						)}

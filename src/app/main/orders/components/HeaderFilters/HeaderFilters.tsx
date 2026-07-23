@@ -1,10 +1,8 @@
-import { Autocomplete, Stack, TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab } from '@mui/material';
+import { Stack, TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import React from 'react';
 import { DatePicker } from '@mui/x-date-pickers';
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
 import { ETabsPlagues } from './HeaderFilterProps';
-import { translateOrderStatus } from '../../utils';
 
 const filterOptions = [
 	{ value: ETabsPlagues.ALL, label: 'Todas' },
@@ -15,24 +13,14 @@ const filterOptions = [
 
 interface HeaderFiltersProps {
 	selectedTab: ETabsPlagues;
-	selectedStatus: EStatusOrder | undefined;
 	selectedDate: Dayjs | undefined;
 	onTabChange: (value: ETabsPlagues) => void;
-	onStatusChange: (value: EStatusOrder | undefined) => void;
 	onDateChange: (value: Dayjs | undefined) => void;
 }
 
-function HeaderFilters({
-	selectedTab,
-	selectedStatus,
-	selectedDate,
-	onTabChange,
-	onStatusChange,
-	onDateChange
-}: HeaderFiltersProps) {
+function HeaderFilters({ selectedTab, selectedDate, onTabChange, onDateChange }: HeaderFiltersProps) {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-	const statusCatalog = Object.values(EStatusOrder);
 
 	const renderFilterControl = () => {
 		if (isMobile) {
@@ -91,21 +79,6 @@ function HeaderFilters({
 				spacing={2}
 				sx={{ width: '100%' }}
 			>
-				<Autocomplete
-					value={selectedStatus}
-					options={statusCatalog}
-					getOptionLabel={(i) => translateOrderStatus(i)}
-					sx={{ width: isMobile ? '100%' : 300 }}
-					onChange={(_, value) => onStatusChange(value || undefined)}
-					renderInput={(params) => (
-						<TextField
-							{...params}
-							size="small"
-							label="Estatus"
-							fullWidth
-						/>
-					)}
-				/>
 				<DatePicker
 					value={selectedDate}
 					onChange={(value: Dayjs | null) => onDateChange(value || undefined)}

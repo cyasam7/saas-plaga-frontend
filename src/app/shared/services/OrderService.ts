@@ -2,9 +2,57 @@ import axios from 'axios';
 import { DatagridRowOrder, EClientType, EStatusOrder, IUserValidToStartOrder, OrderEntity } from '../entities/OrderEntity';
 import { AxiosFetcher } from '../fetcher';
 import { ResponseId } from '../entities/UserEntity';
+import { Paginated } from 'src/app/shared-interfaces/Paginated';
 
 export interface IQueryOrder {
   clientId?: string;
+}
+
+export enum EOrdersDayFilter {
+  ALL = 'all',
+  TODAY = 'today',
+  TOMORROW = 'tomorrow',
+  PENDING = 'pending'
+}
+
+export interface IQueryDatagridOrders {
+  dayFilter?: EOrdersDayFilter;
+  date?: string;
+}
+
+export interface OrdersDatagridStats {
+  total: number;
+  today: number;
+  pending: number;
+}
+
+/** Respuesta de GET /order/datagrid: filas (creadas + asignadas) + resumen. */
+export interface GetDatagridOrdersResponse {
+  orders: DatagridRowOrder[];
+  stats: OrdersDatagridStats;
+}
+
+/** Fila de GET /order/history. Espejo del contrato dedicado del endpoint en el API. */
+export interface OrderHistoryRow {
+  id: string;
+  folio: string;
+  date: Date;
+  timezone: string;
+  status: EStatusOrder;
+  price: number;
+  clientName: string;
+  clientType: EClientType | null;
+  fumigatorName: string | null;
+}
+
+export interface IQueryOrdersHistory {
+  page: number;
+  take: number;
+  status?: EStatusOrder[];
+  clientType?: EClientType;
+  dateFrom?: string;
+  dateTo?: string;
+  search?: string;
 }
 
 export interface IClientDataByPhone {
@@ -88,12 +136,26 @@ export class OrderService {
     });
   }
 
-  static async getDatagridOrders(): Promise<DatagridRowOrder[]> {
-    const data = await AxiosFetcher<DatagridRowOrder[]>({
+  static async getDatagridOrders(query?: IQueryDatagridOrders): Promise<GetDatagridOrdersResponse> {
+    const data = await AxiosFetcher<GetDatagridOrdersResponse>({
       url: `/order/datagrid`,
-      method: 'GET'
+      method: 'GET',
+      params: query ?? {}
     });
     return data;
+  }
+
+  static async getOrdersHistory(query: IQueryOrdersHistory): Promise<Paginated<OrderHistoryRow>> {
+    const { status, ...rest } = query;
+    return await AxiosFetcher<Paginated<OrderHistoryRow>>({
+      url: `/order/history`,
+      method: 'GET',
+      params: {
+        ...rest,
+        // El API espera los estatus como lista separada por coma.
+        ...(status?.length ? { status: status.join(',') } : {})
+      }
+    });
   }
 
   static async deleteById(id: string): Promise<void> {

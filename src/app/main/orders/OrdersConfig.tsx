@@ -13,6 +13,7 @@ i18next.addResourceBundle('tr', 'examplePage', tr);
 i18next.addResourceBundle('ar', 'examplePage', ar);
 
 const Orders = lazy(() => import('./Orders'));
+const OrdersHistory = lazy(() => import('./History/OrdersHistory'));
 
 /**
  * The Example page config.
@@ -33,6 +34,11 @@ const OrdersConfig: FuseRouteConfigType = {
 			path: 'orders',
 			auth: ['staff', 'admin'],
 			element: <Orders />
+		},
+		{
+			path: 'orders/history',
+			auth: ['staff', 'admin'],
+			element: <OrdersHistory />
 		},
 		{
 			path: "orders/:orderId/download",

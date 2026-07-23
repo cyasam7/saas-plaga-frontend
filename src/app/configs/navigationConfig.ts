@@ -6,7 +6,7 @@ import { FuseNavItemType } from '@fuse/core/FuseNavigation/types/FuseNavItemType
 const navigationConfig: FuseNavItemType[] = [
   {
     id: 'modules-app',
-    title: 'Módulos',
+    title: 'Usuarios',
     type: 'group',
     children: [
       {
@@ -19,20 +19,11 @@ const navigationConfig: FuseNavItemType[] = [
       },
       {
         id: 'users',
-        title: 'Usuarios',
+        title: 'Trabajadores',
         type: 'item',
         icon: 'heroicons-outline:users',
         auth: ['staff'],
         url: '/users'
-      },
-      {
-        id: 'orders',
-        title: 'Ordenes',
-        type: 'item',
-        auth: ['staff'],
-        icon: 'material-outline:assignment',
-        url: '/orders',
-        children: []
       },
       {
         id: 'clients',
@@ -42,6 +33,32 @@ const navigationConfig: FuseNavItemType[] = [
         icon: 'material-twotone:person_pin',
         url: '/clients',
         children: []
+      }
+    ]
+  },
+  {
+    id: 'orders-app',
+    title: 'Ordenes',
+    type: 'group',
+    auth: ['staff'],
+    icon: 'material-outline:assignment',
+    children: [
+      {
+        id: 'orders-created',
+        title: 'Registradas',
+        type: 'item',
+        auth: ['staff'],
+        icon: 'material-outline:assignment',
+        url: '/orders',
+        end: true
+      },
+      {
+        id: 'orders-history',
+        title: 'Historial',
+        type: 'item',
+        auth: ['staff'],
+        icon: 'material-outline:history',
+        url: '/orders/history'
       }
     ]
   },

@@ -1,12 +1,10 @@
-import { useMemo } from 'react';
 import { Box, Grid, Paper, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { ReceiptLong, PendingActions, Today, Autorenew } from '@mui/icons-material';
-import dayjs from 'dayjs';
-import { DatagridRowOrder, EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { ReceiptLong, PendingActions, Today } from '@mui/icons-material';
+import { OrdersDatagridStats } from 'src/app/shared/services/OrderService';
 
 interface StatsCardsProps {
-	orders: DatagridRowOrder[];
+	stats: OrdersDatagridStats;
 }
 
 interface StatItem {
@@ -17,45 +15,32 @@ interface StatItem {
 	bgColor: string;
 }
 
-export function StatsCards({ orders }: StatsCardsProps) {
+export function StatsCards({ stats }: StatsCardsProps) {
 	const theme = useTheme();
 
-	const stats = useMemo<StatItem[]>(() => {
-		const today = dayjs().format('YYYY-MM-DD');
-
-		return [
-			{
-				label: 'Total',
-				value: orders.length,
-				icon: <ReceiptLong />,
-				color: theme.palette.primary.main,
-				bgColor: alpha(theme.palette.primary.main, 0.08)
-			},
-			{
-				label: 'Pendientes',
-				value: orders.filter(
-					(o) => o.status === EStatusOrder.CREATED || o.status === EStatusOrder.ASSIGNED
-				).length,
-				icon: <PendingActions />,
-				color: theme.palette.warning.main,
-				bgColor: alpha(theme.palette.warning.main, 0.12)
-			},
-			{
-				label: 'Hoy',
-				value: orders.filter((o) => dayjs(o.date).format('YYYY-MM-DD') === today).length,
-				icon: <Today />,
-				color: theme.palette.info.main,
-				bgColor: alpha(theme.palette.info.main, 0.12)
-			},
-			{
-				label: 'En progreso',
-				value: orders.filter((o) => o.status === EStatusOrder.IN_PROGRESS).length,
-				icon: <Autorenew />,
-				color: theme.palette.secondary.main,
-				bgColor: alpha(theme.palette.secondary.main, 0.1)
-			}
-		];
-	}, [orders, theme]);
+	const cards: StatItem[] = [
+		{
+			label: 'Pendientes',
+			value: stats.pending,
+			icon: <PendingActions />,
+			color: theme.palette.warning.main,
+			bgColor: alpha(theme.palette.warning.main, 0.12)
+		},
+		{
+			label: 'Hoy',
+			value: stats.today,
+			icon: <Today />,
+			color: theme.palette.info.main,
+			bgColor: alpha(theme.palette.info.main, 0.12)
+		},
+		{
+			label: 'Total',
+			value: stats.total,
+			icon: <ReceiptLong />,
+			color: theme.palette.primary.main,
+			bgColor: alpha(theme.palette.primary.main, 0.08)
+		}
+	];
 
 	return (
 		<Grid
@@ -63,11 +48,11 @@ export function StatsCards({ orders }: StatsCardsProps) {
 			spacing={2.5}
 			sx={{ mb: 3 }}
 		>
-			{stats.map((stat) => (
+			{cards.map((stat) => (
 				<Grid
 					item
-					xs={6}
-					sm={3}
+					xs={12}
+					sm={4}
 					key={stat.label}
 				>
 					<Paper
