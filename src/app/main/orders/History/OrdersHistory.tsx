@@ -1,17 +1,23 @@
+import { useState } from 'react';
 import { Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
-import { ReceiptLong } from '@mui/icons-material';
-import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { FileDownload, ReceiptLong } from '@mui/icons-material';
+import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
+import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { OrderHistoryRow } from 'src/app/shared/services/OrderService';
 
 import { columnsOrdersHistory } from './columns';
+import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
 import HistoryFilters from './components/HistoryFilters/HistoryFilters';
 import { hasActiveFilters } from './helpers';
 import useOrdersHistory from './hooks/useOrdersHistory';
 import useOrdersHistoryFilters from './hooks/useOrdersHistoryFilters';
+
+const CAN_GENERATE_REPORT_STATUSES = [EStatusOrder.DONE, EStatusOrder.FINISHED];
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
 	'& .FusePageSimple-header': {
@@ -54,8 +60,36 @@ function EmptyState() {
 function OrdersHistory() {
 	const { filters, searchInput, setSearchInput, setFilter, clearFilters } = useOrdersHistoryFilters();
 	const { rows, totalCount, isLoading, isFetchingNextPage, hasNextPage, sentinelRef } = useOrdersHistory(filters);
+	const [orderId, setOrderId] = useState<string>('');
+	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
 
 	const isEmpty = !isLoading && rows.length === 0;
+
+	const columns: GridColDef<OrderHistoryRow>[] = [
+		...columnsOrdersHistory,
+		{
+			headerName: 'Acciones',
+			field: 'actions',
+			type: 'actions',
+			sortable: false,
+			flex: 0.6,
+			minWidth: 100,
+			align: 'center',
+			disableColumnMenu: true,
+			getActions: (params) => [
+				<GridActionsCellItem
+					key="download-report"
+					label="Generar reporte"
+					icon={<FileDownload />}
+					disabled={!CAN_GENERATE_REPORT_STATUSES.includes(params.row.status)}
+					onClick={() => {
+						setOrderId(params.row.id);
+						setOpenDownloadReport(true);
+					}}
+				/>
+			]
+		}
+	];
 
 	return (
 		<Root
@@ -71,6 +105,14 @@ function OrdersHistory() {
 			}
 			content={
 				<Box sx={{ p: 3, width: '100%' }}>
+					<GenerateReportDialog
+						id={orderId}
+						open={openDownloadReport}
+						onClose={() => {
+							setOrderId('');
+							setOpenDownloadReport(false);
+						}}
+					/>
 					<Paper sx={{ p: 2 }}>
 						<Stack spacing={2}>
 							<HistoryFilters
@@ -91,7 +133,7 @@ function OrdersHistory() {
 									disableRowSelectionOnClick
 									loading={isLoading}
 									rows={rows}
-									columns={columnsOrdersHistory}
+									columns={columns}
 									getRowHeight={() => 'auto'}
 									sx={{
 										[`& .${gridClasses.cell}`]: { py: 1.5, display: 'flex', alignItems: 'center' }

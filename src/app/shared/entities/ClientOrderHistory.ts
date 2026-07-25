@@ -13,6 +13,15 @@ export interface ClientOrderHistoryProductApplied {
   productDose: string;
 }
 
+export interface ClientOrderHistoryAreaInfestation {
+  areaId: string;
+  areaName: string;
+  skipped: boolean;
+  infestationLvl?: string;
+  skipReason?: string;
+  skipReasonOther?: string;
+}
+
 /**
  * Dedicated response contract for GET /api/clients/:id/orders.
  * Mirrors the backend `ClientOrderHistoryResponse`; not reused by other endpoints.
@@ -39,7 +48,6 @@ export interface ClientOrderHistoryResponse {
   applicationsType: ClientOrderHistorySimpleCatalog[];
   pests: ClientOrderHistorySimpleCatalog[];
   productsApplied: ClientOrderHistoryProductApplied[];
-  infestationLvl: string | null;
-  infestationArea: string[];
+  areaInfestations: ClientOrderHistoryAreaInfestation[];
   includeCertificate: boolean;
 }
