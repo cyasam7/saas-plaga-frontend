@@ -1,220 +1,244 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { ReactNode } from 'react';
 import PreviewPage from '../PreviewPage/PreviewPage';
+import ReportSection from '../ReportSection/ReportSection';
 import { safeColor } from '../../utils/safeColor';
 import { IReportPreviewProps } from '../../entities/ReportPreview';
 
 /** Datos de una orden ficticia: la configuración no los define, sólo dan contexto al preview. */
 const SAMPLE = {
-	number: 'N° 00001',
-	date: '15 DE JULIO DEL 2026',
+	orderNumber: 'OS-2026-0431',
+	date: '15 de julio de 2026',
 	clientName: 'Comercializadora del Valle S.A.',
-	clientAddress: 'Dirección: Av. Reforma 1234, Col. Centro',
-	clientPhone: 'Teléfono: +52 (618) 324 0572',
-	pests: 'ARAÑAS, CUCARACHAS, GARRAPATAS, ETC..',
-	services: 'INSPECCIÓN PROFESIONAL, MANEJO INTEGRAL DE PLAGAS, ETC...',
-	systems: 'TRAMPAS MECÁNICAS, TRAMPAS DE GOMA, ETC...',
-	actionPlan:
+	clientAddress: 'Av. Reforma 1234, Col. Centro',
+	clientPhone: '+52 (618) 324 0572',
+	areaInfestations: 'Almacén: alta, Cocina: media, Oficinas: baja',
+	plagues: 'Cucarachas, roedores',
+	services: 'Fumigación general, control de roedores',
+	observations:
 		'Se aplicará manejo integral de plagas en todas las áreas indicadas, con seguimiento programado y reporte de resultados al finalizar cada visita.',
-	total: '$4,500.00'
+	includeCertificate: 'Sí',
+	scheduleFollowUp: 'Sí',
+	daysFollowUp: '10 días',
+	servicePrice: '$4,500.00'
 };
 
-function Category({ title, color, children }: { title: string; color: string; children: ReactNode }) {
+function Field({ label, value }: { label: string; value: string }) {
 	return (
 		<Box>
-			<Box sx={{ backgroundColor: color, height: 35, display: 'flex', alignItems: 'center', px: '8px' }}>
-				<Typography sx={{ color: '#fff', fontSize: 12 }}>{title}</Typography>
-			</Box>
-			<Box sx={{ py: '8px', px: '4px' }}>{children}</Box>
+			<Typography
+				sx={{ fontSize: 9, color: '#6B7280' }}
+				noWrap
+			>
+				{label}
+			</Typography>
+			<Typography sx={{ fontSize: 11, color: '#111827', wordBreak: 'break-word' }}>{value}</Typography>
 		</Box>
 	);
 }
 
-function ConceptRow({ label, value }: { label: string; value: string }) {
+function SignatureBox({ label }: { label: string }) {
 	return (
-		<Stack
-			direction="row"
-			spacing={1}
-			sx={{ py: '4px', borderBottom: '1px solid #E5E7EB' }}
-		>
-			<Typography sx={{ fontSize: 10, flex: 1 }}>{label}</Typography>
-			<Typography sx={{ fontSize: 10, flex: 2 }}>{value}</Typography>
-		</Stack>
+		<Box sx={{ flex: 1, textAlign: 'center' }}>
+			<Box
+				sx={{
+					height: 45,
+					border: '1px solid #d1d5db',
+					borderRadius: '4px',
+					backgroundColor: '#ffffff'
+				}}
+			/>
+			<Typography sx={{ fontSize: 9, color: '#4B5563', mt: '4px' }}>{label}</Typography>
+		</Box>
 	);
 }
 
-function InputValue({ displayName, value, color }: { displayName: string; value: string; color: string }) {
-	return (
-		<Stack
-			direction="row"
-			justifyContent="space-between"
-			spacing={1.5}
-		>
-			<Typography sx={{ fontSize: 10, color }}>{displayName}:</Typography>
-			<Typography sx={{ fontSize: 10 }}>{value}</Typography>
-		</Stack>
-	);
-}
-
-function ServiceOrderPreview({ name, address, licenseSanitary, primaryColor, logoUrl }: IReportPreviewProps) {
+function ServiceOrderPreview({ name, address, primaryColor, secondaryColor, logoUrl }: IReportPreviewProps) {
 	const primary = safeColor(primaryColor);
+	const secondary = safeColor(secondaryColor);
 
 	return (
 		<PreviewPage>
-			<Box sx={{ backgroundColor: primary, py: '12px', px: '32px' }}>
-				<Typography sx={{ color: '#fff', fontWeight: 800, fontSize: 14 }}>ORDEN DE SERVICIO</Typography>
-			</Box>
-
-			<Box sx={{ px: '32px', pt: '20px' }}>
+			<Box sx={{ p: '25px' }}>
 				<Stack
 					direction="row"
 					justifyContent="space-between"
 					alignItems="flex-start"
+					sx={{ borderTop: `8px solid ${primary}`, pt: '15px', mb: '15px' }}
 				>
-					<Stack
-						justifyContent="space-between"
-						spacing={2}
+					<Box sx={{ width: 120 }}>
+						{logoUrl ? (
+							<Box
+								component="img"
+								src={logoUrl}
+								alt=""
+								sx={{ width: 100, height: 50, objectFit: 'contain' }}
+							/>
+						) : (
+							<Box
+								sx={{
+									width: 100,
+									height: 50,
+									border: '1px dashed #D1D5DB',
+									borderRadius: 1,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center'
+								}}
+							>
+								<Typography sx={{ fontSize: 9, color: '#9CA3AF' }}>Sin logo</Typography>
+							</Box>
+						)}
+					</Box>
+					<Box sx={{ textAlign: 'right' }}>
+						<Typography sx={{ fontSize: 18, fontWeight: 700, color: primary }}>Orden de Servicio</Typography>
+						<Typography sx={{ fontSize: 10, color: '#4B5563', mt: '4px' }}>No. {SAMPLE.orderNumber}</Typography>
+						<Typography sx={{ fontSize: 9, color: '#4B5563' }}>Fecha de emisión: {SAMPLE.date}</Typography>
+					</Box>
+				</Stack>
+
+				<Stack spacing="10px">
+					<ReportSection
+						title="Información General"
+						color={secondary}
+						titleFontSize={12}
 					>
-						<Box>
-							<Typography sx={{ fontSize: 14, color: primary, fontWeight: 700 }}>
-								{name || '[Nombre de la empresa]'}
-							</Typography>
-							<Typography sx={{ fontSize: 10, mt: '8px' }}>
-								{address || '[Dirección de la empresa]'}
-							</Typography>
-							<Typography sx={{ fontSize: 10, mt: '4px', color: '#4B5563' }}>
-								Licencia Sanitaria: {licenseSanitary || '[Número de Licencia]'}
-							</Typography>
-						</Box>
-						<Box>
-							<Typography sx={{ fontSize: 10 }}>{SAMPLE.number}</Typography>
-							<Typography sx={{ fontSize: 10, mt: '2px' }}>{SAMPLE.date}</Typography>
-						</Box>
-					</Stack>
-					{logoUrl ? (
-						<Box
-							component="img"
-							src={logoUrl}
-							alt=""
-							sx={{ width: 200, height: 80, objectFit: 'contain' }}
-						/>
-					) : (
-						<Box
-							sx={{
-								width: 200,
-								height: 80,
-								border: '1px dashed #D1D5DB',
-								borderRadius: 1,
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center'
-							}}
+						<Stack
+							direction="row"
+							flexWrap="wrap"
+							useFlexGap
+							spacing={2}
 						>
-							<Typography sx={{ fontSize: 9, color: '#9CA3AF' }}>Sin logo</Typography>
-						</Box>
-					)}
-				</Stack>
+							<Box sx={{ width: '45%' }}>
+								<Field
+									label="Empresa:"
+									value={name || '[Nombre de la empresa]'}
+								/>
+							</Box>
+							<Box sx={{ width: '45%' }}>
+								<Field
+									label="Dirección de la empresa:"
+									value={address || '[Dirección de la empresa]'}
+								/>
+							</Box>
+							<Box sx={{ width: '45%' }}>
+								<Field
+									label="Cliente:"
+									value={SAMPLE.clientName}
+								/>
+							</Box>
+							<Box sx={{ width: '45%' }}>
+								<Field
+									label="Dirección del cliente:"
+									value={SAMPLE.clientAddress}
+								/>
+							</Box>
+							<Box sx={{ width: '45%' }}>
+								<Field
+									label="Teléfono:"
+									value={SAMPLE.clientPhone}
+								/>
+							</Box>
+						</Stack>
+					</ReportSection>
 
-				<Box sx={{ mt: '24px' }}>
-					<Typography sx={{ fontSize: 14, color: primary }}>{SAMPLE.clientName}</Typography>
-					<Typography sx={{ fontSize: 10, mt: '8px' }}>{SAMPLE.clientAddress}</Typography>
-					<Typography sx={{ fontSize: 10, mt: '4px' }}>{SAMPLE.clientPhone}</Typography>
-				</Box>
-
-				<Stack
-					direction="row"
-					justifyContent="flex-end"
-					sx={{ my: '18px' }}
-				>
-					<Typography sx={{ fontSize: 14, color: primary, fontWeight: 700 }}>DATOS DE SERVICIO</Typography>
-				</Stack>
-
-				<Stack spacing={1.5}>
-					<Category
-						title="CONCEPTO"
-						color={primary}
+					<ReportSection
+						title="Detalles del Servicio"
+						color={secondary}
+						titleFontSize={12}
 					>
-						<ConceptRow
-							label="PLAGAS DETECTADAS"
-							value={SAMPLE.pests}
-						/>
-						<ConceptRow
-							label="TIPOS DE SERVICIOS"
-							value={SAMPLE.services}
-						/>
-						<ConceptRow
-							label="SISTEMAS DE APLICACIÓN"
-							value={SAMPLE.systems}
-						/>
-					</Category>
+						<Stack
+							direction="row"
+							spacing={3}
+						>
+							<Box flex={1}>
+								<Field
+									label="Áreas revisadas y nivel de infestación:"
+									value={SAMPLE.areaInfestations}
+								/>
+							</Box>
+							<Box flex={1}>
+								<Field
+									label="Plagas encontradas:"
+									value={SAMPLE.plagues}
+								/>
+							</Box>
+							<Box flex={1}>
+								<Field
+									label="Servicios a realizar:"
+									value={SAMPLE.services}
+								/>
+							</Box>
+						</Stack>
+					</ReportSection>
 
-					<Category
-						title="PLAN DE ACCIÓN"
-						color={primary}
+					<ReportSection
+						title="Plan de Acción y Observaciones"
+						color={secondary}
+						titleFontSize={12}
 					>
-						<Typography sx={{ fontSize: 10, lineHeight: 1.4, letterSpacing: '0.5px' }}>
-							{SAMPLE.actionPlan}
-						</Typography>
-					</Category>
+						<Typography sx={{ fontSize: 11, color: '#111827' }}>{SAMPLE.observations}</Typography>
+					</ReportSection>
 
-					<Category
-						title="INSTRUCCIONES FINALES"
-						color={primary}
+					<ReportSection
+						title="Instrucciones y Seguimiento"
+						color={secondary}
+						titleFontSize={12}
+					>
+						<Stack
+							direction="row"
+							spacing={3}
+						>
+							<Box flex={1}>
+								<Field
+									label="Incluir certificado:"
+									value={SAMPLE.includeCertificate}
+								/>
+							</Box>
+							<Box flex={1}>
+								<Field
+									label="Programar seguimiento:"
+									value={SAMPLE.scheduleFollowUp}
+								/>
+							</Box>
+							<Box flex={1}>
+								<Field
+									label="Días para seguimiento:"
+									value={SAMPLE.daysFollowUp}
+								/>
+							</Box>
+							<Box flex={1}>
+								<Field
+									label="Costo del servicio:"
+									value={SAMPLE.servicePrice}
+								/>
+							</Box>
+						</Stack>
+					</ReportSection>
+
+					<ReportSection
+						title="Firmas de Autorización"
+						color={secondary}
+						titleFontSize={12}
 					>
 						<Stack
 							direction="row"
 							spacing={2}
 						>
-							<Stack
-								spacing={1}
-								flex={1}
-							>
-								<InputValue
-									color={primary}
-									displayName="¿CERTIFICADO INCLUIDO?"
-									value="SI"
-								/>
-								<InputValue
-									color={primary}
-									displayName="¿BRINDAR SEGUIMIENTO?"
-									value="NO"
-								/>
-								<InputValue
-									color={primary}
-									displayName="DIAS"
-									value="10 DIAS"
-								/>
-							</Stack>
-							<Stack
-								spacing={1}
-								flex={1}
-							>
-								<InputValue
-									color={primary}
-									displayName="GARANTÍA"
-									value="30 DIAS"
-								/>
-								<InputValue
-									color={primary}
-									displayName="PRÓXIMA VISITA"
-									value="15/08/2026"
-								/>
-							</Stack>
+							<SignatureBox label="Firma del Técnico" />
+							<SignatureBox label="Firma del Cliente" />
 						</Stack>
-					</Category>
+					</ReportSection>
 
-					<Category
-						title="PRESUPUESTO GENERAL"
-						color={primary}
+					<ReportSection
+						title="Aviso de Privacidad"
+						color={secondary}
+						titleFontSize={12}
 					>
-						<Stack
-							direction="row"
-							justifyContent="space-between"
-						>
-							<Typography sx={{ fontSize: 10, color: primary }}>TOTAL:</Typography>
-							<Typography sx={{ fontSize: 10, fontWeight: 700 }}>{SAMPLE.total}</Typography>
-						</Stack>
-					</Category>
+						<Typography sx={{ fontSize: 9, color: '#4B5563' }}>
+							La información personal recopilada en este reporte será utilizada únicamente para fines de
+							prestación del servicio y no será compartida con terceros sin su consentimiento.
+						</Typography>
+					</ReportSection>
 				</Stack>
 			</Box>
 		</PreviewPage>

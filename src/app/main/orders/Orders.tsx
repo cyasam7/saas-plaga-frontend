@@ -2,7 +2,6 @@ import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-d
 import { useQuery } from 'react-query';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import { Dayjs } from 'dayjs';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import FusePageSimple from '@fuse/core/FusePageSimple';
 import { styled } from '@mui/material/styles';
@@ -48,7 +47,6 @@ function Order() {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [tabFilter, setTabFilter] = useState<ETabsPlagues>(ETabsPlagues.ALL);
-	const [calendarFilter, setCalendarFilter] = useState<Dayjs | undefined>(null);
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAssign, setOpenAssign] = useState<boolean>(false);
 	const [openFollow, setOpenFollow] = useState<boolean>(false);
@@ -57,17 +55,16 @@ function Order() {
 	const [orderId, setOrderId] = useState<string>('');
 	const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
 
-	// Los filtros de la tabla se resuelven en el backend: se mandan como query params.
+	// El filtro de la tabla se resuelve en el backend: se manda como query param.
 	const dayFilter = TAB_TO_DAY_FILTER[tabFilter];
-	const dateParam = calendarFilter ? calendarFilter.toISOString() : undefined;
 
 	const {
 		data = { orders: [], stats: { total: 0, today: 0, pending: 0, passed: 0 } },
 		isLoading,
 		refetch
 	} = useQuery({
-		queryKey: ['orders', dayFilter, dateParam],
-		queryFn: () => OrderService.getDatagridOrders({ dayFilter, date: dateParam })
+		queryKey: ['orders', dayFilter],
+		queryFn: () => OrderService.getDatagridOrders({ dayFilter })
 	});
 
 	const orders = data.orders;
@@ -154,9 +151,7 @@ function Order() {
 	const renderFilters = () => (
 		<HeaderFilters
 			selectedTab={tabFilter}
-			selectedDate={calendarFilter}
 			onTabChange={setTabFilter}
-			onDateChange={setCalendarFilter}
 		/>
 	);
 

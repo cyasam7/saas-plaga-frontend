@@ -1,7 +1,5 @@
-import { Stack, TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab } from '@mui/material';
-import { Dayjs } from 'dayjs';
+import { TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab } from '@mui/material';
 import React from 'react';
-import { DatePicker } from '@mui/x-date-pickers';
 import { ETabsPlagues } from './HeaderFilterProps';
 
 const filterOptions = [
@@ -13,12 +11,10 @@ const filterOptions = [
 
 interface HeaderFiltersProps {
 	selectedTab: ETabsPlagues;
-	selectedDate: Dayjs | undefined;
 	onTabChange: (value: ETabsPlagues) => void;
-	onDateChange: (value: Dayjs | undefined) => void;
 }
 
-function HeaderFilters({ selectedTab, selectedDate, onTabChange, onDateChange }: HeaderFiltersProps) {
+function HeaderFilters({ selectedTab, onTabChange }: HeaderFiltersProps) {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -67,35 +63,7 @@ function HeaderFilters({ selectedTab, selectedDate, onTabChange, onDateChange }:
 		);
 	};
 
-	return (
-		<Stack
-			direction="column"
-			spacing={2}
-			sx={{ width: '100%' }}
-		>
-			{renderFilterControl()}
-			<Stack
-				direction={isMobile ? 'column' : 'row'}
-				spacing={2}
-				sx={{ width: '100%' }}
-			>
-				<DatePicker
-					value={selectedDate}
-					onChange={(value: Dayjs | null) => onDateChange(value || undefined)}
-					slotProps={{
-						textField: {
-							size: 'small',
-							fullWidth: true
-						},
-						field: {
-							clearable: true
-						}
-					}}
-					sx={{ width: isMobile ? '100%' : 'auto' }}
-				/>
-			</Stack>
-		</Stack>
-	);
+	return renderFilterControl();
 }
 
 export default HeaderFilters;

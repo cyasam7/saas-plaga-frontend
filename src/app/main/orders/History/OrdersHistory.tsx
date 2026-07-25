@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
-import { FileDownload, ReceiptLong } from '@mui/icons-material';
+import { FileDownload, ReceiptLong, Visibility } from '@mui/icons-material';
 import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 
@@ -12,6 +12,7 @@ import { OrderHistoryRow } from 'src/app/shared/services/OrderService';
 
 import { columnsOrdersHistory } from './columns';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
+import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
 import HistoryFilters from './components/HistoryFilters/HistoryFilters';
 import { hasActiveFilters } from './helpers';
 import useOrdersHistory from './hooks/useOrdersHistory';
@@ -62,6 +63,7 @@ function OrdersHistory() {
 	const { rows, totalCount, isLoading, isFetchingNextPage, hasNextPage, sentinelRef } = useOrdersHistory(filters);
 	const [orderId, setOrderId] = useState<string>('');
 	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
+	const [openDetail, setOpenDetail] = useState<boolean>(false);
 
 	const isEmpty = !isLoading && rows.length === 0;
 
@@ -77,6 +79,15 @@ function OrdersHistory() {
 			align: 'center',
 			disableColumnMenu: true,
 			getActions: (params) => [
+				<GridActionsCellItem
+					key="view-detail"
+					label="Ver detalle"
+					icon={<Visibility />}
+					onClick={() => {
+						setOrderId(params.row.id);
+						setOpenDetail(true);
+					}}
+				/>,
 				<GridActionsCellItem
 					key="download-report"
 					label="Generar reporte"
@@ -111,6 +122,14 @@ function OrdersHistory() {
 						onClose={() => {
 							setOrderId('');
 							setOpenDownloadReport(false);
+						}}
+					/>
+					<OrderDetailDialog
+						id={orderId}
+						open={openDetail}
+						onClose={() => {
+							setOrderId('');
+							setOpenDetail(false);
 						}}
 					/>
 					<Paper sx={{ p: 2 }}>

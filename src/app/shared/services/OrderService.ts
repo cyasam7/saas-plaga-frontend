@@ -3,6 +3,7 @@ import { DatagridRowOrder, EClientType, EStatusOrder, IUserValidToStartOrder } f
 import { AxiosFetcher } from '../fetcher';
 import { ResponseId } from '../entities/UserEntity';
 import { Paginated } from 'src/app/shared-interfaces/Paginated';
+import { OrderDetailResponse } from '../entities/OrderDetail';
 
 export enum EOrdersDayFilter {
   ALL = 'all',
@@ -13,7 +14,6 @@ export enum EOrdersDayFilter {
 
 export interface IQueryDatagridOrders {
   dayFilter?: EOrdersDayFilter;
-  date?: string;
 }
 
 export interface OrdersDatagridStats {
@@ -188,5 +188,12 @@ export class OrderService {
       method: 'GET'
     });
     return resp;
+  }
+
+  static async getOrderDetail(id: string): Promise<OrderDetailResponse> {
+    return await AxiosFetcher<OrderDetailResponse>({
+      url: `/order/${id}`,
+      method: 'GET'
+    });
   }
 }
