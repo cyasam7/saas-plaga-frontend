@@ -1,6 +1,4 @@
 import { Card, CardContent, Stack, Box, Typography, IconButton, Tooltip } from '@mui/material';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import { FileDownload, Delete } from '@mui/icons-material';
@@ -12,8 +10,6 @@ import ChipOrder from '../ChipOrder/ChipOrder';
 
 interface MobileCardProps {
 	order: DatagridRowOrder;
-	onView: (id: string) => void;
-	onEdit: (id: string) => void;
 	onAssign: (id: string) => void;
 	onFollow: (id: string) => void;
 	onDownloadCertificate: (id: string) => Promise<void>;
@@ -22,8 +18,6 @@ interface MobileCardProps {
 
 export function MobileCard({
 	order,
-	onView,
-	onEdit,
 	onAssign,
 	onFollow,
 	onDownloadCertificate,
@@ -67,27 +61,6 @@ export function MobileCard({
 							gap={1}
 							mt={1}
 						>
-							<Tooltip title="Ver">
-								<IconButton
-									size="small"
-									aria-label="Ver"
-									onClick={() => onView(order.id)}
-								>
-									<RemoveRedEyeIcon fontSize="small" />
-								</IconButton>
-							</Tooltip>
-							<Tooltip title="Modificar">
-								<span>
-									<IconButton
-										size="small"
-										aria-label="Modificar"
-										onClick={() => onEdit(order.id)}
-										disabled={[EStatusOrder.FINISHED].includes(order.status)}
-									>
-										<NoteAltIcon fontSize="small" />
-									</IconButton>
-								</span>
-							</Tooltip>
 							<Tooltip title="Asignar">
 								<span>
 									<IconButton

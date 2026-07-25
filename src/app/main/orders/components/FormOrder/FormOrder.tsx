@@ -34,17 +34,7 @@ const clientTypeOptions = [
 ] as const;
 
 function FormOrder(props: IFormOrderProps) {
-	const { formHandler, disabled, isUpdating, disableSpecificField } = props;
-
-	const {
-		dateField = false,
-		priceField = false,
-		clientNameField = false,
-		clientPhoneField = false,
-		clientAddressField = false,
-		descriptionField = false,
-		clientTypeField = false
-	} = disableSpecificField || {};
+	const { formHandler, disabled } = props;
 
 	const clientType = formHandler.watch('clientType');
 
@@ -83,7 +73,7 @@ function FormOrder(props: IFormOrderProps) {
 								description={option.description}
 								ariaLabel={option.ariaLabel}
 								selected={clientType === option.value}
-								disabled={disabled || clientTypeField}
+								disabled={disabled}
 								onSelect={() => handleClientTypeChange(option.value)}
 							/>
 						))}
@@ -106,7 +96,7 @@ function FormOrder(props: IFormOrderProps) {
 						key={clientType}
 					>
 						<Box>
-							{!isUpdating && clientType === EClientType.BUSINESS ? (
+							{clientType === EClientType.BUSINESS ? (
 								<FormOrderBusiness
 									formHandler={formHandler}
 									disabled={disabled}
@@ -115,12 +105,6 @@ function FormOrder(props: IFormOrderProps) {
 								<FormOrderIndividual
 									formHandler={formHandler}
 									disabled={disabled}
-									disableSpecificField={{
-										clientNameField,
-										clientPhoneField,
-										clientAddressField,
-										descriptionField
-									}}
 								/>
 							)}
 						</Box>
@@ -150,7 +134,7 @@ function FormOrder(props: IFormOrderProps) {
 							<DateTimePickerField
 								control={formHandler.control}
 								name="date"
-								disabled={disabled || dateField}
+								disabled={disabled}
 								datePickerProps={{
 									timeSteps: { minutes: 15 },
 									ampm: false,
@@ -171,7 +155,7 @@ function FormOrder(props: IFormOrderProps) {
 									<TextField
 										{...field}
 										size="small"
-										disabled={disabled || priceField}
+										disabled={disabled}
 										label="Costo"
 										fullWidth
 										variant="outlined"

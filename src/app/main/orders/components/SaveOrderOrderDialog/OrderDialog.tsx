@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import {
 	Box,
@@ -14,12 +14,9 @@ import {
 import { Close } from '@mui/icons-material';
 import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useQuery } from 'react-query';
-import dayjs from 'dayjs';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import { LoadingButton } from '@mui/lab';
 import FormOrder from '../FormOrder/FormOrder';
-import { EBusinessMode, EClientType, IFormCreatePest } from '../FormOrder/FormOrderProps';
+import { EClientType, IFormCreatePest } from '../FormOrder/FormOrderProps';
 import { OrderDialogProps } from './OrderDialogProps';
 import { OrderService } from '../../../../shared/services/OrderService';
 import { createOrderSchema } from '../FormOrder/schema';
@@ -27,38 +24,12 @@ import { defaultValuesOrder } from '../FormOrder/defaultValues';
 import { Transition } from './transition';
 
 function OrderDialog(props: OrderDialogProps) {
-	const { onCancel, onSubmit, open, id, shouldOpenDialogAssign } = props;
-
-	const isUpdating = Boolean(id);
+	const { onCancel, onSubmit, open, shouldOpenDialogAssign } = props;
 
 	const formHandler = useForm<IFormCreatePest>({
 		resolver: yupResolver<IFormCreatePest>(createOrderSchema as any),
 		defaultValues: defaultValuesOrder
 	});
-
-	const { data } = useQuery({
-		queryKey: ['order-by-id', id],
-		queryFn: () => OrderService.getById(id),
-		enabled: Boolean(id) && open
-	});
-
-	useEffect(() => {
-		if (data) {
-			formHandler.reset({
-				clientId: data.clientId ?? "",
-				clientAddress: data.clientAddress,
-				clientName: data.clientName,
-				clientPhone: data.clientPhone,
-				clientType: data.clientType ?? EClientType.INDIVIDUAL,
-				businessMode: EBusinessMode.EXISTING,
-				price: String(data.price),
-				date: dayjs(data.date)
-			});
-		}
-		return () => {
-			formHandler.reset(defaultValuesOrder);
-		};
-	}, [data]);
 
 	async function handleSubmit(formValues: IFormCreatePest): Promise<void> {
 		try {
@@ -73,20 +44,13 @@ function OrderDialog(props: OrderDialogProps) {
 			};
 
 			let orderIdSaved: { id: string };
-			if (isUpdating) {
-				orderIdSaved = await OrderService.updateOrder({
-					...base,
-					id,
-					clientType: formValues.clientType,
-					isFollowUp: false
-				});
-			} else if (formValues.clientType === EClientType.BUSINESS) {
+			if (formValues.clientType === EClientType.BUSINESS) {
 				orderIdSaved = await OrderService.createBusinessOrder(base);
 			} else {
 				orderIdSaved = await OrderService.createIndividualOrder(base);
 			}
 
-			handleResetForm();
+			handleCancel();
 			displayToast({
 				message: 'Se ha guardado correctamente',
 				autoHideDuration: 4000,
@@ -111,20 +75,6 @@ function OrderDialog(props: OrderDialogProps) {
 	}
 
 	function handleCancel(): void {
-		if (isUpdating && formHandler.formState.isDirty) {
-			openDialog({
-				title: 'Confirmación requerida',
-				text: '¿Seguro que deseas cancelar sin guardar?',
-				onAccept() {
-					handleResetForm();
-				}
-			});
-		} else {
-			handleResetForm();
-		}
-	}
-
-	function handleResetForm(): void {
 		formHandler.reset(defaultValuesOrder);
 		onCancel();
 	}
@@ -151,15 +101,13 @@ function OrderDialog(props: OrderDialogProps) {
 							variant="h6"
 							sx={{ fontWeight: 700, lineHeight: 1.3 }}
 						>
-							{isUpdating ? 'Editar orden' : 'Nueva orden'}
+							Nueva orden
 						</Typography>
 						<Typography
 							variant="body2"
 							color="text.secondary"
 						>
-							{isUpdating
-								? 'Actualiza los datos de la orden de servicio.'
-								: 'Registra el cliente y los detalles del servicio.'}
+							Registra el cliente y los detalles del servicio.
 						</Typography>
 					</Box>
 					<IconButton
@@ -176,15 +124,6 @@ function OrderDialog(props: OrderDialogProps) {
 				<FormOrder
 					formHandler={formHandler}
 					disabled={isSubmitting}
-					isUpdating={isUpdating}
-					disableSpecificField={
-						isUpdating && {
-							clientAddressField: true,
-							clientNameField: true,
-							clientPhoneField: true,
-							clientTypeField: true
-						}
-					}
 				/>
 			</DialogContent>
 			<DialogActions sx={{ px: 3, py: 2 }}>
@@ -202,7 +141,7 @@ function OrderDialog(props: OrderDialogProps) {
 					loading={isSubmitting}
 					onClick={formHandler.handleSubmit(handleSubmit)}
 				>
-					{isUpdating ? 'Guardar cambios' : 'Crear orden'}
+					Crear orden
 				</LoadingButton>
 			</DialogActions>
 		</Dialog>

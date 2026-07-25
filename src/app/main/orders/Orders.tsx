@@ -2,8 +2,6 @@ import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-d
 import { useQuery } from 'react-query';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import { Dayjs } from 'dayjs';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import FusePageSimple from '@fuse/core/FusePageSimple';
@@ -16,7 +14,6 @@ import { columnsOrders } from './columns';
 import { EOrdersDayFilter, OrderService } from '../../shared/services/OrderService';
 import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
-import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
 import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
@@ -53,7 +50,6 @@ function Order() {
 	const [tabFilter, setTabFilter] = useState<ETabsPlagues>(ETabsPlagues.ALL);
 	const [calendarFilter, setCalendarFilter] = useState<Dayjs | undefined>(null);
 	const [open, setOpen] = useState<boolean>(false);
-	const [openDetails, setOpenDetails] = useState<boolean>(false);
 	const [openAssign, setOpenAssign] = useState<boolean>(false);
 	const [openFollow, setOpenFollow] = useState<boolean>(false);
 	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
@@ -91,16 +87,6 @@ function Order() {
 				const { status, assignedId } = params.row;
 				return [
 					<GridActionsCellItem
-						key="view"
-						label="Ver"
-						icon={<RemoveRedEyeIcon />}
-						onClick={() => {
-							setOrderId(params.row.id);
-							setOpenDetails(true);
-						}}
-						className="action-button"
-					/>,
-					<GridActionsCellItem
 						key="assign"
 						label={assignedId ? 'Reasignar' : 'Asignar'}
 						icon={<AssignmentIndIcon />}
@@ -110,18 +96,6 @@ function Order() {
 							setOpenAssign(true);
 						}}
 						disabled={[EStatusOrder.DONE, EStatusOrder.FINISHED].includes(status)}
-						className="action-button"
-					/>,
-					<GridActionsCellItem
-						key="modify"
-						label="Modificar"
-						icon={<NoteAltIcon />}
-						showInMenu
-						onClick={() => {
-							setOrderId(params.row.id);
-							setOpen(true);
-						}}
-						disabled={[EStatusOrder.FINISHED].includes(status)}
 						className="action-button"
 					/>,
 					<GridActionsCellItem
@@ -226,7 +200,6 @@ function Order() {
 					/>
 					<OrderDialog
 						open={open}
-						id={orderId}
 						onCancel={() => {
 							setOpen(false);
 							setOrderId('');
@@ -258,14 +231,6 @@ function Order() {
 						open={openFollow}
 						onSubmit={async () => {
 							await refetch();
-						}}
-					/>
-					<OrderDetailDialog
-						open={openDetails}
-						id={orderId}
-						onClose={() => {
-							setOrderId('');
-							setOpenDetails(false);
 						}}
 					/>
 					<Paper
@@ -362,14 +327,6 @@ function Order() {
 										<MobileCard
 											key={order.id}
 											order={order}
-											onView={(id) => {
-												setOrderId(id);
-												setOpenDetails(true);
-											}}
-											onEdit={(id) => {
-												setOrderId(id);
-												setOpen(true);
-											}}
 											onAssign={(id) => {
 												setOrderId(id);
 												setOpenAssign(true);

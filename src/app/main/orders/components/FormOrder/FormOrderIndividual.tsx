@@ -10,22 +10,10 @@ import { EClientType, IFormCreatePest } from './FormOrderProps';
 interface IFormOrderIndividualProps {
 	formHandler: UseFormReturn<IFormCreatePest>;
 	disabled?: boolean;
-	disableSpecificField?: {
-		clientNameField?: boolean;
-		clientPhoneField?: boolean;
-		clientAddressField?: boolean;
-		descriptionField?: boolean;
-	};
 }
 
 function FormOrderIndividual(props: IFormOrderIndividualProps) {
-	const { formHandler, disabled, disableSpecificField } = props;
-	const {
-		clientNameField = false,
-		clientPhoneField = false,
-		clientAddressField = false,
-		descriptionField = false
-	} = disableSpecificField || {};
+	const { formHandler, disabled } = props;
 
 	async function handleAutoCompleteClient(): Promise<void> {
 		const phone = formHandler.watch('clientPhone');
@@ -87,7 +75,7 @@ function FormOrderIndividual(props: IFormOrderIndividualProps) {
 					variant="outlined"
 					label="Teléfono"
 					size="small"
-					disabled={disabled || clientPhoneField}
+					disabled={disabled}
 					fullWidth
 					required
 					onBlur={handleAutoCompleteClient}
@@ -105,7 +93,7 @@ function FormOrderIndividual(props: IFormOrderIndividualProps) {
 						<TextField
 							{...field}
 							size="small"
-							disabled={disabled || clientNameField}
+							disabled={disabled}
 							variant="outlined"
 							required
 							label="Nombre completo"
@@ -135,7 +123,7 @@ function FormOrderIndividual(props: IFormOrderIndividualProps) {
 					control={formHandler.control}
 					name="clientAddress"
 					label="Dirección"
-					disabled={disabled || clientAddressField}
+					disabled={disabled}
 					fullWidth
 					size="small"
 					autoComplete="street-address"
@@ -156,7 +144,7 @@ function FormOrderIndividual(props: IFormOrderIndividualProps) {
 					name="description"
 					control={formHandler.control}
 					label="Descripción"
-					disabled={disabled || descriptionField}
+					disabled={disabled}
 					fullWidth
 					multiline
 					rows={3}

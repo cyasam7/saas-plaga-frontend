@@ -3,5 +3,4 @@ export interface OrderDialogProps {
 	onSubmit: (orderId: string, shouldOpenDialogAssign: boolean) => Promise<void>;
 	onCancel: () => void;
 	shouldOpenDialogAssign?: boolean;
-	id?: string;
 }

@@ -12,17 +12,6 @@ export enum EBusinessMode {
 export interface IFormOrderProps {
 	formHandler: UseFormReturn<IFormCreatePest>;
 	disabled?: boolean;
-	/** Editing an existing order: show the stored client fields (read-only) instead of the creation selectors. */
-	isUpdating?: boolean;
-	disableSpecificField?: {
-		dateField?: boolean;
-		priceField?: boolean;
-		clientNameField?: boolean;
-		clientPhoneField?: boolean;
-		clientAddressField?: boolean;
-		descriptionField?: boolean;
-		clientTypeField?: boolean;
-	};
 }
 
 export interface IFormCreatePest {

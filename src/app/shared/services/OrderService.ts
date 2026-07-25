@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DatagridRowOrder, EClientType, EStatusOrder, IUserValidToStartOrder, OrderEntity } from '../entities/OrderEntity';
+import { DatagridRowOrder, EClientType, EStatusOrder, IUserValidToStartOrder } from '../entities/OrderEntity';
 import { AxiosFetcher } from '../fetcher';
 import { ResponseId } from '../entities/UserEntity';
 import { Paginated } from 'src/app/shared-interfaces/Paginated';
@@ -60,15 +60,6 @@ export interface IClientDataByPhone {
 }
 
 export class OrderService {
-  /** Updates an existing order (requires id). */
-  static async updateOrder(data: any): Promise<ResponseId> {
-    return await AxiosFetcher<ResponseId>({
-      url: '/order',
-      data,
-      method: 'POST'
-    });
-  }
-
   /** Creates a residential (individual) order, upserting the client by phone/id. */
   static async createIndividualOrder(data: any): Promise<ResponseId> {
     return await AxiosFetcher<ResponseId>({
@@ -95,13 +86,6 @@ export class OrderService {
       url: '/order/followUp',
       data,
       method: 'POST'
-    });
-  }
-
-  static async getById(id: string): Promise<OrderEntity> {
-    return await AxiosFetcher<OrderEntity>({
-      url: `/order/${id}`,
-      method: 'GET'
     });
   }
 
