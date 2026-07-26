@@ -378,12 +378,6 @@ function Order() {
 									density="comfortable"
 									getRowHeight={() => 'auto'}
 									sx={{
-										[`& .${gridClasses.main}`]: {
-											mt: 2,
-											border: 1,
-											borderColor: 'divider',
-											borderRadius: 2
-										},
 										'& .MuiDataGrid-cell': {
 											py: 1,
 											px: 1,
