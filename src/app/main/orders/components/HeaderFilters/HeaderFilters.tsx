@@ -1,34 +1,38 @@
-import { TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab } from '@mui/material';
-import React from 'react';
-import { ETabsPlagues } from './HeaderFilterProps';
+import { TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab, Stack } from '@mui/material';
+import { EOrdersDayFilter } from 'src/app/shared/services/OrderService';
+import FumigatorFilter from './FumigatorFilter';
 
-const filterOptions = [
-	{ value: ETabsPlagues.ALL, label: 'Todas' },
-	{ value: ETabsPlagues.TODAY, label: 'Hoy' },
-	{ value: ETabsPlagues.TOMORROW, label: 'Mañana' },
-	{ value: ETabsPlagues.PENDING, label: 'Pendientes' }
+const dayFilterOptions = [
+	{ value: EOrdersDayFilter.ALL, label: 'Todas' },
+	{ value: EOrdersDayFilter.TODAY, label: 'Hoy' },
+	{ value: EOrdersDayFilter.TOMORROW, label: 'Mañana' },
+	{ value: EOrdersDayFilter.PENDING, label: 'Pendientes' },
+	{ value: EOrdersDayFilter.PASSED, label: 'Pasadas' }
 ] as const;
 
 interface HeaderFiltersProps {
-	selectedTab: ETabsPlagues;
-	onTabChange: (value: ETabsPlagues) => void;
+	dayFilter: EOrdersDayFilter;
+	onDayFilterChange: (value: EOrdersDayFilter) => void;
+	fumigatorId: string;
+	onFumigatorChange: (value: string) => void;
 }
 
-function HeaderFilters({ selectedTab, onTabChange }: HeaderFiltersProps) {
+function HeaderFilters({ dayFilter, onDayFilterChange, fumigatorId, onFumigatorChange }: HeaderFiltersProps) {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-	const renderFilterControl = () => {
+	const renderDayFilter = () => {
 		if (isMobile) {
 			return (
 				<TextField
 					select
-					value={selectedTab}
+					value={dayFilter}
 					label="Filtrar por"
 					size="small"
-					onChange={(e) => onTabChange(e.target.value as unknown as ETabsPlagues)}
+					fullWidth
+					onChange={(e) => onDayFilterChange(e.target.value as EOrdersDayFilter)}
 				>
-					{filterOptions.map((option) => (
+					{dayFilterOptions.map((option) => (
 						<MenuItem
 							key={option.value}
 							value={option.value}
@@ -42,8 +46,10 @@ function HeaderFilters({ selectedTab, onTabChange }: HeaderFiltersProps) {
 
 		return (
 			<Tabs
-				value={selectedTab}
-				onChange={(_, value) => onTabChange(value as ETabsPlagues)}
+				value={dayFilter}
+				onChange={(_, value) => onDayFilterChange(value as EOrdersDayFilter)}
+				variant="scrollable"
+				scrollButtons="auto"
 				sx={{
 					minHeight: 40,
 					'& .MuiTab-root': {
@@ -52,7 +58,7 @@ function HeaderFilters({ selectedTab, onTabChange }: HeaderFiltersProps) {
 					}
 				}}
 			>
-				{filterOptions.map((option) => (
+				{dayFilterOptions.map((option) => (
 					<Tab
 						key={option.value}
 						value={option.value}
@@ -63,7 +69,21 @@ function HeaderFilters({ selectedTab, onTabChange }: HeaderFiltersProps) {
 		);
 	};
 
-	return renderFilterControl();
+	return (
+		<Stack
+			direction={isMobile ? 'column' : 'row'}
+			spacing={2}
+			alignItems={isMobile ? 'stretch' : 'center'}
+			justifyContent="space-between"
+		>
+			{renderDayFilter()}
+			<FumigatorFilter
+				value={fumigatorId}
+				onChange={onFumigatorChange}
+				fullWidth={isMobile}
+			/>
+		</Stack>
+	);
 }
 
 export default HeaderFilters;

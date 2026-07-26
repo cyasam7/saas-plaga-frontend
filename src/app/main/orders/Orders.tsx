@@ -10,26 +10,19 @@ import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-m
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
 import { columnsOrders } from './columns';
-import { EOrdersDayFilter, OrderService } from '../../shared/services/OrderService';
+import { OrderService } from '../../shared/services/OrderService';
 import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
 import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
-import { ETabsPlagues } from './components/HeaderFilters/HeaderFilterProps';
+import useOrdersFilters from './hooks/useOrdersFilters';
 import { MobileCard } from './components/MobileCard/MobileCard';
 import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
 import { StatsCards } from './components/StatsCards/StatsCards';
 import './styles/actionButtons.css';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
-
-const TAB_TO_DAY_FILTER: Record<ETabsPlagues, EOrdersDayFilter> = {
-	[ETabsPlagues.ALL]: EOrdersDayFilter.ALL,
-	[ETabsPlagues.TODAY]: EOrdersDayFilter.TODAY,
-	[ETabsPlagues.TOMORROW]: EOrdersDayFilter.TOMORROW,
-	[ETabsPlagues.PENDING]: EOrdersDayFilter.PENDING
-};
 
 const Root = styled(FusePageSimple)(({ theme }) => ({
 	'& .FusePageSimple-header': {
@@ -46,7 +39,6 @@ const Root = styled(FusePageSimple)(({ theme }) => ({
 function Order() {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-	const [tabFilter, setTabFilter] = useState<ETabsPlagues>(ETabsPlagues.ALL);
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAssign, setOpenAssign] = useState<boolean>(false);
 	const [openFollow, setOpenFollow] = useState<boolean>(false);
@@ -55,16 +47,16 @@ function Order() {
 	const [orderId, setOrderId] = useState<string>('');
 	const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
 
-	// El filtro de la tabla se resuelve en el backend: se manda como query param.
-	const dayFilter = TAB_TO_DAY_FILTER[tabFilter];
+	// Los filtros viven en la URL y se resuelven en el backend: se mandan como query params.
+	const { filters, query, setFilter } = useOrdersFilters();
 
 	const {
-		data = { orders: [], stats: { total: 0, today: 0, pending: 0, passed: 0 } },
+		data = { orders: [], stats: { total: 0, today: 0, tomorrow: 0, pending: 0, passed: 0 } },
 		isLoading,
 		refetch
 	} = useQuery({
-		queryKey: ['orders', dayFilter],
-		queryFn: () => OrderService.getDatagridOrders({ dayFilter })
+		queryKey: ['orders', query],
+		queryFn: () => OrderService.getDatagridOrders(query)
 	});
 
 	const orders = data.orders;
@@ -150,8 +142,10 @@ function Order() {
 
 	const renderFilters = () => (
 		<HeaderFilters
-			selectedTab={tabFilter}
-			onTabChange={setTabFilter}
+			dayFilter={filters.dayFilter}
+			onDayFilterChange={(value) => setFilter('dayFilter', value)}
+			fumigatorId={filters.fumigatorId}
+			onFumigatorChange={(value) => setFilter('fumigatorId', value)}
 		/>
 	);
 

@@ -9,16 +9,19 @@ export enum EOrdersDayFilter {
   ALL = 'all',
   TODAY = 'today',
   TOMORROW = 'tomorrow',
-  PENDING = 'pending'
+  PENDING = 'pending',
+  PASSED = 'passed'
 }
 
 export interface IQueryDatagridOrders {
   dayFilter?: EOrdersDayFilter;
+  fumigatorId?: string;
 }
 
 export interface OrdersDatagridStats {
   total: number;
   today: number;
+  tomorrow: number;
   pending: number;
   passed: number;
 }
