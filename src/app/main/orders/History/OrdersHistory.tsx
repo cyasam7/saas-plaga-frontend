@@ -104,8 +104,10 @@ function OrdersHistory() {
 
 	return (
 		<Root
+			scroll="content"
 			header={
 				<FusePageSimpleHeader
+					
 					header={
 						<SimpleHeader
 							title="Historial de órdenes"
