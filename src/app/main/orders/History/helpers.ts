@@ -14,6 +14,8 @@ export interface OrdersHistoryFilters {
 	dateTo: string | null;
 	status: EStatusOrder[];
 	clientType: EClientType | null;
+	/** Cadena vacía = todos los fumigadores. */
+	fumigatorId: string;
 	search: string;
 }
 
@@ -22,6 +24,7 @@ export const EMPTY_FILTERS: OrdersHistoryFilters = {
 	dateTo: null,
 	status: [],
 	clientType: null,
+	fumigatorId: '',
 	search: ''
 };
 
@@ -37,6 +40,7 @@ export function parseFiltersFromParams(params: URLSearchParams): OrdersHistoryFi
 		dateTo: params.get('dateTo'),
 		status,
 		clientType: Object.values(EClientType).includes(clientType as EClientType) ? (clientType as EClientType) : null,
+		fumigatorId: params.get('fumigatorId') ?? '',
 		search: params.get('search') ?? ''
 	};
 }
@@ -53,6 +57,8 @@ export function filtersToParams(filters: OrdersHistoryFilters): URLSearchParams 
 
 	if (filters.clientType) params.set('clientType', filters.clientType);
 
+	if (filters.fumigatorId) params.set('fumigatorId', filters.fumigatorId);
+
 	if (filters.search) params.set('search', filters.search);
 
 	return params;
@@ -60,6 +66,11 @@ export function filtersToParams(filters: OrdersHistoryFilters): URLSearchParams 
 
 export function hasActiveFilters(filters: OrdersHistoryFilters): boolean {
 	return Boolean(
-		filters.dateFrom || filters.dateTo || filters.status.length || filters.clientType || filters.search
+		filters.dateFrom ||
+			filters.dateTo ||
+			filters.status.length ||
+			filters.clientType ||
+			filters.fumigatorId ||
+			filters.search
 	);
 }

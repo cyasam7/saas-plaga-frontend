@@ -29,6 +29,7 @@ export function useOrdersHistory(filters: OrdersHistoryFilters): IUseOrdersHisto
 				clientType: filters.clientType ?? undefined,
 				dateFrom: filters.dateFrom ?? undefined,
 				dateTo: filters.dateTo ?? undefined,
+				fumigatorId: filters.fumigatorId || undefined,
 				search: filters.search || undefined
 			}),
 		getNextPageParam: (lastPage) => (lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined)

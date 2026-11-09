@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import { EClientType, EStatusOrder } from 'src/app/shared/entities/OrderEntity';
 
+import FumigatorFilter from '../../../components/HeaderFilters/FumigatorFilter';
 import { HISTORY_STATUSES, OrdersHistoryFilters } from '../../helpers';
 import { translateOrderStatus } from '../../../utils';
 
@@ -99,6 +100,11 @@ function HistoryFilters({
 					</MenuItem>
 				))}
 			</TextField>
+
+			<FumigatorFilter
+				value={filters.fumigatorId}
+				onChange={(fumigatorId) => onFilterChange('fumigatorId', fumigatorId)}
+			/>
 
 			{showClearButton && (
 				<Button

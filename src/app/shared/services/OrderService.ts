@@ -53,6 +53,7 @@ export interface IQueryOrdersHistory {
   dateFrom?: string;
   dateTo?: string;
   search?: string;
+  fumigatorId?: string;
 }
 
 export interface IClientDataByPhone {
