@@ -15,10 +15,6 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { createLogger } from 'redux-logger';
 import { dialogReducer } from 'src/app/auth/user/store/dialogSlice';
-import { fuseMessageSlice } from '@fuse/core/FuseMessage/store/fuseMessageSlice';
-import { fuseSettingsSlice } from '@fuse/core/FuseSettings/store/fuseSettingsSlice';
-import { navbarSlice } from 'app/theme-layouts/shared-components/navbar/store/navbarSlice';
-import { dataSlice } from 'app/theme-layouts/shared-components/quickPanel/store/dataSlice';
 
 /**
  * The dynamic middleware instance.
@@ -47,11 +43,7 @@ export interface LazyLoadedSlices {}
 const staticReducers = {
   i18n,
   [apiService.reducerPath]: apiService.reducer,
-  dialogReducer,
-  fuseMessage: fuseMessageSlice.reducer,
-  fuseSettings: fuseSettingsSlice.reducer,
-  navbar: navbarSlice.reducer,
-  quickPanel: dataSlice.reducer,
+  dialogReducer
 };
 
 /**

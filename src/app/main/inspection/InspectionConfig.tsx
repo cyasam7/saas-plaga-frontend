@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import { lazy } from 'react';
-import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
+import { IRouteConfig } from 'app/core/routing/types';
 import en from './i18n/en';
 import es from './i18n/es';
 
@@ -9,20 +9,7 @@ i18next.addResourceBundle('es', 'examplePage', es);
 
 const Inspection = lazy(() => import('./Inspection'));
 
-/**
- * The Example page config.
- */
-const ExampleConfig: FuseRouteConfigType = {
-	settings: {
-		layout: {
-			style: 'layout1',
-			config: {
-				footer: {
-					display: false
-				}
-			}
-		}
-	},
+const InspectionConfig: IRouteConfig = {
 	auth: ['staff', 'admin'],
 	routes: [
 		{
@@ -32,4 +19,4 @@ const ExampleConfig: FuseRouteConfigType = {
 	]
 };
 
-export default ExampleConfig;
+export default InspectionConfig;

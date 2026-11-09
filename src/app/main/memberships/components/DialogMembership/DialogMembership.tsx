@@ -3,7 +3,7 @@ import FormSaveMembership, { defaultValuesFormMembership } from '../FormMembersh
 import { IDialogMembershipProps } from './DialogMembershipProps';
 import { IFormSaveMembershipData, schemaSaveMembership } from '../FormMembership/FormMembershipProps';
 import { MembershipService } from 'src/app/shared/services/MembershipService';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';

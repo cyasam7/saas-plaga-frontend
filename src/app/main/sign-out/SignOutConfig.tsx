@@ -1,28 +1,8 @@
-import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
+import { IRouteConfig } from 'app/core/routing/types';
 import SignOutPage from './SignOutPage';
 
-const SignOutConfig: FuseRouteConfigType = {
-	settings: {
-		layout: {
-			config: {
-				navbar: {
-					display: false
-				},
-				toolbar: {
-					display: false
-				},
-				footer: {
-					display: false
-				},
-				leftSidePanel: {
-					display: false
-				},
-				rightSidePanel: {
-					display: false
-				}
-			}
-		}
-	},
+const SignOutConfig: IRouteConfig = {
+	isFullScreen: true,
 	auth: null,
 	routes: [
 		{

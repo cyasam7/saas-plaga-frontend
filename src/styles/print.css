@@ -31,16 +31,8 @@
     }
 
     /* General styles */
-    #fuse-toolbar,
-    #fuse-footer,
-    #fuse-navbar,
-    #fuse-settings-presets,
-    #fuse-layout .ps > .ps__rail-x,
-    #fuse-layout .ps > .ps__rail-y {
+    #app-toolbar,
+    #app-navbar {
         display: none !important;
-    }
-
-    #fuse-layout .ps {
-        overflow: visible !important;
     }
 }

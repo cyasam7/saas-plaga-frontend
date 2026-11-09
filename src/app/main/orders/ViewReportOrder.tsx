@@ -1,4 +1,4 @@
-import { displayToast } from "@fuse/core/FuseMessage/DisplayToast";
+import { displayToast } from "app/core/feedback/toast";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";

@@ -1,5 +1,4 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import { Paper, Stack, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridActionsCellItemProps, GridColDef } from '@mui/x-data-grid';
 import { useQuery } from 'react-query';
@@ -8,7 +7,7 @@ import { Visibility, NotInterested, HistoryEdu, NoteAlt, RemoveCircleOutline } f
 import { ReactElement, useMemo, useState } from 'react';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { useAppSelector } from 'app/store/store';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { IDataGridUserRow } from 'src/app/shared/entities/UserEntity';
@@ -17,22 +16,9 @@ import HeaderGrid from './components/HeaderGrid/HeaderGrid';
 import DialogUser from './components/DialogUser/DialogUser';
 import DialogSigner from '../../shared-components/DialogSigner/DialogSigner';
 import SignViewer from './components/SignViewer/SignViewer';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 function Users() {
 	const [userId, setUserId] = useState('');
@@ -208,15 +194,11 @@ function Users() {
 	}
 
 	return (
-		<Root
+		<PageLayout
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Usuarios"
-							subtitle="Gestiona los usuarios dentro de tu organización"
-						/>
-					}
+				<SimpleHeader
+					title="Usuarios"
+					subtitle="Gestiona los usuarios dentro de tu organización"
 				/>
 			}
 			content={

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { AppConfigService } from 'src/app/shared/services/AppConfig';
 import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { accountSchema, defaultValuesAccountUser, validateLogo } from './config';
 import { ReportType } from './entities/ReportPreview';
 

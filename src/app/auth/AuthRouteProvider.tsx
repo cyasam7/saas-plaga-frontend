@@ -1,16 +1,14 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
-import FuseAuthorization from '@fuse/core/FuseAuthorization';
+import { BrowserRouter } from 'react-router-dom';
 import { useAppDispatch } from 'app/store/store';
-import FuseSplashScreen from '@fuse/core/FuseSplashScreen/FuseSplashScreen';
+import SplashScreen from 'app/core/feedback/SplashScreen';
 import {
 	resetUser,
 	selectUser,
-	selectUserRole,
 	setUser,
 	updateUser,
 	userSlice
 } from 'src/app/auth/user/store/userSlice';
-import BrowserRouter from '@fuse/core/BrowserRouter';
 import { PartialDeep } from 'type-fest';
 import firebase from 'firebase/compat/app';
 import _ from '@lodash';
@@ -59,10 +57,6 @@ function AuthRoute(props: AuthProviderProps) {
 	const dispatch = useAppDispatch();
 	const queryClient = useQueryClient();
 	const user = useSelector(selectUser);
-	/**
-	 * Get user role from store
-	 */
-	const userRole = useSelector(selectUserRole);
 
 	/**
 	 * Jwt auth service
@@ -225,14 +219,12 @@ function AuthRoute(props: AuthProviderProps) {
 	 * Render loading screen while loading user data
 	 */
 	if (isLoading) {
-		return <FuseSplashScreen />;
+		return <SplashScreen />;
 	}
 
 	return (
 		<AuthContext.Provider value={combinedAuth}>
-			<BrowserRouter>
-				<FuseAuthorization userRole={userRole}>{children}</FuseAuthorization>
-			</BrowserRouter>
+			<BrowserRouter>{children}</BrowserRouter>
 		</AuthContext.Provider>
 	);
 }

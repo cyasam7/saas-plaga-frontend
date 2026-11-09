@@ -7,7 +7,7 @@ import { IServiceType } from '../types';
 import ServiceTypeDialog from './ServiceTypeDialog';
 import { ServiceTypeService } from 'src/app/shared/services/Catalogs/ServiceTypeService';
 import { useQuery } from 'react-query';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { ServiceTypeCard } from './ServiceTypeCard';
 import { ServiceTypesLoading } from './ServiceTypesLoading';
 import { ServiceTypesEmpty } from './ServiceTypesEmpty';

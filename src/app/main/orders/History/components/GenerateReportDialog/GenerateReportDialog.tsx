@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, MenuItem, Stack, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
 import { OrderService } from 'src/app/shared/services/OrderService';

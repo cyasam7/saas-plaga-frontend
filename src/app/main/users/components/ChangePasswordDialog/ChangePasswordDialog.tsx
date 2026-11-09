@@ -5,7 +5,7 @@ import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/
 import { useForm } from 'react-hook-form';
 import { FormChangePassword, IChangePasswordDialog } from './IChangePasswordDialog';
 import { UserService } from 'src/app/shared/services/UserService';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { useQueryClient } from 'react-query';
 
 const ChangePasswordDialog = (props: IChangePasswordDialog) => {

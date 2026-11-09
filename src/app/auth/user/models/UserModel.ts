@@ -14,9 +14,7 @@ function UserModel(data: PartialDeep<User>): User {
 		data: {
 			displayName: 'Guest User',
 			photoURL: '',
-			email: '',
-			shortcuts: [],
-			settings: {}
+			email: ''
 		}
 	});
 }

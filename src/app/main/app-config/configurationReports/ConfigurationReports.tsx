@@ -1,5 +1,4 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import { Box, Button, Card, Chip, Divider, Stack, Typography } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import { useConfigurationReports } from './useConfigurationReports';
@@ -7,18 +6,6 @@ import LogoSection from './components/LogoSection/LogoSection';
 import CompanySection from './components/CompanySection/CompanySection';
 import ColorsSection from './components/ColorsSection/ColorsSection';
 import ReportPreviewDialog from './components/ReportPreviewDialog/ReportPreviewDialog';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 function ConfigurationReports() {
 	const {
@@ -39,7 +26,7 @@ function ConfigurationReports() {
 	} = useConfigurationReports();
 
 	return (
-		<Root
+		<PageLayout
 			scroll="content"
 			header={
 				<Stack

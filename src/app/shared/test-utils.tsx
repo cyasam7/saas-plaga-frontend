@@ -1,7 +1,7 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { configureAppStore } from 'app/store/store'
-import ErrorBoundary from '@fuse/utils/ErrorBoundary'
+import ErrorBoundary from 'app/core/feedback/ErrorBoundary';
 import { StyledEngineProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from 'react-query'
 export * from '@testing-library/react'

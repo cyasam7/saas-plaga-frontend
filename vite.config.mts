@@ -39,16 +39,12 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': '/src',
-			"@fuse": "/src/@fuse",
-			"@history": "/src/@history",
 			"@lodash": "/src/@lodash",
-			"@mock-api": "/src/@mock-api",
 			"@schema": "/src/@schema",
 			"app/store": "/src/app/store",
 			"app/shared-components": "/src/app/shared-components",
 			"app/configs": "/src/app/configs",
-			"app/theme-layouts": "/src/app/theme-layouts",
-			"app/AppContext": "/src/app/AppContext"
+			"app/core": "/src/app/core"
 		},
 	},
 	"optimizeDeps": {

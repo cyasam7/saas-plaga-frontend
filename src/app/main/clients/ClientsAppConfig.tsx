@@ -1,22 +1,9 @@
+import { Container } from '@mui/material';
+import { IRouteConfig } from 'app/core/routing/types';
 import { ClientsApp } from './ClientsApp';
 import { ClientDetail } from './ClientDetail';
-import { Container } from '@mui/material';
 
-
-/**
- * The ClientsApp configuration.
- */
-const ClientsAppConfig = {
-	settings: {
-		layout: {
-			style: 'layout1',
-			config: {
-				footer: {
-					display: false
-				}
-			}
-		}
-	},
+const ClientsAppConfig: IRouteConfig = {
 	routes: [
 		{
 			path: '/clients',
@@ -24,10 +11,11 @@ const ClientsAppConfig = {
 		},
 		{
 			path: '/clients/:clientId',
-			element:
+			element: (
 				<Container maxWidth="xl">
 					<ClientDetail />
 				</Container>
+			)
 		}
 	]
 };

@@ -1,16 +1,9 @@
-import FuseLayout from '@fuse/core/FuseLayout';
-import FuseTheme from '@fuse/core/FuseTheme';
 import { SnackbarProvider } from 'notistack';
-import { useSelector } from 'react-redux';
-import rtlPlugin from 'stylis-plugin-rtl';
-import createCache, { Options } from '@emotion/cache';
+import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { selectCurrentLanguageDirection } from 'app/store/i18nSlice';
-import themeLayouts from 'app/theme-layouts/themeLayouts';
-import { selectMainTheme } from '@fuse/core/FuseSettings/store/fuseSettingsSlice';
 import axios from 'axios';
 import { QueryClientProvider, QueryClient } from 'react-query';
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -20,6 +13,9 @@ import { pdfjs } from 'react-pdf';
 import withAppProviders from './withAppProviders';
 import { AuthRouteProvider } from './auth/AuthRouteProvider';
 import GlobalDialog from './shared-components/GlobalDialog/GlobalDialog';
+import Toaster from './core/feedback/Toaster';
+import AppThemeProvider from './core/theme/AppThemeProvider';
+import AppLayout from './core/layout/AppLayout';
 import 'dayjs/locale/es'; // import locale
 
 /**
@@ -35,18 +31,10 @@ dayjs.locale('es');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const emotionCacheOptions = {
-	rtl: {
-		key: 'muirtl',
-		stylisPlugins: [rtlPlugin],
-		insertionPoint: document.getElementById('emotion-insertion-point')
-	},
-	ltr: {
-		key: 'muiltr',
-		stylisPlugins: [],
-		insertionPoint: document.getElementById('emotion-insertion-point')
-	}
-};
+const emotionCache = createCache({
+	key: 'muiltr',
+	insertionPoint: document.getElementById('emotion-insertion-point') ?? undefined
+});
 
 const queryClient = new QueryClient();
 
@@ -54,25 +42,15 @@ const queryClient = new QueryClient();
  * The main App component.
  */
 function App() {
-	/**
-	 * The language direction from the Redux store.
-	 */
-	const langDirection = useSelector(selectCurrentLanguageDirection);
-
-	/**
-	 * The main theme from the Redux store.
-	 */
-	const mainTheme = useSelector(selectMainTheme);
-
 	return (
 		<QueryClientProvider client={queryClient}>
-			<CacheProvider value={createCache(emotionCacheOptions[langDirection] as Options)}>
-				<FuseTheme
-					theme={mainTheme}
-					direction={langDirection}
-				>
+			<CacheProvider value={emotionCache}>
+				<AppThemeProvider>
 					<AuthRouteProvider>
-						<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
+						<LocalizationProvider
+							dateAdapter={AdapterDayjs}
+							adapterLocale="es"
+						>
 							<SnackbarProvider
 								maxSnack={5}
 								anchorOrigin={{
@@ -83,12 +61,13 @@ function App() {
 									containerRoot: 'bottom-0 right-0 mb-52 md:mb-68 mr-8 lg:mr-80 z-99'
 								}}
 							>
-								<FuseLayout layouts={themeLayouts} />
+								<AppLayout />
 								<GlobalDialog />
+								<Toaster />
 							</SnackbarProvider>
 						</LocalizationProvider>
 					</AuthRouteProvider>
-				</FuseTheme>
+				</AppThemeProvider>
 			</CacheProvider>
 		</QueryClientProvider>
 	);

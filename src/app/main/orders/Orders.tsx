@@ -3,12 +3,11 @@ import { useQuery } from 'react-query';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-material';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
 import { OrderService } from '../../shared/services/OrderService';
 import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
@@ -18,23 +17,10 @@ import HeaderFilters from './components/HeaderFilters/HeaderFilters';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
 import useOrdersFilters from './hooks/useOrdersFilters';
 import { MobileCard } from './components/MobileCard/MobileCard';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
 import { StatsCards } from './components/StatsCards/StatsCards';
 import './styles/actionButtons.css';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 function Order() {
 	const theme = useTheme();
@@ -150,28 +136,24 @@ function Order() {
 	);
 
 	return (
-		<Root
+		<PageLayout
 			scroll='content'
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Ordenes de servicio"
-							subtitle="Gestiona las ordenes de servicio"
-							actions={
-								<Button
-									color="primary"
-									variant="contained"
-									startIcon={<Add />}
-									onClick={() => {
-										setOpen(true);
-										setShouldOpenDialogAssign(true);
-									}}
-								>
-									Nuevo
-								</Button>
-							}
-						/>
+				<SimpleHeader
+					title="Ordenes de servicio"
+					subtitle="Gestiona las ordenes de servicio"
+					actions={
+						<Button
+							color="primary"
+							variant="contained"
+							startIcon={<Add />}
+							onClick={() => {
+								setOpen(true);
+								setShouldOpenDialogAssign(true);
+							}}
+						>
+							Nuevo
+						</Button>
 					}
 				/>
 			}

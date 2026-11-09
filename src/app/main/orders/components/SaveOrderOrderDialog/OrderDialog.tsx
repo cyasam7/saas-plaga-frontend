@@ -12,7 +12,7 @@ import {
 	Typography
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import FormOrder from '../FormOrder/FormOrder';

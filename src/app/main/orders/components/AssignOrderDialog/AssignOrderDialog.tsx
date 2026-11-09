@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import { useQuery, useQueryClient } from 'react-query';
 import { OrderService } from 'src/app/shared/services/OrderService';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { IAssignOrderDialog, IAssignOrderForm } from './IAssignOrderDialog';
 
 function AssignOrderDialog(props: IAssignOrderDialog) {

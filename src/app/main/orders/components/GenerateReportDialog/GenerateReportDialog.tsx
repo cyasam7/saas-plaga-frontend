@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, MenuItem, Stack, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { IOrderFollowUpDialogProps } from './IGenerateReportDialog';
 import { IGenerateReportForm, generateReportSchema, TypeReport } from './schema';

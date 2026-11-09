@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { IProduct } from '../types';
 import ProductDialog from './ProductDialog';
 import { InsecticideTypeService } from 'src/app/shared/services/Catalogs/InsecticideTypeService';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { useQuery } from 'react-query';
 import { ProductCard } from './ProductCard';
 import { ProductsLoading } from './ProductsLoading';

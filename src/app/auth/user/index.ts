@@ -1,4 +1,3 @@
-import { FuseSettingsConfigType } from '@fuse/core/FuseSettings/FuseSettings';
 import { InternalAxiosRequestConfig } from 'axios';
 
 /**
@@ -11,9 +10,6 @@ export type User = {
     displayName: string;
     photoURL?: string;
     email?: string;
-    shortcuts?: string[];
-    settings?: Partial<FuseSettingsConfigType>;
-    loginRedirectUrl?: string; // The URL to redirect to after login.
     tenant?: string;
     isTenantConfigured?: boolean;
   };

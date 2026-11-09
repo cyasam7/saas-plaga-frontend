@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import { IPestType } from '../types';
 import PestTypeDialog from './PestTypeDialog';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { useQuery } from 'react-query';
 import { PestTypeCard } from './PestTypeCard';
 import { PestTypesLoading } from './PestTypesLoading';

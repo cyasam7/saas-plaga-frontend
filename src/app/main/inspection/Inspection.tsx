@@ -1,34 +1,16 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import { Container, Grid, Card, CardContent, Typography } from '@mui/material';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 function Inspection() {
 
 
 	return (
-		<Root
+		<PageLayout
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Inspección"
-							subtitle="Gestiona las inspecciones"
-						/>
-					}
+				<SimpleHeader
+					title="Inspección"
+					subtitle="Gestiona las inspecciones"
 				/>
 			}
 			content={

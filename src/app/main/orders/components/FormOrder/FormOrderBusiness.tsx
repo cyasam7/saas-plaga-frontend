@@ -17,7 +17,7 @@ import {
 import { Add, LocationOn, Search, Store } from '@mui/icons-material';
 import { UseFormReturn } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
 import { PhoneInput } from 'app/shared-components/Form/PhoneInput/PhoneInput';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';

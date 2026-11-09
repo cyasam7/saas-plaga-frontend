@@ -1,24 +1,10 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import { Container } from '@mui/material';
 import { ClientService } from 'src/app/shared/services/ClientService';
 import { useQuery } from 'react-query';
 import { ClientList } from './ClientDetail/ClientList';
 import { FormClientValues } from './Forms/NewClientForm/types';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 /**
  * The ContactsApp page.
@@ -43,16 +29,12 @@ export function ClientsApp() {
 	}
 
 	return (
-		<Root
+		<PageLayout
 			scroll="content"
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Clientes"
-							subtitle="Gestiona los clientes del sistema"
-						/>
-					}
+				<SimpleHeader
+					title="Clientes"
+					subtitle="Gestiona los clientes del sistema"
 				/>
 			}
 			content={

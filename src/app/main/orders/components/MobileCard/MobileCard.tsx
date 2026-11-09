@@ -4,7 +4,7 @@ import MoveUpIcon from '@mui/icons-material/MoveUp';
 import { FileDownload, Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { DatagridRowOrder, EStatusOrder } from '../../../../shared/entities/OrderEntity';
 import ChipOrder from '../ChipOrder/ChipOrder';
 

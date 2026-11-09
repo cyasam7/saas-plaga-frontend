@@ -6,7 +6,7 @@ import HeaderDialog from 'app/shared-components/DialogSkeleton/HeaderDialog/Head
 import { UserService } from 'src/app/shared/services/UserService';
 import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
 import { useQuery } from 'react-query';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import FormUser from '../FormUser/FormUser';
 import { IDialogUserProps } from './IDialogUserProps';
 import { IFormUser } from '../FormUser/IFormUser';

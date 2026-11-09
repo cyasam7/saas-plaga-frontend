@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DateTimePickerField } from 'app/shared-components/DateTimePicker';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';

@@ -7,7 +7,7 @@ import ApplicationTypeDialog from './ApplicationTypeDialog';
 import { IApplicationType } from '../types';
 import { ApplicationTypeService } from 'src/app/shared/services/Catalogs/ApplicationTypeService';
 import { useQuery } from 'react-query';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import { ApplicationTypeCard } from './ApplicationTypeCard';
 import { ApplicationTypesLoading } from './ApplicationTypesLoading';
 import { ApplicationTypesEmpty } from './ApplicationTypesEmpty';
