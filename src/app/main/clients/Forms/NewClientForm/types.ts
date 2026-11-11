@@ -16,7 +16,7 @@ const locationSchema = z.object({
   contactPhone: z.string().min(8, { message: "Ingrese un teléfono válido" }),
   contactPerson: z.string().optional(),
   references: z.string().optional(),
-  areas: z.array(areaSchema),
+  areas: z.array(areaSchema).min(1, { message: "Agregue al menos un área" }),
 })
 
 // Base object (pre-refinement) so individual sections can derive sub-schemas
@@ -71,6 +71,6 @@ export type FormClientValues = z.infer<typeof formSchema>
 export interface NewClientFormProps {
   open: boolean
   onClose: () => void
-  onSubmit?: (data: FormClientValues) => void
+  onSubmit?: (data: FormClientValues) => Promise<void> | void
   defaultValues?: Partial<FormClientValues>
 }

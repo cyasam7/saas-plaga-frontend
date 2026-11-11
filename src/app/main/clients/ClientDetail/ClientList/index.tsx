@@ -116,8 +116,8 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
     setSelectedClientId(null);
   };
 
-  const handleFormSubmit = (data: FormClientValues) => {
-    onSaveClient(data, selectedClientId);
+  const handleFormSubmit = async (data: FormClientValues) => {
+    await onSaveClient?.(data, selectedClientId);
     handleFormClose();
   };
 

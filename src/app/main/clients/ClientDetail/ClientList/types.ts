@@ -3,6 +3,6 @@ import { Client } from "../../types";
 
 export interface ClientListProps {
   clients: Client[]
-  onSaveClient?: (data: FormClientValues, id?: string) => void
+  onSaveClient?: (data: FormClientValues, id?: string) => Promise<void>
   onDeleteClient?: (id: string) => void
 } 
