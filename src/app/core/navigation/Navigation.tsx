@@ -5,7 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import navigationConfig from 'app/configs/navigationConfig';
+import navigationConfig from './navigationConfig';
 import { hasPermission } from 'app/core/routing/hasPermission';
 import { UserRole } from 'app/core/routing/types';
 import { INavItem } from './types';

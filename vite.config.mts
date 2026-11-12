@@ -16,7 +16,7 @@ export default defineConfig({
 		{
 			name: 'custom-hmr-control',
 			handleHotUpdate({ file, server }) {
-				if (file.includes('src/app/configs/')) {
+				if (file.endsWith('src/app/core/routing/routesConfig.tsx') || file.endsWith('src/app/core/navigation/navigationConfig.ts')) {
 					server.ws.send({
 						type: 'full-reload',
 					});
@@ -42,7 +42,6 @@ export default defineConfig({
 			"@lodash": "/src/@lodash",
 			"@schema": "/src/@schema",
 			"app/shared/components": "/src/app/shared/components",
-			"app/configs": "/src/app/configs",
 			"app/core": "/src/app/core"
 		},
 	},

@@ -5,7 +5,6 @@
 			"@lodash": ["./src/@lodash"],
 			"@schema": ["./src/@schema"],
 			"app/shared/components/*": ["./src/app/shared/components/*"],
-			"app/configs/*": ["./src/app/configs/*"],
 			"app/core/*": ["./src/app/core/*"]
 		},
 		"declaration": false,

@@ -5,7 +5,7 @@ import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import { INavItem } from 'app/core/navigation/types';
+import { INavItem } from './types';
 
 /**
  * Sidebar navigation, filtered per user role by `auth`.

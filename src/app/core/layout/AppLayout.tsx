@@ -2,7 +2,7 @@ import { Suspense, useEffect } from 'react';
 import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import { useLocation, useRoutes } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import routes from 'app/configs/routesConfig';
+import routes from 'app/core/routing/routesConfig';
 import Loading from 'app/core/feedback/Loading';
 import RouteGuard from 'app/core/routing/RouteGuard';
 import { useCurrentRoute } from 'app/core/routing/useCurrentRoute';
