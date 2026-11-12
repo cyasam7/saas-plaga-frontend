@@ -1,11 +1,7 @@
-import i18next from 'i18next';
 import { lazy } from 'react';
 import { IRouteConfig } from 'app/core/routing/types';
-import en from './i18n/en';
 import { authRoles } from 'src/app/auth';
 import ViewReportOrder from './ViewReportOrder';
-
-i18next.addResourceBundle('en', 'examplePage', en);
 
 const Orders = lazy(() => import('./Orders'));
 const OrdersHistory = lazy(() => import('./History/OrdersHistory'));

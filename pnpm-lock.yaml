@@ -125,9 +125,6 @@ importers:
       history:
         specifier: 5.3.0
         version: 5.3.0
-      i18next:
-        specifier: 23.7.16
-        version: 23.7.16
       jwt-decode:
         specifier: 3.1.2
         version: 3.1.2
@@ -185,9 +182,6 @@ importers:
       react-hook-form:
         specifier: ^7.45.0
         version: 7.82.0(react@18.2.0)
-      react-i18next:
-        specifier: 14.0.0
-        version: 14.0.0(i18next@23.7.16)(react-dom@18.2.0(react@18.2.0))(react-native@0.86.0(@babel/core@7.23.7)(@types/react@18.3.31)(react@18.2.0))(react@18.2.0)
       react-imask:
         specifier: ^7.5.0
         version: 7.6.1(react@18.2.0)
@@ -4429,9 +4423,6 @@ packages:
     resolution: {integrity: sha512-oWv4T4yJ52iKrufjnyZPkrN0CH3QnrUqdB6In1g5Fe1mia8GmF36gnfNySxoZtxD5+NmYw1EElVXiBk93UeskA==}
     engines: {node: '>=12'}
 
-  html-parse-stringify@3.1.0:
-    resolution: {integrity: sha512-E0oAXcELOtsXe+BmpJ2EZyedbldPpriV5vICzEuo6xjC/D1lDukOI7KrpfQGF2Qc4wWEy0nk3bFORS2K5ZAhFQ==}
-
   html-to-draftjs@1.5.0:
     resolution: {integrity: sha512-kggLXBNciKDwKf+KYsuE+V5gw4dZ7nHyGMX9m0wy7urzWjKGWyNFetmArRLvRV0VrxKN70WylFsJvMTJx02OBQ==}
     peerDependencies:
@@ -4459,9 +4450,6 @@ packages:
 
   hyphenate-style-name@1.1.0:
     resolution: {integrity: sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==}
-
-  i18next@23.7.16:
-    resolution: {integrity: sha512-SrqFkMn9W6Wb43ZJ9qrO6U2U4S80RsFMA7VYFSqp7oc7RllQOYDCdRfsse6A7Cq/V8MnpxKvJCYgM8++27n4Fw==}
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -5928,19 +5916,6 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
-  react-i18next@14.0.0:
-    resolution: {integrity: sha512-OCrS8rHNAmnr8ggGRDxjakzihrMW7HCbsplduTm3EuuQ6fyvWGT41ksZpqbduYoqJurBmEsEVZ1pILSUWkHZng==}
-    peerDependencies:
-      i18next: '>= 23.2.3'
-      react: '>= 16.8.0'
-      react-dom: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-
   react-imask@7.6.1:
     resolution: {integrity: sha512-vLNfzcCz62Yzx/GRGh5tiCph9Gbh2cZu+Tz8OiO5it2eNuuhpA0DWhhSlOtVtSJ80+Bx+vFK5De8eQ9AmbkXzA==}
     engines: {npm: '>=4.0.0'}
@@ -7074,10 +7049,6 @@ packages:
 
   vlq@1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
-
-  void-elements@3.1.0:
-    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
-    engines: {node: '>=0.10.0'}
 
   w3c-xmlserializer@4.0.0:
     resolution: {integrity: sha512-d+BFHzbiCx6zGfz0HyQ6Rg69w9k19nviJspaj4yNscGjrHu94sVP+aRm75yEbCh+r2/yR+7q6hux9LVtbuTGBw==}
@@ -11950,10 +11921,6 @@ snapshots:
     dependencies:
       whatwg-encoding: 2.0.0
 
-  html-parse-stringify@3.1.0:
-    dependencies:
-      void-elements: 3.1.0
-
   html-to-draftjs@1.5.0(draft-js@0.11.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(immutable@4.3.4):
     dependencies:
       draft-js: 0.11.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -11992,10 +11959,6 @@ snapshots:
   hyphen@1.14.1: {}
 
   hyphenate-style-name@1.1.0: {}
-
-  i18next@23.7.16:
-    dependencies:
-      '@babel/runtime': 7.29.7
 
   iconv-lite@0.4.24:
     dependencies:
@@ -13613,16 +13576,6 @@ snapshots:
     dependencies:
       react: 18.2.0
 
-  react-i18next@14.0.0(i18next@23.7.16)(react-dom@18.2.0(react@18.2.0))(react-native@0.86.0(@babel/core@7.23.7)(@types/react@18.3.31)(react@18.2.0))(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.29.7
-      html-parse-stringify: 3.1.0
-      i18next: 23.7.16
-      react: 18.2.0
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.86.0(@babel/core@7.23.7)(@types/react@18.3.31)(react@18.2.0)
-
   react-imask@7.6.1(react@18.2.0):
     dependencies:
       imask: 7.6.1
@@ -14997,8 +14950,6 @@ snapshots:
       - terser
 
   vlq@1.0.1: {}
-
-  void-elements@3.1.0: {}
 
   w3c-xmlserializer@4.0.0:
     dependencies:
