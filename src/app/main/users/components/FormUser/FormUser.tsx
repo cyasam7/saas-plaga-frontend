@@ -1,9 +1,8 @@
 import { Grid, MenuItem } from '@mui/material';
+import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import React, { useEffect } from 'react';
 import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';
-import { selectUser, selectUserRole } from 'src/app/auth/user/store/userSlice';
-import { useSelector } from 'react-redux';
 import { useQueryTenantsByUser } from 'src/app/requests/tenants/useQueryTenantsByUser';
 import { ERoleCode } from 'src/app/requests/users/types';
 import { IFormUserProps } from './IFormUser';
@@ -13,8 +12,8 @@ import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/
 function FormUser(props: IFormUserProps) {
 	const { hook, isEditing, } = props;
 
-	const role = useSelector(selectUserRole);
-	const user = useSelector(selectUser);
+	const { user } = useAuth();
+	const role = user.role;
 
 	const { data: tenants = [] } = useQueryTenantsByUser({ userId: user.uid }, !!user.uid);
 

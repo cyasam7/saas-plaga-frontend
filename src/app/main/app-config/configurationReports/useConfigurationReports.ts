@@ -1,8 +1,7 @@
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
+import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useSelector } from 'react-redux';
-import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { useQueryGetAccountConfig } from 'src/app/requests/app-config/useQueryGetAccountConfig';
 import { useMutationSaveAccountConfig } from 'src/app/requests/app-config/useMutationSaveAccountConfig';
 import { IFormSaveAccount } from './types';
@@ -11,7 +10,7 @@ import { accountSchema, defaultValuesAccountUser, validateLogo } from './config'
 import { ReportType } from './entities/ReportPreview';
 
 export function useConfigurationReports() {
-	const user = useSelector(selectUser);
+	const { user } = useAuth();
 	const tenantId = user.data.tenant;
 	const [logoError, setLogoError] = useState<string | null>(null);
 	const [reportType, setReportType] = useState<ReportType>('certificate');

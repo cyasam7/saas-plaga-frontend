@@ -1,5 +1,4 @@
 import { MouseEvent, useState } from 'react';
-import { useSelector } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -9,14 +8,13 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import { darken } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { useAuth } from 'src/app/auth/AuthRouteProvider';
 
 /**
  * Toolbar button with the signed-in user's name/role and a sign-out menu.
  */
 function UserMenu() {
-	const user = useSelector(selectUser);
+	const { user } = useAuth();
 	const { signOut } = useAuth();
 	const [userMenuAnchorElement, setUserMenuAnchorElement] = useState<HTMLElement | null>(null);
 

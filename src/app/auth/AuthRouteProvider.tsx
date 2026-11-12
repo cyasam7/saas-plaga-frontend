@@ -1,18 +1,10 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { ISignInPayload, ISignUpPayload } from 'src/app/requests/auth/types';
 import { BrowserRouter } from 'react-router-dom';
-import { useAppDispatch } from 'app/store/store';
 import SplashScreen from 'app/core/feedback/SplashScreen';
-import {
-	resetUser,
-	selectUser,
-	setUser,
-	updateUser
-} from 'src/app/auth/user/store/userSlice';
 import { PartialDeep } from 'type-fest';
 import firebase from 'firebase/compat/app';
 import _ from '@lodash';
-import { useSelector } from 'react-redux';
 import { useQueryClient } from 'react-query';
 import useJwtAuth, { JwtAuth } from './services/jwt/useJwtAuth';
 import { User } from './user';
@@ -29,6 +21,7 @@ export type SignInPayload = ISignInPayload;
 export type SignUpPayload = ISignUpPayload;
 
 type AuthContext = {
+	user: User;
 	jwtService?: JwtAuth<User, SignInPayload, SignUpPayload>;
 	firebaseService?: ReturnType<typeof useFirebaseAuth>;
 	signOut?: () => void;
@@ -36,17 +29,29 @@ type AuthContext = {
 	isAuthenticated: boolean;
 };
 
-const AuthContext = createContext<AuthContext>({
-	isAuthenticated: false
-});
+const AuthContext = createContext<AuthContext | null>(null);
 
 type AuthProviderProps = { children: React.ReactNode };
 
 function AuthRouteProvider(props: AuthProviderProps) {
 	const { children } = props;
-	const dispatch = useAppDispatch();
 	const queryClient = useQueryClient();
-	const user = useSelector(selectUser);
+	const [user, setUser] = useState<User>(() => UserModel({}));
+
+	/**
+	 * Replaces the logged-in user, keeping fields the new user doesn't define.
+	 */
+	const replaceUser = useCallback((signedInUser: User) => {
+		setUser((currentUser) => _.defaults({}, signedInUser, currentUser));
+	}, []);
+
+	const resetUser = useCallback(() => {
+		setUser(UserModel({}));
+	}, []);
+
+	const mergeUser = useCallback((userChanges: PartialDeep<User>) => {
+		setUser((currentUser) => _.merge({}, currentUser, userChanges));
+	}, []);
 
 	/**
 	 * Jwt auth service
@@ -62,21 +67,21 @@ function AuthRouteProvider(props: AuthProviderProps) {
 			updateTokenFromHeader: true
 		},
 		onSignedIn: (user: User) => {
-			dispatch(setUser(user));
+			replaceUser(user);
 			setAuthService('jwt');
 		},
 		onSignedUp: (user: User) => {
-			dispatch(setUser(user));
+			replaceUser(user);
 			setAuthService('jwt');
 		},
 		onSignedOut: () => {
 			queryClient.removeQueries();
 
-			dispatch(resetUser());
+			resetUser();
 			resetAuthService();
 		},
 		onUpdateUser: (user) => {
-			dispatch(updateUser(user));
+			mergeUser(user);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -95,7 +100,7 @@ function AuthRouteProvider(props: AuthProviderProps) {
 				.once('value')
 				.then((snapshot) => {
 					const user = snapshot.val() as User;
-					dispatch(setUser(user));
+					replaceUser(user);
 					setAuthService('firebase');
 				});
 		},
@@ -116,11 +121,11 @@ function AuthRouteProvider(props: AuthProviderProps) {
 			setAuthService('firebase');
 		},
 		onSignedOut: () => {
-			dispatch(resetUser());
+			resetUser();
 			resetAuthService();
 		},
 		onUpdateUser: (user) => {
-			dispatch(updateUser(user));
+			mergeUser(user);
 		},
 		onError: (error) => {
 			// eslint-disable-next-line no-console
@@ -149,6 +154,7 @@ function AuthRouteProvider(props: AuthProviderProps) {
 	 */
 	const combinedAuth = useMemo<AuthContext>(
 		() => ({
+			user,
 			jwtService,
 			firebaseService,
 			signOut: () => {

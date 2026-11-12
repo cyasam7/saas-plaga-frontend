@@ -1,13 +1,12 @@
 import Avatar from '@mui/material/Avatar';
+import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import Typography from '@mui/material/Typography';
-import { useSelector } from 'react-redux';
-import { selectUser } from 'src/app/auth/user/store/userSlice';
 
 /**
  * Signed-in user's avatar, name and email at the top of the sidebar.
  */
 function UserNavbarHeader() {
-	const user = useSelector(selectUser);
+	const { user } = useAuth();
 
 	return (
 		<div className="relative flex flex-col items-center justify-center p-16 pb-14">

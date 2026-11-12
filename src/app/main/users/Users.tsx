@@ -1,4 +1,5 @@
 import PageLayout from 'app/core/page/PageLayout';
+import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import { Paper, Stack, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridActionsCellItemProps, GridColDef } from '@mui/x-data-grid';
 import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
@@ -10,8 +11,6 @@ import { ReactElement, useMemo, useState } from 'react';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
-import { useAppSelector } from 'app/store/store';
-import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { columnsUsers } from './columns';
 import HeaderGrid from './components/HeaderGrid/HeaderGrid';
 import DialogUser from './components/DialogUser/DialogUser';
@@ -32,7 +31,7 @@ function Users() {
 	const { invalidate } = useQueryInvalidator();
 	const [openUserDialog, setOpenUserDialog] = useState(false);
 	const [openChangePassword, setOpenChangePassword] = useState(false);
-	const userLogged = useAppSelector(selectUser);
+	const { user: userLogged } = useAuth();
 
 	const { data, isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
 	const { mutateAsync: deleteUser } = useMutationDeleteUser();

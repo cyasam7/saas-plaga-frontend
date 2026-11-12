@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -8,7 +8,6 @@ import { alpha } from '@mui/material/styles';
 import navigationConfig from 'app/configs/navigationConfig';
 import { hasPermission } from 'app/core/routing/hasPermission';
 import { UserRole } from 'app/core/routing/types';
-import { selectUserRole } from 'src/app/auth/user/store/userSlice';
 import { INavItem } from './types';
 
 /**
@@ -78,7 +77,7 @@ type NavigationProps = {
  */
 function Navigation(props: NavigationProps) {
 	const { onItemClick } = props;
-	const userRole = useSelector(selectUserRole);
+	const userRole = useAuth().user.role;
 	const visibleNavItems = filterNavigationByRole(navigationConfig, userRole);
 
 	return (

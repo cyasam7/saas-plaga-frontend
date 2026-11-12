@@ -1,12 +1,11 @@
 import { Suspense, useEffect } from 'react';
+import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import { useLocation, useRoutes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import routes from 'app/configs/routesConfig';
 import Loading from 'app/core/feedback/Loading';
 import RouteGuard from 'app/core/routing/RouteGuard';
 import { useCurrentRoute } from 'app/core/routing/useCurrentRoute';
-import { selectUserRole } from 'src/app/auth/user/store/userSlice';
 import { LayoutProvider } from './LayoutContext';
 import Navbar from './Navbar';
 import Toolbar from './Toolbar';
@@ -21,7 +20,7 @@ const CONTAINER_MAX_WIDTH = 1570;
 function AppLayout() {
 	const routedPage = useRoutes(routes);
 	const currentRoute = useCurrentRoute(routes);
-	const userRole = useSelector(selectUserRole);
+	const userRole = useAuth().user.role;
 	const isFullScreen = currentRoute?.isFullScreen ?? false;
 	const { pathname } = useLocation();
 
