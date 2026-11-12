@@ -35,6 +35,8 @@ export interface OrderEntity {
 export interface DatagridRowOrder {
   id: string;
   date: Date;
+  folio: string;
+  timezone: string;
   client: {
     name: string;
     phone: string;

@@ -2,6 +2,7 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonPinTwoToneIcon from '@mui/icons-material/PersonPinTwoTone';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import { INavItem } from 'app/core/navigation/types';
@@ -55,6 +56,14 @@ const navigationConfig: INavItem[] = [
 				icon: AssignmentOutlinedIcon,
 				url: '/orders',
 				end: true
+			},
+			{
+				id: 'orders-admin',
+				title: 'Panel de órdenes',
+				type: 'item',
+				auth: ['staff'],
+				icon: DashboardOutlinedIcon,
+				url: '/orders/admin'
 			},
 			{
 				id: 'orders-history',
