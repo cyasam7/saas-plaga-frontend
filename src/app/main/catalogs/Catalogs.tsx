@@ -7,11 +7,11 @@ import Paper from '@mui/material/Paper';
 import PageLayout from 'app/core/page/PageLayout';
 
 import TabPanel from './components/TabPanel';
-import ApplicationTypes from './components/application-types/ApplicationTypes';
+import ApplicationTypes from './components/ApplicationTypes';
 import { Container, Stack } from '@mui/material';
-import ServiceTypes from './components/service-types/ServiceTypes';
+import ServiceTypes from './components/ServiceTypes';
 import Products from './components/products/Products';
-import PestTypes from './components/pest-types/PestTypes';
+import PestTypes from './components/PestTypes';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 

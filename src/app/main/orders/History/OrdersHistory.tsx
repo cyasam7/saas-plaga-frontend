@@ -9,7 +9,7 @@ import { EStatusOrder } from 'src/app/requests/orders/types';
 import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 
 import { columnsOrdersHistory } from './columns';
-import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
+import GenerateReportDialog from '../components/GenerateReportDialog/GenerateReportDialog';
 import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
 import HistoryFilters from './components/HistoryFilters/HistoryFilters';
 import { hasActiveFilters } from './helpers';

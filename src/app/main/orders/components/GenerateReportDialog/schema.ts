@@ -8,10 +8,10 @@ export enum TypeReport {
 
 export interface IGenerateReportForm {
   typeReport: TypeReport;
-  days: number | null;
+  months: number | null;
 }
 
 export const generateReportSchema = yup.object<IGenerateReportForm>({
   typeReport: yup.string().required(FIELD_REQUIRED),
-  days: yup.number().typeError('Debe ser valor numerico').nullable()
+  months: yup.number().typeError('Debe ser valor numerico').nullable()
 });
