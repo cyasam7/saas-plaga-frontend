@@ -1,14 +1,14 @@
 import { Grid, MenuItem } from '@mui/material';
 import React, { useEffect } from 'react';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
-import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
+import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';
 import { selectUser, selectUserRole } from 'src/app/auth/user/store/userSlice';
 import { useSelector } from 'react-redux';
 import { useQueryTenantsByUser } from 'src/app/requests/tenants/useQueryTenantsByUser';
 import { ERoleCode } from 'src/app/requests/users/types';
 import { IFormUserProps } from './IFormUser';
 import { ROLE_CATALOG } from './constant';
-import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
+import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 
 function FormUser(props: IFormUserProps) {
 	const { hook, isEditing, } = props;

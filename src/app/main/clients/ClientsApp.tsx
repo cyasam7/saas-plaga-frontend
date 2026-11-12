@@ -7,7 +7,7 @@ import { useMutationDeleteClient } from 'src/app/requests/clients/useMutationDel
 import { clientKeys } from 'src/app/requests/clients/keys';
 import { ClientList } from './ClientDetail/ClientList';
 import { FormClientValues } from './Forms/NewClientForm/types';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 /**
  * The ContactsApp page.

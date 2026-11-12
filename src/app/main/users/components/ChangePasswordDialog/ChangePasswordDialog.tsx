@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Stack } from '@mui/material';
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton'
-import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton'
+import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 import { useForm } from 'react-hook-form';
 import { FormChangePassword, IChangePasswordDialog } from './IChangePasswordDialog';
 import { useMutationChangeUserPassword } from 'src/app/requests/users/useMutationChangeUserPassword';

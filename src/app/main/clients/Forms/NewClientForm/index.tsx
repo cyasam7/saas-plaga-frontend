@@ -26,9 +26,9 @@ import { useForm, useFieldArray, useFormState, Control, Controller } from "react
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormClientValues, NewClientFormProps, formSchema } from "./types"
 import { useEffect } from "react"
-import PhoneInputForm from "app/shared-components/Form/PhoneInputForm/PhoneInputForm"
-import TextFieldForm from "app/shared-components/Form/TextFieldForm/TextFieldForm"
-import CheckboxForm from "app/shared-components/Form/CheckboxForm/CheckboxForm"
+import PhoneInputForm from "app/shared/components/Form/PhoneInputForm/PhoneInputForm"
+import TextFieldForm from "app/shared/components/Form/TextFieldForm/TextFieldForm"
+import CheckboxForm from "app/shared/components/Form/CheckboxForm/CheckboxForm"
 
 const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)"
 

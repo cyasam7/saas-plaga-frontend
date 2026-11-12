@@ -1,4 +1,4 @@
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton'
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton'
 import FormSaveMembership, { defaultValuesFormMembership } from '../FormMembership/FormSaveMembership'
 import { IDialogMembershipProps } from './DialogMembershipProps';
 import { IFormSaveMembershipData, schemaSaveMembership } from '../FormMembership/FormMembershipProps';

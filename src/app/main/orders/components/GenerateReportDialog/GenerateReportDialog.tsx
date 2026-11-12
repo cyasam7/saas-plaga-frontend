@@ -8,7 +8,7 @@ import { IGenerateReportForm, generateReportSchema, TypeReport } from './schema'
 import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/useMutationDownloadOrderCertificate';
 import { useMutationDownloadFumigationReport } from 'src/app/requests/orders/useMutationDownloadFumigationReport';
 import { downloadPdfFile } from '../../utils';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 
 const mapTranslate = {
 	[TypeReport.SERVICE_ORDER]: "Orden de servicio",

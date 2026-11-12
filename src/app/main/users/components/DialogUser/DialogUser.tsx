@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton';
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import HeaderDialog from 'app/shared-components/DialogSkeleton/HeaderDialog/HeaderDialog';
+import HeaderDialog from 'app/shared/components/DialogSkeleton/HeaderDialog/HeaderDialog';
 import { useQueryGetUser } from 'src/app/requests/users/useQueryGetUser';
 import { useMutationSaveUser } from 'src/app/requests/users/useMutationSaveUser';
 import { userKeys } from 'src/app/requests/users/keys';
 import { ERoleCode } from 'src/app/requests/users/types';
-import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
+import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
 import FormUser from '../FormUser/FormUser';
 import { IDialogUserProps } from './IDialogUserProps';

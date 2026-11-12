@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
+import { formatCurrency } from 'src/app/shared/constants/formatCurrency';
 import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { formatOrderWhen } from '../utils';
 import FumigatorAvatar from './FumigatorAvatar';

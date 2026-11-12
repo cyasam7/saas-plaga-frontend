@@ -42,7 +42,7 @@ export default defineConfig({
 			"@lodash": "/src/@lodash",
 			"@schema": "/src/@schema",
 			"app/store": "/src/app/store",
-			"app/shared-components": "/src/app/shared-components",
+			"app/shared/components": "/src/app/shared/components",
 			"app/configs": "/src/app/configs",
 			"app/core": "/src/app/core"
 		},

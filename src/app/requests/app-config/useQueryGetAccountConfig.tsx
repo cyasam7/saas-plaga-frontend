@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
 import { AxiosFetcher } from 'src/app/shared/fetcher';
-import { HEADER_TENANT_NAME } from 'src/app/shared-constants/headers';
+import { HEADER_TENANT_NAME } from 'src/app/shared/constants/headers';
 import { appConfigKeys } from 'src/app/requests/app-config/keys';
 
 export interface IGetAccountConfigPayload {

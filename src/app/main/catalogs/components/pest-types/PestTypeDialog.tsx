@@ -6,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { useForm } from 'react-hook-form';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import { Box, useTheme } from '@mui/material';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import { INamedCatalogItem } from 'src/app/requests/catalogs/types';

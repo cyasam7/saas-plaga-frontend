@@ -7,17 +7,17 @@ import { useMutationSaveUserSign } from 'src/app/requests/users/useMutationSaveU
 import { userKeys } from 'src/app/requests/users/keys';
 import { Visibility, NotInterested, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
 import { ReactElement, useMemo, useState } from 'react';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
+import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
 import { useAppSelector } from 'app/store/store';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
 import { columnsUsers } from './columns';
 import HeaderGrid from './components/HeaderGrid/HeaderGrid';
 import DialogUser from './components/DialogUser/DialogUser';
-import DialogSigner from '../../shared-components/DialogSigner/DialogSigner';
+import DialogSigner from '../../shared/components/DialogSigner/DialogSigner';
 import SignViewer from './components/SignViewer/SignViewer';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
 

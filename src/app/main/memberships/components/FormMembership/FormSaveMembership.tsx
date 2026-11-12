@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { Grid, MenuItem, Divider, Typography } from '@mui/material';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import { IFormSaveMembershipData, IFormSaveMembershipProps } from './FormMembershipProps';
-import { DatePickerForm } from 'app/shared-components/DatePicker/DatePicker';
-import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
+import { DatePickerForm } from 'app/shared/components/DatePicker/DatePicker';
+import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';
 import { EMembershipType } from 'src/app/requests/memberships/types';
-import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
+import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 
 export const defaultValuesFormMembership = {
   id: undefined,

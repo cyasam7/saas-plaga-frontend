@@ -13,7 +13,7 @@ import { displayToast } from 'app/core/feedback/toast';
 import { ProductCard } from './ProductCard';
 import { ProductsLoading } from './ProductsLoading';
 import { ProductsEmpty } from './ProductsEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
+import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
 
 export default function Products() {
     const { data: products = [], refetch, isLoading } = useQueryInsecticideTypes()

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useGeolocation from 'src/app/shared-hooks/useGeolocation';
+import useGeolocation from 'src/app/shared/hooks/useGeolocation';
 
 import { Map, Marker, useMarkerRef } from '@vis.gl/react-google-maps';
 import { Skeleton } from '@mui/material';

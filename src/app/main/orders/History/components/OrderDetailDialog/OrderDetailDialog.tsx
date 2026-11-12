@@ -12,8 +12,8 @@ import {
 	Typography
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { DATE_FORMAT, DATE_TIME_FORMAT } from 'src/app/shared-constants/dateFormat';
-import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
+import { DATE_FORMAT, DATE_TIME_FORMAT } from 'src/app/shared/constants/dateFormat';
+import { formatCurrency } from 'src/app/shared/constants/formatCurrency';
 import ChipOrder from '../../../components/ChipOrder/ChipOrder';
 import { IGetOrderDetailResponse, useQueryGetOrderDetail } from 'src/app/requests/orders/useQueryGetOrderDetail';
 import { IOrderDetailDialogProps } from './IOrderDetailDialog';

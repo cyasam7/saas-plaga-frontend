@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
+import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
 import { IFormSaveAccount } from './types';
 import { ComponentType } from 'react';
 import CertificatePreview from './components/CertificatePreview/CertificatePreview';

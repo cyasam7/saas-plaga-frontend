@@ -10,7 +10,7 @@ import { displayToast } from 'app/core/feedback/toast';
 import { PestTypeCard } from './PestTypeCard';
 import { PestTypesLoading } from './PestTypesLoading';
 import { PestTypesEmpty } from './PestTypesEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
+import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
 import { useQueryPestTypes } from 'src/app/requests/catalogs/useQueryPestTypes';
 import { useMutationSavePestType } from 'src/app/requests/catalogs/useMutationSavePestType';
 import { useMutationDeletePestType } from 'src/app/requests/catalogs/useMutationDeletePestType';

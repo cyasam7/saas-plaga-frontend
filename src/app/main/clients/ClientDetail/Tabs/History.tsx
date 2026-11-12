@@ -14,7 +14,7 @@ import {
 } from "@mui/material"
 import { useState } from "react"
 import dayjs from "dayjs"
-import { DATE_FORMAT } from "src/app/shared-constants/dateFormat"
+import { DATE_FORMAT } from "src/app/shared/constants/dateFormat"
 import ChipOrder from "src/app/main/orders/components/ChipOrder/ChipOrder"
 import {
   IClientOrdersHistoryResponse,

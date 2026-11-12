@@ -2,12 +2,12 @@ import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { Button, Paper, Stack, useTheme } from '@mui/material';
 import PageLayout from 'app/core/page/PageLayout';
 import { Add } from '@mui/icons-material';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 import { useQueryMembershipsDatagrid } from 'src/app/requests/memberships/useQueryMembershipsDatagrid';
 import { useMutationChangeMembershipIsActive } from 'src/app/requests/memberships/useMutationChangeMembershipIsActive';
 import { useMutationExtendMembershipDueDate } from 'src/app/requests/memberships/useMutationExtendMembershipDueDate';
 import dayjs from 'dayjs';
-import { DATE_FORMAT } from 'src/app/shared-constants/dateFormat';
+import { DATE_FORMAT } from 'src/app/shared/constants/dateFormat';
 import DialogMembership from './components/DialogMembership/DialogMembership';
 import { useState } from 'react';
 

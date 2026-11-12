@@ -7,8 +7,8 @@ import {
 	Person
 } from '@mui/icons-material';
 import { Controller } from 'react-hook-form';
-import { NumericFormatAdapter } from 'app/shared-components/NumericFormatAdapter/NumericFormatAdapter';
-import { DateTimePickerField } from 'app/shared-components/DateTimePicker';
+import { NumericFormatAdapter } from 'app/shared/components/NumericFormatAdapter/NumericFormatAdapter';
+import { DateTimePickerField } from 'app/shared/components/DateTimePicker';
 import { EClientType, IFormOrderProps } from './FormOrderProps';
 import FormOrderIndividual from './FormOrderIndividual';
 import FormOrderBusiness from './FormOrderBusiness';

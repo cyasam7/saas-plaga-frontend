@@ -1,6 +1,6 @@
 import PageLayout from 'app/core/page/PageLayout';
 import { Container, Grid, Card, CardContent, Typography } from '@mui/material';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 function Inspection() {
 

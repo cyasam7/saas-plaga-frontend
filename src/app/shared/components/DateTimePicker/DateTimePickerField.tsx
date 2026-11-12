@@ -1,12 +1,12 @@
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DateTimePicker, DateTimePickerProps } from '@mui/x-date-pickers';
 import { FormHelperText } from '@mui/material';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import dayjs, { Dayjs } from 'dayjs';
-import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
+import { TIMEZONE } from 'src/app/shared/constants/dateFormat';
 
 export type DateTimePickerViews = 'year' | 'month' | 'day' | 'hours' | 'minutes';
-interface DatePickerFormProps<T extends FieldValues> {
+interface DateTimePickerFieldProps<T extends FieldValues> {
 	name: Path<T>;
 	control: Control<T>;
 	label?: string;
@@ -14,9 +14,10 @@ interface DatePickerFormProps<T extends FieldValues> {
 	required?: boolean;
 	minDate?: Dayjs;
 	fullWidth?: boolean;
+	datePickerProps?: DateTimePickerProps<Dayjs>
 }
 
-export function DatePickerForm<T extends FieldValues>({
+export function DateTimePickerField<T extends FieldValues>({
 	name,
 	control,
 	label = 'Fecha',
@@ -24,7 +25,8 @@ export function DatePickerForm<T extends FieldValues>({
 	required = true,
 	minDate = dayjs(),
 	fullWidth = true,
-}: DatePickerFormProps<T>) {
+	datePickerProps
+}: DateTimePickerFieldProps<T>) {
 
 	return (
 		<Controller
@@ -32,13 +34,16 @@ export function DatePickerForm<T extends FieldValues>({
 			name={name}
 			render={({ field, fieldState }) => (
 				<>
-					<DatePicker
+					<DateTimePicker
+						timezone={TIMEZONE}
 						label={required ? `${label} *` : label}
 						disabled={disabled}
 						sx={{ width: fullWidth ? '100%' : 'auto' }}
 						value={field.value}
 						minDate={minDate}
 						onChange={(newValue) => field.onChange(newValue)}
+						ampm={true}
+						{...datePickerProps}
 						slotProps={{
 							textField: {
 								variant: 'outlined',

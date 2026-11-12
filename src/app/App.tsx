@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import { pdfjs } from 'react-pdf';
 import withAppProviders from './withAppProviders';
 import { AuthRouteProvider } from './auth/AuthRouteProvider';
-import GlobalDialog from './shared-components/GlobalDialog/GlobalDialog';
+import GlobalDialog from './shared/components/GlobalDialog/GlobalDialog';
 import Toaster from './core/feedback/Toaster';
 import AppThemeProvider from './core/theme/AppThemeProvider';
 import AppLayout from './core/layout/AppLayout';

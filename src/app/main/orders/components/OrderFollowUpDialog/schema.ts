@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs';
-import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
+import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
 import * as yup from 'yup';
 
 export interface IFollowUpForm {

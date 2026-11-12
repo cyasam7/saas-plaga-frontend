@@ -14,10 +14,10 @@ import {
 	FIELD_PASSWORD_SHORT,
 	FIELD_REQUIRED,
 	FIELD_TERMS_CONDITIONS
-} from 'src/app/shared-constants/yupMessages';
+} from 'src/app/shared/constants/yupMessages';
 import { AxiosError } from 'axios';
 import { SignUpPayload, useAuth } from '../../../auth/AuthRouteProvider';
-import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
+import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 
 /**
  * Form Validation Schema

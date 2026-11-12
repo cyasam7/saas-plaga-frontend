@@ -11,8 +11,8 @@ import {
   Chip,
 } from "@mui/material"
 import dayjs from "dayjs"
-import { DATE_TIME_FORMAT, DATE_FORMAT } from "src/app/shared-constants/dateFormat"
-import { formatCurrency } from "src/app/shared-constants/formatCurrency"
+import { DATE_TIME_FORMAT, DATE_FORMAT } from "src/app/shared/constants/dateFormat"
+import { formatCurrency } from "src/app/shared/constants/formatCurrency"
 import ChipOrder from "src/app/main/orders/components/ChipOrder/ChipOrder"
 import { IClientOrdersHistoryResponse } from "src/app/requests/clients/useQueryClientOrdersHistory"
 

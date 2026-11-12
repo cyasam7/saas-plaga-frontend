@@ -3,7 +3,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import { FileDownload, Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
+import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
 import { displayToast } from 'app/core/feedback/toast';
 import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { EStatusOrder } from 'src/app/requests/orders/types';

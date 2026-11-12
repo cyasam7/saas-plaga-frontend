@@ -13,7 +13,7 @@ import { displayToast } from 'app/core/feedback/toast';
 import { ApplicationTypeCard } from './ApplicationTypeCard';
 import { ApplicationTypesLoading } from './ApplicationTypesLoading';
 import { ApplicationTypesEmpty } from './ApplicationTypesEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
+import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
 
 export default function ApplicationTypes() {
     const { data: applicationTypes = [], refetch, isLoading } = useQueryApplicationTypes()

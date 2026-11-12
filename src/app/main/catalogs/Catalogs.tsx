@@ -12,7 +12,7 @@ import { Container, Stack } from '@mui/material';
 import ServiceTypes from './components/service-types/ServiceTypes';
 import Products from './components/products/Products';
 import PestTypes from './components/pest-types/PestTypes';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 
 export default function CatalogsV2() {

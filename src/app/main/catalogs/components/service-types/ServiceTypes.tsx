@@ -13,7 +13,7 @@ import { displayToast } from 'app/core/feedback/toast';
 import { ServiceTypeCard } from './ServiceTypeCard';
 import { ServiceTypesLoading } from './ServiceTypesLoading';
 import { ServiceTypesEmpty } from './ServiceTypesEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
+import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
 
 export default function ServiceTypes() {
     const { data: serviceTypes = [], refetch, isLoading } = useQueryServiceTypes()

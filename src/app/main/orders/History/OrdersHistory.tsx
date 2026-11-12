@@ -4,7 +4,7 @@ import { FileDownload, ReceiptLong, Visibility } from '@mui/icons-material';
 import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from '@mui/x-data-grid';
 
 import PageLayout from 'app/core/page/PageLayout';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 

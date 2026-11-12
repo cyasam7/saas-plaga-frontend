@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import useDebounce from 'src/app/shared-hooks/useDebounce';
+import useDebounce from 'src/app/shared/hooks/useDebounce';
 
 import { EMPTY_FILTERS, filtersToParams, OrdersHistoryFilters, parseFiltersFromParams } from '../helpers';
 

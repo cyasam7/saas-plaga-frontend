@@ -1,9 +1,9 @@
 import { Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { LocationOn, Person } from '@mui/icons-material';
 import { Controller, UseFormReturn } from 'react-hook-form';
-import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
+import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';
+import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import { useQueryClientDataByPhone } from 'src/app/requests/orders/useQueryClientDataByPhone';
 import { EClientType, IFormCreatePest } from './FormOrderProps';
 

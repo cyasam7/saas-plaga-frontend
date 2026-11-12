@@ -1,10 +1,10 @@
 import React from 'react';
 import { FormControl, FormLabel, MenuItem, Stack, Typography } from '@mui/material';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
-import HeaderDialog from 'app/shared-components/DialogSkeleton/HeaderDialog/HeaderDialog';
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
+import HeaderDialog from 'app/shared/components/DialogSkeleton/HeaderDialog/HeaderDialog';
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
 import { useForm } from 'react-hook-form';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
+import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
 import { useQueryClient } from 'react-query';
 import { useQueryFumigatorsToAssignOrder } from 'src/app/requests/orders/useQueryFumigatorsToAssignOrder';
 import { useMutationAssignOrder } from 'src/app/requests/orders/useMutationAssignOrder';

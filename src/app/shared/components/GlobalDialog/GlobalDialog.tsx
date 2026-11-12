@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/
 import React, { useState } from 'react';
 import { useAppSelector } from 'app/store/store';
 import { useDispatch } from 'react-redux';
-import { closeModal, selectGlobalDialog } from '../../auth/user/store/dialogSlice';
+import { closeModal, selectGlobalDialog } from '../../../auth/user/store/dialogSlice';
 
 function GlobalDialog() {
 	const [loading, setLoading] = useState<boolean>(false);

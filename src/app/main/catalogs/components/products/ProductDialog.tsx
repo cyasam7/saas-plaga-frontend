@@ -6,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { useForm, useFieldArray } from 'react-hook-form';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import { Box, useTheme, IconButton, Typography, Grid, Paper, MenuItem } from '@mui/material';
 import ScienceIcon from '@mui/icons-material/Science';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';

@@ -3,8 +3,8 @@ import { GridColDef } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 
 import ChipOrder from 'src/app/main/orders/components/ChipOrder/ChipOrder';
-import { DATE_FORMAT, TIME_FORMAT } from 'src/app/shared-constants/dateFormat';
-import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
+import { DATE_FORMAT, TIME_FORMAT } from 'src/app/shared/constants/dateFormat';
+import { formatCurrency } from 'src/app/shared/constants/formatCurrency';
 import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 
 import { statusLabel } from '../utils';

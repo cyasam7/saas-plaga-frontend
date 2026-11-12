@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from 'src/app/auth/AuthRouteProvider';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
+import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
 
 /**
  * Form Validation Schema

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import _ from '@lodash';
 import { PartialDeep } from 'type-fest';
-import { ApiError } from 'src/app/shared-interfaces/ErrorAxios';
+import { ApiError } from 'src/app/shared/interfaces/ErrorAxios';
 import { AxiosConfigRetry, User as UserType } from '../../user';
 import {
 	IGetCurrentUserResponse,
@@ -12,7 +12,7 @@ import {
 	ISignUpPayload
 } from 'src/app/requests/auth/types';
 import { formatUserResponse } from './utils';
-import { TIMEZONE } from 'src/app/shared-constants/dateFormat';
+import { TIMEZONE } from 'src/app/shared/constants/dateFormat';
 
 export type SignUpPayload = ISignUpPayload;
 

@@ -24,7 +24,7 @@ vi.mock('src/app/requests/orders/useQueryClientDataByPhone', () => ({
 }));
 
 const openDialog = vi.fn();
-vi.mock('app/shared-components/GlobalDialog/openDialog', () => ({
+vi.mock('app/shared/components/GlobalDialog/openDialog', () => ({
 	openDialog: (...args: unknown[]) => openDialog(...args)
 }));
 
