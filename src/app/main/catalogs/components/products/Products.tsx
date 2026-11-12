@@ -13,9 +13,10 @@ import { displayToast } from 'app/core/feedback/toast';
 import { ProductCard } from './ProductCard';
 import { ProductsLoading } from './ProductsLoading';
 import { ProductsEmpty } from './ProductsEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 
 export default function Products() {
+    const { openDialog: openGlobalDialog } = useGlobalDialog();
     const { data: products = [], refetch, isLoading } = useQueryInsecticideTypes()
     const { mutateAsync: saveInsecticideType } = useMutationSaveInsecticideType()
     const { mutateAsync: deleteInsecticideType } = useMutationDeleteInsecticideType()

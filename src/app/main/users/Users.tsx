@@ -7,7 +7,7 @@ import { useMutationSaveUserSign } from 'src/app/requests/users/useMutationSaveU
 import { userKeys } from 'src/app/requests/users/keys';
 import { Visibility, NotInterested, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
 import { ReactElement, useMemo, useState } from 'react';
-import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
 import { useAppSelector } from 'app/store/store';
@@ -22,6 +22,7 @@ import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswo
 import SyncLockIcon from '@mui/icons-material/SyncLock';
 
 function Users() {
+	const { openDialog } = useGlobalDialog();
 	const [userId, setUserId] = useState('');
 	const [openSigner, setOpenSigner] = useState(false);
 	const [openPreviewSign, setOpenPreviewSign] = useState(false);

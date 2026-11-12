@@ -21,7 +21,7 @@ import { useQueryGetClient } from "src/app/requests/clients/useQueryGetClient"
 import { useMutationSaveClient } from "src/app/requests/clients/useMutationSaveClient"
 import { IBranchesResponse, useQueryBranches } from "src/app/requests/branches/useQueryBranches"
 import { useMutationDeleteBranch } from "src/app/requests/branches/useMutationDeleteBranch"
-import { openDialog } from "app/shared/components/GlobalDialog/openDialog"
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { HistoryTab } from "./Tabs/History"
 import { BranchesTab } from "./Tabs/Branches"
 import PageHeader from "../PageHeader"
@@ -29,6 +29,7 @@ import { FormClientValues } from "../Forms/NewClientForm/types"
 
 
 export function ClientDetail() {
+  const { openDialog } = useGlobalDialog();
   const navigate = useNavigate()
 
   const { clientId = "" } = useParams()

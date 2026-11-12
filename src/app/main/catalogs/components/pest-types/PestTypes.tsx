@@ -10,12 +10,13 @@ import { displayToast } from 'app/core/feedback/toast';
 import { PestTypeCard } from './PestTypeCard';
 import { PestTypesLoading } from './PestTypesLoading';
 import { PestTypesEmpty } from './PestTypesEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { useQueryPestTypes } from 'src/app/requests/catalogs/useQueryPestTypes';
 import { useMutationSavePestType } from 'src/app/requests/catalogs/useMutationSavePestType';
 import { useMutationDeletePestType } from 'src/app/requests/catalogs/useMutationDeletePestType';
 
 export default function PestTypes() {
+    const { openDialog: openGlobalDialog } = useGlobalDialog();
     const { data: pestTypes = [], refetch, isLoading } = useQueryPestTypes()
     const { mutateAsync: savePestType } = useMutationSavePestType()
     const { mutateAsync: deletePestType } = useMutationDeletePestType()

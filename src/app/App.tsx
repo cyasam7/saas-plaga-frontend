@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import { pdfjs } from 'react-pdf';
 import withAppProviders from './withAppProviders';
 import { AuthRouteProvider } from './auth/AuthRouteProvider';
-import GlobalDialog from './shared/components/GlobalDialog/GlobalDialog';
+import { GlobalDialogProvider } from './shared/components/GlobalDialog/GlobalDialogContext';
 import Toaster from './core/feedback/Toaster';
 import AppThemeProvider from './core/theme/AppThemeProvider';
 import AppLayout from './core/layout/AppLayout';
@@ -61,9 +61,10 @@ function App() {
 									containerRoot: 'bottom-0 right-0 mb-52 md:mb-68 mr-8 lg:mr-80 z-99'
 								}}
 							>
-								<AppLayout />
-								<GlobalDialog />
-								<Toaster />
+								<GlobalDialogProvider>
+									<AppLayout />
+									<Toaster />
+								</GlobalDialogProvider>
 							</SnackbarProvider>
 						</LocalizationProvider>
 					</AuthRouteProvider>

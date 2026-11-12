@@ -13,9 +13,10 @@ import { displayToast } from 'app/core/feedback/toast';
 import { ApplicationTypeCard } from './ApplicationTypeCard';
 import { ApplicationTypesLoading } from './ApplicationTypesLoading';
 import { ApplicationTypesEmpty } from './ApplicationTypesEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 
 export default function ApplicationTypes() {
+    const { openDialog: openGlobalDialog } = useGlobalDialog();
     const { data: applicationTypes = [], refetch, isLoading } = useQueryApplicationTypes()
     const { mutateAsync: saveApplicationType } = useMutationSaveApplicationType()
     const { mutateAsync: deleteApplicationType } = useMutationDeleteApplicationType()

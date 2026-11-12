@@ -4,7 +4,7 @@ import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldFor
 import HeaderDialog from 'app/shared/components/DialogSkeleton/HeaderDialog/HeaderDialog';
 import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
 import { useForm } from 'react-hook-form';
-import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { useQueryClient } from 'react-query';
 import { useQueryFumigatorsToAssignOrder } from 'src/app/requests/orders/useQueryFumigatorsToAssignOrder';
 import { useMutationAssignOrder } from 'src/app/requests/orders/useMutationAssignOrder';
@@ -13,6 +13,7 @@ import { displayToast } from 'app/core/feedback/toast';
 import { IAssignOrderDialog, IAssignOrderForm } from './IAssignOrderDialog';
 
 function AssignOrderDialog(props: IAssignOrderDialog) {
+	const { openDialog } = useGlobalDialog();
 	const { onClose, open, orderId } = props;
 	const queryClient = useQueryClient();
 

@@ -1,55 +1,56 @@
 import { LoadingButton } from '@mui/lab';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import React, { useState } from 'react';
-import { useAppSelector } from 'app/store/store';
-import { useDispatch } from 'react-redux';
-import { closeModal, selectGlobalDialog } from '../../../auth/user/store/dialogSlice';
+import { useState } from 'react';
+import type { IGlobalDialogOptions } from './GlobalDialogContext';
 
-function GlobalDialog() {
-	const [loading, setLoading] = useState<boolean>(false);
-	const dispatch = useDispatch();
-	const { onAccept, open, text, title, onCancel, textAccept, textCancel } = useAppSelector(selectGlobalDialog);
+type GlobalDialogProps = {
+	dialogOptions: IGlobalDialogOptions | null;
+	onClose: () => void;
+};
+
+function GlobalDialog({ dialogOptions, onClose }: GlobalDialogProps) {
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	async function handleSubmit(): Promise<void> {
 		try {
-			setLoading(true);
-			await onAccept();
+			setIsLoading(true);
+			await dialogOptions?.onAccept();
 		} catch {
-			dispatch(closeModal());
-			setLoading(false);
+			// onAccept handles and reports its own errors; the dialog only needs to close.
 		} finally {
-			dispatch(closeModal());
-			setLoading(false);
+			onClose();
+			setIsLoading(false);
 		}
 	}
-	function handleClose(): void {
-		onCancel?.();
-		dispatch(closeModal());
+
+	function handleCancel(): void {
+		dialogOptions?.onCancel?.();
+		onClose();
 	}
 
 	return (
 		<Dialog
-			open={open}
+			open={dialogOptions !== null}
 			PaperProps={{ sx: { minWidth: '400px', minHeight: '160px' } }}
 		>
-			<DialogTitle>{title}</DialogTitle>
-			<DialogContent>{text}</DialogContent>
+			<DialogTitle>{dialogOptions?.title}</DialogTitle>
+			<DialogContent>{dialogOptions?.text}</DialogContent>
 			<DialogActions>
 				<Button
-					onClick={handleClose}
-					disabled={loading}
+					onClick={handleCancel}
+					disabled={isLoading}
 					color="secondary"
 					variant="outlined"
 				>
-					{textCancel ?? 'Cancelar'}
+					{dialogOptions?.textCancel ?? 'Cancelar'}
 				</Button>
 				<LoadingButton
 					onClick={handleSubmit}
 					color="primary"
 					variant="contained"
-					loading={loading}
+					loading={isLoading}
 				>
-					{textAccept ?? 'Aceptar'}
+					{dialogOptions?.textAccept ?? 'Aceptar'}
 				</LoadingButton>
 			</DialogActions>
 		</Dialog>

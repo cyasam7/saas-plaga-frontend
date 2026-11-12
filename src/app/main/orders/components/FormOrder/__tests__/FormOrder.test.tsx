@@ -24,8 +24,8 @@ vi.mock('src/app/requests/orders/useQueryClientDataByPhone', () => ({
 }));
 
 const openDialog = vi.fn();
-vi.mock('app/shared/components/GlobalDialog/openDialog', () => ({
-	openDialog: (...args: unknown[]) => openDialog(...args)
+vi.mock('app/shared/components/GlobalDialog/GlobalDialogContext', () => ({
+	useGlobalDialog: () => ({ openDialog: (...args: unknown[]) => openDialog(...args) })
 }));
 
 // Business form data (request hooks)

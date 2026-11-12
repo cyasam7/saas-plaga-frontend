@@ -13,9 +13,10 @@ import { displayToast } from 'app/core/feedback/toast';
 import { ServiceTypeCard } from './ServiceTypeCard';
 import { ServiceTypesLoading } from './ServiceTypesLoading';
 import { ServiceTypesEmpty } from './ServiceTypesEmpty';
-import { openDialog as openGlobalDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 
 export default function ServiceTypes() {
+    const { openDialog: openGlobalDialog } = useGlobalDialog();
     const { data: serviceTypes = [], refetch, isLoading } = useQueryServiceTypes()
     const { mutateAsync: saveServiceType } = useMutationSaveServiceType()
     const { mutateAsync: deleteServiceType } = useMutationDeleteServiceType()

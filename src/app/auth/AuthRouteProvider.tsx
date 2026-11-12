@@ -7,14 +7,12 @@ import {
 	resetUser,
 	selectUser,
 	setUser,
-	updateUser,
-	userSlice
+	updateUser
 } from 'src/app/auth/user/store/userSlice';
 import { PartialDeep } from 'type-fest';
 import firebase from 'firebase/compat/app';
 import _ from '@lodash';
 import { useSelector } from 'react-redux';
-import withReducer from 'app/store/withReducer';
 import { useQueryClient } from 'react-query';
 import useJwtAuth, { JwtAuth } from './services/jwt/useJwtAuth';
 import { User } from './user';
@@ -44,7 +42,7 @@ const AuthContext = createContext<AuthContext>({
 
 type AuthProviderProps = { children: React.ReactNode };
 
-function AuthRoute(props: AuthProviderProps) {
+function AuthRouteProvider(props: AuthProviderProps) {
 	const { children } = props;
 	const dispatch = useAppDispatch();
 	const queryClient = useQueryClient();
@@ -228,6 +226,4 @@ function useAuth(): AuthContext {
 	}
 	return context;
 }
-const AuthRouteProvider = withReducer<AuthProviderProps>('user', userSlice.reducer)(AuthRoute);
-
 export { useAuth, AuthRouteProvider };

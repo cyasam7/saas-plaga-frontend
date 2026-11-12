@@ -3,7 +3,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import { FileDownload, Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
 import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { EStatusOrder } from 'src/app/requests/orders/types';
@@ -24,6 +24,8 @@ export function MobileCard({
 	onDownloadCertificate,
 	onDelete
 }: MobileCardProps) {
+	const { openDialog } = useGlobalDialog();
+
 	return (
 		<Box key={order.id}>
 			<Card sx={{ mb: 2, width: '100%' }}>

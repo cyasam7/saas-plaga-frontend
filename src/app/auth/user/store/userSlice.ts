@@ -1,12 +1,10 @@
 /* eslint import/no-extraneous-dependencies: off */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootStateType } from 'app/store/types';
+import type { RootState } from 'app/store/store';
 import { User } from 'src/app/auth/user';
 import { PartialDeep } from 'type-fest';
 import _ from '@lodash';
 import userModel from '../models/UserModel';
-
-type AppRootStateType = RootStateType<userSliceType>;
 
 /**
  * Sets the user object in the Redux store.
@@ -66,10 +64,8 @@ export const userSlice = createSlice({
 
 export const { userSignOut, updateUser } = userSlice.actions;
 
-export const selectUser = (state: AppRootStateType) => state?.user;
+export const selectUser = (state: RootState) => state?.user;
 
-export const selectUserRole = (state: AppRootStateType) => state?.user?.role;
-
-export type userSliceType = typeof userSlice;
+export const selectUserRole = (state: RootState) => state?.user?.role;
 
 export default userSlice.reducer;

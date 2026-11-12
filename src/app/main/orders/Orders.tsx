@@ -5,7 +5,7 @@ import MoveUpIcon from '@mui/icons-material/MoveUp';
 import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-material';
-import { openDialog } from 'app/shared/components/GlobalDialog/openDialog';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
 import { IOrdersDatagridResponse, useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
@@ -25,6 +25,7 @@ import './styles/actionButtons.css';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
 
 function Order() {
+	const { openDialog } = useGlobalDialog();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [open, setOpen] = useState<boolean>(false);
