@@ -15,12 +15,12 @@ import {
 import { useNavigate, useParams } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import DetailTabs from "./DetailTabs"
-import { Branch } from "../types"
 import ClientInfo from "./ClientInfo"
 import { BranchForm } from "../Forms/BranchForm"
-import { useQuery } from "react-query"
-import { ClientService } from "src/app/shared/services/ClientService"
-import { BranchService } from "src/app/shared/services/BranchService"
+import { useQueryGetClient } from "src/app/requests/clients/useQueryGetClient"
+import { useMutationSaveClient } from "src/app/requests/clients/useMutationSaveClient"
+import { IBranchesResponse, useQueryBranches } from "src/app/requests/branches/useQueryBranches"
+import { useMutationDeleteBranch } from "src/app/requests/branches/useMutationDeleteBranch"
 import { openDialog } from "app/shared-components/GlobalDialog/openDialog"
 import { HistoryTab } from "./Tabs/History"
 import { BranchesTab } from "./Tabs/Branches"
@@ -31,37 +31,32 @@ import { FormClientValues } from "../Forms/NewClientForm/types"
 export function ClientDetail() {
   const navigate = useNavigate()
 
-  const { clientId } = useParams()
+  const { clientId = "" } = useParams()
 
-  const { data: client, isLoading, refetch: refetchClient } = useQuery({
-    queryKey: ["clients", clientId],
-    queryFn: () => {
-      return ClientService.byId(clientId)
-    }
-  })
+  const { data: client, isLoading, refetch: refetchClient } = useQueryGetClient({ clientId }, Boolean(clientId))
+  const { mutateAsync: saveClient } = useMutationSaveClient()
+  const { mutateAsync: deleteBranch } = useMutationDeleteBranch()
 
   const isBusiness = client?.type === "business"
 
   const handleSaveSection = async (values: FormClientValues) => {
     if (!clientId) return
-    await ClientService.save(values, clientId)
+    await saveClient({ ...values, id: clientId })
     await refetchClient()
     if (values.type === "business") {
       await refetchBranches()
     }
   }
 
-  const { data: branches = [], isLoading: isLoadingBranches, refetch: refetchBranches } = useQuery({
-    queryKey: ["branches", clientId],
-    queryFn: () => {
-      return BranchService.byQuery({ clientId: clientId })
-    },
-    enabled: isBusiness,
-  })
+  const {
+    data: branches = [],
+    isLoading: isLoadingBranches,
+    refetch: refetchBranches,
+  } = useQueryBranches({ clientId }, isBusiness)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const [isBranchFormOpen, setIsBranchFormOpen] = useState(false)
-  const [currentBranch, setCurrentBranch] = useState<Branch | null>(null)
+  const [currentBranch, setCurrentBranch] = useState<IBranchesResponse[number] | null>(null)
   // Vacío = alta de sucursal; con id = edición.
   const [editingBranchId, setEditingBranchId] = useState("")
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
@@ -88,7 +83,7 @@ export function ClientDetail() {
     setIsBranchFormOpen(true)
   }
 
-  const handleEditBranch = (branch: Branch) => {
+  const handleEditBranch = (branch: IBranchesResponse[number]) => {
     setEditingBranchId(branch.id)
     setIsBranchFormOpen(true)
     handleMenuClose()
@@ -105,7 +100,7 @@ export function ClientDetail() {
       title: "Eliminar Sucursal",
       text: "¿Está seguro que desea eliminar esta sucursal? Esta acción no se puede deshacer.",
       onAccept: async () => {
-        await BranchService.remove(branchId)
+        await deleteBranch({ branchId })
         await refetchBranches()
       },
     })

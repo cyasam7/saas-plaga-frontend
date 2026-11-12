@@ -1,7 +1,7 @@
 import type React from "react"
 import { Box, Grid, Typography, Skeleton, Paper } from "@mui/material"
 import { Store } from "@mui/icons-material"
-import { Branch } from "../../types"
+import { IBranchesResponse } from "src/app/requests/branches/useQueryBranches"
 import { BranchCard } from "../../Cards/BranchCard"
 
 const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)"
@@ -21,7 +21,7 @@ const cardEnter = (index: number) => ({
 })
 
 interface BranchesTabProps {
-  branches: Branch[]
+  branches: IBranchesResponse
   isLoading?: boolean
   handleMenuClick: (event: React.MouseEvent<HTMLElement>, branchId: string) => void
   headerComponent?: React.ReactNode

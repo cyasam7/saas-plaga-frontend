@@ -1,6 +1,6 @@
-import { Client } from "../../types"
+import { IClient } from "src/app/requests/clients/types"
 
 export interface ClientCardProps {
-  client: Client
+  client: IClient
   onMenuOpen: (event: React.MouseEvent<HTMLElement>, id: string) => void
 } 

@@ -10,7 +10,6 @@ export const renderWithRedux = (children: React.ReactNode, initialState: any) =>
   const store = configureAppStore(initialState)
   const queryClient = new QueryClient()
 
-
   return (
     <ErrorBoundary>
       <Provider store={store}>

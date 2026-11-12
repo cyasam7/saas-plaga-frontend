@@ -13,12 +13,13 @@ import {
   Typography,
 } from "@mui/material"
 import { useState } from "react"
-import { useQuery } from "react-query"
 import dayjs from "dayjs"
 import { DATE_FORMAT } from "src/app/shared-constants/dateFormat"
 import ChipOrder from "src/app/main/orders/components/ChipOrder/ChipOrder"
-import { ClientService } from "src/app/shared/services/ClientService"
-import { ClientOrderHistoryResponse } from "src/app/shared/entities/ClientOrderHistory"
+import {
+  IClientOrdersHistoryResponse,
+  useQueryClientOrdersHistory,
+} from "src/app/requests/clients/useQueryClientOrdersHistory"
 import { OrderHistoryDetailDialog } from "./OrderHistoryDetailDialog"
 
 interface HistoryTabProps {
@@ -54,13 +55,12 @@ function LoadingRows() {
 }
 
 export const HistoryTab = ({ clientId }: HistoryTabProps) => {
-  const [selectedOrder, setSelectedOrder] = useState<ClientOrderHistoryResponse | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<IClientOrdersHistoryResponse[number] | null>(null)
 
-  const { data: orders = [], isLoading } = useQuery({
-    queryKey: ["client-orders-history", clientId],
-    queryFn: () => ClientService.getOrdersHistory(clientId as string),
-    enabled: Boolean(clientId),
-  })
+  const { data: orders = [], isLoading } = useQueryClientOrdersHistory(
+    { clientId: clientId ?? "" },
+    Boolean(clientId)
+  )
 
   if (!isLoading && orders.length === 0) {
     return <EmptyState />

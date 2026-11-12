@@ -15,7 +15,7 @@ import { z } from "zod"
 import TextFieldForm from "app/shared-components/Form/TextFieldForm/TextFieldForm"
 import PhoneInputForm from "app/shared-components/Form/PhoneInputForm/PhoneInputForm"
 import CheckboxForm from "app/shared-components/Form/CheckboxForm/CheckboxForm"
-import { Client } from "../../types"
+import { IGetClientResponse } from "src/app/requests/clients/useQueryGetClient"
 import { FormClientValues, baseClientObject } from "../../Forms/NewClientForm/types"
 import { clientToFormValues } from "../../Forms/NewClientForm/mapper"
 
@@ -58,7 +58,7 @@ const SECTION_TITLES: Record<ClientSection, string> = {
 interface EditSectionDialogProps {
   open: boolean
   section: ClientSection | null
-  client: Client
+  client: IGetClientResponse
   onClose: () => void
   onSave: (values: FormClientValues) => Promise<void> | void
 }

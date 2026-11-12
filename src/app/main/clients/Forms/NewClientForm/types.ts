@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { ISaveClientPayload } from "src/app/requests/clients/useMutationSaveClient"
 
 const emptyToUndefined = (schema: z.ZodTypeAny) =>
   z.preprocess((v) => (v === "" || v === null ? undefined : v), schema)
@@ -66,7 +67,8 @@ export const formSchema = baseClientObject
     }
   })
 
-export type FormClientValues = z.infer<typeof formSchema>
+// El formulario edita exactamente lo que recibe POST /clients (sin `id`, que va aparte).
+export type FormClientValues = Omit<ISaveClientPayload, "id">
 
 export interface NewClientFormProps {
   open: boolean

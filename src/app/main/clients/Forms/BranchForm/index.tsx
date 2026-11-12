@@ -16,11 +16,12 @@ import {
 import { AddCircleOutline, DeleteOutline } from "@mui/icons-material"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "react-query"
 import TextFieldForm from "src/app/shared-components/Form/TextFieldForm/TextFieldForm"
 import PhoneInputForm from "src/app/shared-components/Form/PhoneInputForm/PhoneInputForm"
-import { BranchService } from "src/app/shared/services/BranchService"
-import { IBranchForm } from "../../types"
+import { IBranchForm } from "src/app/requests/branches/types"
+import { useQueryGetBranchForm } from "src/app/requests/branches/useQueryGetBranchForm"
+import { useMutationCreateBranchForm } from "src/app/requests/branches/useMutationCreateBranchForm"
+import { useMutationUpdateBranchForm } from "src/app/requests/branches/useMutationUpdateBranchForm"
 import { BranchFormProps, branchFormSchema } from "./types"
 
 const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)"
@@ -56,12 +57,9 @@ const newBranchForm: IBranchForm = {
 export function BranchForm({ open, clientId, branchId, onClose, onSaved }: BranchFormProps) {
   const isEditing = Boolean(branchId)
 
-  const { data: branchFormResponse, isLoading: isLoadingForm } = useQuery({
-    queryKey: ["branches", branchId, "form"],
-    queryFn: () => BranchService.getForm(branchId),
-    enabled: open && isEditing,
-    cacheTime: 0,
-  })
+  const { data: branchFormResponse, isLoading: isLoadingForm } = useQueryGetBranchForm({ branchId }, open && isEditing)
+  const { mutateAsync: createBranchForm } = useMutationCreateBranchForm()
+  const { mutateAsync: updateBranchForm } = useMutationUpdateBranchForm()
 
   const {
     control,
@@ -85,8 +83,8 @@ export function BranchForm({ open, clientId, branchId, onClose, onSaved }: Branc
 
   async function handleSaveBranchForm(branchForm: IBranchForm) {
     try {
-      if (isEditing) await BranchService.updateForm(branchId, branchForm)
-      else await BranchService.createForm(clientId, branchForm)
+      if (isEditing) await updateBranchForm({ branchId, form: branchForm })
+      else await createBranchForm({ clientId, form: branchForm })
 
       await onSaved()
       handleClose()

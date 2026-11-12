@@ -16,14 +16,15 @@ import {
 } from '@mui/material';
 import { Add, LocationOn, Search, Store } from '@mui/icons-material';
 import { UseFormReturn } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { displayToast } from 'app/core/feedback/toast';
 import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
 import { PhoneInput } from 'app/shared-components/Form/PhoneInput/PhoneInput';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
-import { ClientService } from 'src/app/shared/services/ClientService';
-import { BranchService } from 'src/app/shared/services/BranchService';
-import { Branch } from 'src/app/main/clients/types';
+import { useQueryClients } from 'src/app/requests/clients/useQueryClients';
+import { IBranchesResponse, useQueryBranches } from 'src/app/requests/branches/useQueryBranches';
+import { useMutationSaveBranch } from 'src/app/requests/branches/useMutationSaveBranch';
+import { branchKeys } from 'src/app/requests/branches/keys';
 import { EBusinessMode, EClientType, IFormCreatePest } from './FormOrderProps';
 import { defaultValuesOrder } from './defaultValues';
 import SelectableCard from './SelectableCard';
@@ -63,17 +64,13 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 	const [addingLocation, setAddingLocation] = useState(false);
 	const [newLocation, setNewLocation] = useState(emptyNewLocation);
 
-	const { data: clients = [], isLoading: isLoadingClients } = useQuery({
-		queryKey: ['business-clients'],
-		queryFn: () => ClientService.getByQuery({ type: 'business' })
-	});
+	const { data: clients = [], isLoading: isLoadingClients } = useQueryClients({ type: 'business' });
 
-	const branchesQueryKey = ['client-branches', clientId];
-	const { data: branches = [], isLoading: isLoadingBranches } = useQuery({
-		queryKey: branchesQueryKey,
-		queryFn: () => BranchService.byQuery({ clientId }),
-		enabled: Boolean(clientId) && businessMode === EBusinessMode.EXISTING
-	});
+	const {
+		data: branches = [],
+		isLoading: isLoadingBranches,
+		refetch: refetchBranches
+	} = useQueryBranches({ clientId }, Boolean(clientId) && businessMode === EBusinessMode.EXISTING);
 
 	function handleModeChange(mode: EBusinessMode): void {
 		formHandler.reset({
@@ -95,48 +92,55 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 		setAddingLocation(false);
 	}
 
-	function applyLocation(branch: Branch): void {
+	function applyLocation(branch: IBranchesResponse[number]): void {
 		setSelectedBranchId(branch.id);
 		formHandler.setValue('clientAddress', branch.address ?? '');
 		formHandler.setValue('clientPhone', branch.contactPhone ?? '');
 	}
 
-	const createLocation = useMutation({
-		mutationFn: () =>
-			BranchService.save({
+	const createLocation = useMutationSaveBranch();
+
+	function handleCreateLocation(): void {
+		createLocation.mutate(
+			{
 				clientId,
 				name: newLocation.name,
 				address: newLocation.address,
 				contactPhone: newLocation.contactPhone,
 				contactPerson: formHandler.watch('clientName')
-			}),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: branchesQueryKey });
-			const refreshed = await BranchService.byQuery({ clientId });
-			const created = refreshed.find(
-				(b) => b.name === newLocation.name && b.address === newLocation.address
-			);
-			if (created) {
-				applyLocation(created);
-			}
-			setAddingLocation(false);
-			setNewLocation(emptyNewLocation);
-			displayToast({
-				message: 'Ubicación agregada',
-				variant: 'success',
-				autoHideDuration: 3000,
-				anchorOrigin: { horizontal: 'right', vertical: 'top' }
-			});
-		},
-		onError: () => {
-			displayToast({
-				message: 'No se pudo agregar la ubicación',
-				variant: 'error',
-				autoHideDuration: 3000,
-				anchorOrigin: { horizontal: 'right', vertical: 'top' }
-			});
-		}
-	});
+			},
+			{ onSuccess: handleLocationCreated, onError: handleLocationCreateError }
+		);
+	}
+
+	async function handleLocationCreated(): Promise<void> {
+		// POST /branch no devuelve el id: se recarga el listado y se ubica la recién creada.
+		await queryClient.invalidateQueries(branchKeys.lists());
+		const { data: refreshedBranches = [] } = await refetchBranches();
+		const createdBranch = refreshedBranches.find(
+			(branch) => branch.name === newLocation.name && branch.address === newLocation.address
+		);
+
+		if (createdBranch) applyLocation(createdBranch);
+
+		setAddingLocation(false);
+		setNewLocation(emptyNewLocation);
+		displayToast({
+			message: 'Ubicación agregada',
+			variant: 'success',
+			autoHideDuration: 3000,
+			anchorOrigin: { horizontal: 'right', vertical: 'top' }
+		});
+	}
+
+	function handleLocationCreateError(): void {
+		displayToast({
+			message: 'No se pudo agregar la ubicación',
+			variant: 'error',
+			autoHideDuration: 3000,
+			anchorOrigin: { horizontal: 'right', vertical: 'top' }
+		});
+	}
 
 	const selectedClient = clients.find((c) => c.id === clientId) ?? null;
 	const canAddLocation =
@@ -426,7 +430,7 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 						Cancelar
 					</Button>
 					<Button
-						onClick={() => createLocation.mutate()}
+						onClick={handleCreateLocation}
 						disabled={!canAddLocation || createLocation.isLoading}
 						variant="contained"
 					>

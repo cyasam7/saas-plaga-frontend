@@ -1,19 +1,14 @@
 import { ClientEntity } from './ClientsEntities';
 import { IUserEntity } from './UserEntity';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 
 export enum EClientType {
   INDIVIDUAL = 'individual',
   BUSINESS = 'business'
 }
 
-export enum EStatusOrder {
-  CREATED = 'CREATED',
-  ASSIGNED = 'ASSIGNED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  PASSED = 'PASSED',
-  DONE = 'DONE',
-  FINISHED = 'FINISHED'
-}
+// Legacy: el enum vive en `requests/orders/types.ts`; se re-exporta para no romper a los consumidores actuales.
+export { EStatusOrder };
 
 export interface OrderEntity {
   id: string;

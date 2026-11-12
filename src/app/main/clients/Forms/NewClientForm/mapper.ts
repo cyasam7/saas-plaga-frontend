@@ -1,4 +1,4 @@
-import { Client } from "../../types"
+import { IGetClientResponse } from "src/app/requests/clients/useQueryGetClient"
 import { FormClientValues } from "./types"
 
 /**
@@ -10,7 +10,7 @@ import { FormClientValues } from "./types"
  * would wipe its branches/areas. Rebuilding from the freshly fetched client —
  * preserving branch/area ids — keeps the re-sync idempotent and lossless.
  */
-export function clientToFormValues(client: Client): FormClientValues {
+export function clientToFormValues(client: IGetClientResponse): FormClientValues {
   return {
     type: client.type,
     name: client.name,
