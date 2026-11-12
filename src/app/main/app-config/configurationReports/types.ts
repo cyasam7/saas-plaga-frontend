@@ -7,3 +7,15 @@ export interface IFormSaveAccount {
 	secondaryColor: string;
 	licenseSanitary: string;
 }
+
+export type ReportType = 'certificate' | 'serviceOrder';
+
+/** Los campos que la configuración de la cuenta controla en cualquier reporte. */
+export interface IReportPreviewProps {
+	name: string;
+	address: string;
+	licenseSanitary: string;
+	primaryColor: string;
+	secondaryColor: string;
+	logoUrl?: string;
+}

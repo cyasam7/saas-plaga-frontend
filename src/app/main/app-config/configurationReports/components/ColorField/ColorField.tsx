@@ -1,8 +1,7 @@
 import { Stack, TextField, Typography } from '@mui/material';
 import { Control, Controller } from 'react-hook-form';
 import { IFormSaveAccount } from '../../types';
-
-const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
+import { safeColor } from '../../utils';
 
 export interface IColorFieldProps {
 	control: Control<IFormSaveAccount>;
@@ -32,7 +31,7 @@ function ColorField({ control, name, label, disabled }: IColorFieldProps) {
 							aria-label={label}
 							disabled={disabled}
 							/* El selector nativo siempre emite un hex válido; el texto puede ir a medias. */
-							value={HEX_PATTERN.test(field.value) ? field.value : '#000000'}
+							value={safeColor(field.value)}
 							onChange={(e) => field.onChange(e.target.value)}
 							style={{ width: 40, height: 40, padding: 0, border: 'none', background: 'none' }}
 						/>

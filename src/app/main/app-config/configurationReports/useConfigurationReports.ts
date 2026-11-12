@@ -7,7 +7,7 @@ import { useMutationSaveAccountConfig } from 'src/app/requests/app-config/useMut
 import { IFormSaveAccount } from './types';
 import { displayToast } from 'app/core/feedback/toast';
 import { accountSchema, defaultValuesAccountUser, validateLogo } from './config';
-import { ReportType } from './entities/ReportPreview';
+import { ReportType } from './types';
 
 export function useConfigurationReports() {
 	const { user } = useAuth();

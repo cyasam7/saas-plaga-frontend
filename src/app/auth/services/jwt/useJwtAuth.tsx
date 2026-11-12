@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import _ from '@lodash';
 import { PartialDeep } from 'type-fest';
-import { ApiError } from 'src/app/shared/interfaces/ErrorAxios';
 import { AxiosConfigRetry, User as UserType } from '../../user';
 import {
+	IApiErrorResponse,
 	IGetCurrentUserResponse,
 	IRefreshTokenPayload,
 	IRefreshTokenResponse,
@@ -280,7 +280,7 @@ const useJwtAuth = <User, SignInPayload, SignUpPayload>(
 				return response;
 			},
 			async (error) => {
-				const axiosError = error as AxiosError<ApiError>;
+				const axiosError = error as AxiosError<IApiErrorResponse>;
 				const statusError = axiosError.response.status;
 				const originalRequest = axiosError.config as AxiosConfigRetry;
 

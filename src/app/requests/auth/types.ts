@@ -75,3 +75,9 @@ export interface IGetCurrentUserResponse {
   };
   tenant?: string;
 }
+
+/** Cuerpo de error que devuelve el API (`HttpExceptionFilter`); lo lee el interceptor de `useJwtAuth`. */
+export interface IApiErrorResponse {
+  statusCode: number;
+  message: string;
+}
