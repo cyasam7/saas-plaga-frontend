@@ -3,26 +3,27 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
-import { IPestType } from '../types';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
+import { ISaveNamedCatalogPayload } from 'src/app/requests/catalogs/types';
 import PestTypeDialog from './PestTypeDialog';
 import { displayToast } from 'app/core/feedback/toast';
-import { useQuery } from 'react-query';
 import { PestTypeCard } from './PestTypeCard';
 import { PestTypesLoading } from './PestTypesLoading';
 import { PestTypesEmpty } from './PestTypesEmpty';
 import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import { PestTypeService } from 'src/app/shared/services/Catalogs/PestTypeService';
+import { useQueryPestTypes } from 'src/app/requests/catalogs/useQueryPestTypes';
+import { useMutationSavePestType } from 'src/app/requests/catalogs/useMutationSavePestType';
+import { useMutationDeletePestType } from 'src/app/requests/catalogs/useMutationDeletePestType';
 
 export default function PestTypes() {
-    const { data: pestTypes = [], refetch, isLoading } = useQuery({
-        queryKey: ['pestTypes'],
-        queryFn: () => PestTypeService.byQuery("")
-    })
+    const { data: pestTypes = [], refetch, isLoading } = useQueryPestTypes()
+    const { mutateAsync: savePestType } = useMutationSavePestType()
+    const { mutateAsync: deletePestType } = useMutationDeletePestType()
     const [openDialog, setOpenDialog] = React.useState(false);
     const [isEditing, setIsEditing] = React.useState(false);
-    const [selectedPest, setSelectedPest] = React.useState<IPestType | null>(null);
+    const [selectedPest, setSelectedPest] = React.useState<INamedCatalogItem | null>(null);
 
-    const handleOpenDialog = (pest?: IPestType) => {
+    const handleOpenDialog = (pest?: INamedCatalogItem) => {
         if (pest) {
             setIsEditing(true);
             setSelectedPest(pest);
@@ -39,8 +40,8 @@ export default function PestTypes() {
         setSelectedPest(null);
     };
 
-    const handleSubmit = async (data: IPestType) => {
-        await PestTypeService.save(data)
+    const handleSubmit = async (data: ISaveNamedCatalogPayload) => {
+        await savePestType(data)
         await refetch()
         displayToast({
             message: isEditing ? 'Tipo de plaga actualizado correctamente' : 'Tipo de plaga creado correctamente',
@@ -50,12 +51,12 @@ export default function PestTypes() {
         handleCloseDialog();
     };
 
-    const handleDelete = async (pest: IPestType) => {
+    const handleDelete = async (pest: INamedCatalogItem) => {
         openGlobalDialog({
             title: 'Eliminar Tipo de Plaga',
             text: '¿Estás seguro de querer eliminar este tipo de plaga?',
             onAccept: async () => {
-                await PestTypeService.delete(pest.id)
+                await deletePestType({ id: pest.id })
                 await refetch()
                 displayToast({
                     message: 'Tipo de plaga eliminado correctamente',

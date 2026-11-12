@@ -9,14 +9,15 @@ import { useForm } from 'react-hook-form';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
 import { Box, useTheme } from '@mui/material';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
-import { IApplicationType } from '../types';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
+import { ISaveNamedCatalogPayload } from 'src/app/requests/catalogs/types';
 
 interface ApplicationTypeDialogProps {
     open: boolean;
     isEditing: boolean;
-    selectedApplication: IApplicationType | null;
+    selectedApplication: INamedCatalogItem | null;
     onClose: () => void;
-    onSubmit: (data: IApplicationType) => void;
+    onSubmit: (data: ISaveNamedCatalogPayload) => void;
 }
 
 export default function ApplicationTypeDialog({
@@ -27,7 +28,7 @@ export default function ApplicationTypeDialog({
     onSubmit
 }: ApplicationTypeDialogProps) {
     const theme = useTheme();
-    const { control, handleSubmit, reset } = useForm<IApplicationType>({
+    const { control, handleSubmit, reset } = useForm<ISaveNamedCatalogPayload>({
         defaultValues: {
             id: '',
             name: '',
@@ -96,7 +97,7 @@ export default function ApplicationTypeDialog({
                         : 'Agrega un nuevo tipo de aplicación al catálogo.'}
                 </DialogContentText>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <TextFieldForm<IApplicationType>
+                    <TextFieldForm<ISaveNamedCatalogPayload>
                         control={control}
                         name="name"
                         label="Nombre"
@@ -105,7 +106,7 @@ export default function ApplicationTypeDialog({
                         margin="dense"
                         sx={{ mt: 2 }}
                     />
-                    <TextFieldForm<IApplicationType>
+                    <TextFieldForm<ISaveNamedCatalogPayload>
                         control={control}
                         name="description"
                         label="Descripción"

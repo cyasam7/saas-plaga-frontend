@@ -1,5 +1,4 @@
 import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
-import { useQuery } from 'react-query';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
@@ -9,8 +8,11 @@ import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-m
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
-import { OrderService } from '../../shared/services/OrderService';
-import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
+import { IOrdersDatagridResponse, useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
+import { useMutationDeleteOrder } from 'src/app/requests/orders/useMutationDeleteOrder';
+import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/useMutationDownloadOrderCertificate';
+import { EStatusOrder } from 'src/app/requests/orders/types';
+import { downloadPdfFile } from './utils';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
 import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
@@ -40,14 +42,13 @@ function Order() {
 		data = { orders: [], stats: { total: 0, today: 0, tomorrow: 0, pending: 0, passed: 0 } },
 		isLoading,
 		refetch
-	} = useQuery({
-		queryKey: ['orders', query],
-		queryFn: () => OrderService.getDatagridOrders(query)
-	});
+	} = useQueryOrdersDatagrid(query);
+	const { mutateAsync: deleteOrder } = useMutationDeleteOrder();
+	const { mutateAsync: downloadOrderCertificate } = useMutationDownloadOrderCertificate();
 
 	const orders = data.orders;
 
-	const columns: GridColDef<DatagridRowOrder>[] = [
+	const columns: GridColDef<IOrdersDatagridResponse['orders'][number]>[] = [
 		...columnsOrders,
 		{
 			headerName: 'Acciones',
@@ -105,7 +106,7 @@ function Order() {
 								title: 'Advertencia',
 								text: '¿Estas seguro que deseas eliminar la orden de servicio?',
 								onAccept: async () => {
-									await OrderService.deleteById(params.row.id);
+									await deleteOrder({ orderId: params.row.id });
 									await refetch();
 									displayToast({
 										message: 'Se ha eliminado correctamente',
@@ -307,13 +308,11 @@ function Order() {
 												setOpenFollow(true);
 											}}
 											onDownloadCertificate={async (id) => {
-												await OrderService.downloadCertificate({
-													daysValid: 30,
-													id
-												});
+												const certificatePdf = await downloadOrderCertificate({ orderId: id, daysValid: 30 });
+												downloadPdfFile(certificatePdf, `${id}.pdf`);
 											}}
 											onDelete={async (id) => {
-												await OrderService.deleteById(id);
+												await deleteOrder({ orderId: id });
 												await refetch();
 											}}
 										/>

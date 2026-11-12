@@ -4,9 +4,11 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import ApplicationTypeDialog from './ApplicationTypeDialog';
-import { IApplicationType } from '../types';
-import { ApplicationTypeService } from 'src/app/shared/services/Catalogs/ApplicationTypeService';
-import { useQuery } from 'react-query';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
+import { ISaveNamedCatalogPayload } from 'src/app/requests/catalogs/types';
+import { useQueryApplicationTypes } from 'src/app/requests/catalogs/useQueryApplicationTypes';
+import { useMutationSaveApplicationType } from 'src/app/requests/catalogs/useMutationSaveApplicationType';
+import { useMutationDeleteApplicationType } from 'src/app/requests/catalogs/useMutationDeleteApplicationType';
 import { displayToast } from 'app/core/feedback/toast';
 import { ApplicationTypeCard } from './ApplicationTypeCard';
 import { ApplicationTypesLoading } from './ApplicationTypesLoading';
@@ -14,15 +16,14 @@ import { ApplicationTypesEmpty } from './ApplicationTypesEmpty';
 import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
 
 export default function ApplicationTypes() {
-    const { data: applicationTypes = [], refetch, isLoading } = useQuery({
-        queryKey: ['applicationTypes'],
-        queryFn: () => ApplicationTypeService.byQuery("")
-    })
+    const { data: applicationTypes = [], refetch, isLoading } = useQueryApplicationTypes()
+    const { mutateAsync: saveApplicationType } = useMutationSaveApplicationType()
+    const { mutateAsync: deleteApplicationType } = useMutationDeleteApplicationType()
     const [isOpenDialog, setIsOpenDialog] = React.useState(false);
     const [isEditing, setIsEditing] = React.useState(false);
-    const [selectedApplication, setSelectedApplication] = React.useState<IApplicationType | null>(null);
+    const [selectedApplication, setSelectedApplication] = React.useState<INamedCatalogItem | null>(null);
 
-    const handleOpenDialog = (application?: IApplicationType) => {
+    const handleOpenDialog = (application?: INamedCatalogItem) => {
         if (application) {
             setIsEditing(true);
             setSelectedApplication(application);
@@ -39,8 +40,8 @@ export default function ApplicationTypes() {
         setSelectedApplication(null);
     };
 
-    const handleSubmit = async (data: IApplicationType) => {
-        await ApplicationTypeService.save(data)
+    const handleSubmit = async (data: ISaveNamedCatalogPayload) => {
+        await saveApplicationType(data)
         await refetch()
         displayToast({
             message: isEditing ? 'Tipo de aplicación actualizado correctamente' : 'Tipo de aplicación creado correctamente',
@@ -50,12 +51,12 @@ export default function ApplicationTypes() {
         handleCloseDialog();
     };
 
-    const handleDelete = async (application: IApplicationType) => {
+    const handleDelete = async (application: INamedCatalogItem) => {
         openGlobalDialog({
             title: 'Eliminar Tipo de Aplicación',
             text: '¿Estás seguro de querer eliminar este tipo de aplicación?',
             onAccept: async () => {
-                await ApplicationTypeService.delete(application.id)
+                await deleteApplicationType({ id: application.id })
                 await refetch()
                 displayToast({
                     message: 'Tipo de aplicación eliminado correctamente',

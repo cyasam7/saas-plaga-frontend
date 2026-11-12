@@ -5,11 +5,12 @@ import { FileDownload, Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
 import { displayToast } from 'app/core/feedback/toast';
-import { DatagridRowOrder, EStatusOrder } from '../../../../shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 import ChipOrder from '../ChipOrder/ChipOrder';
 
 interface MobileCardProps {
-	order: DatagridRowOrder;
+	order: IOrdersDatagridResponse['orders'][number];
 	onAssign: (id: string) => void;
 	onFollow: (id: string) => void;
 	onDownloadCertificate: (id: string) => Promise<void>;

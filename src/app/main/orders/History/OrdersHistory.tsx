@@ -5,8 +5,8 @@ import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from '@mui/x-d
 
 import PageLayout from 'app/core/page/PageLayout';
 import SimpleHeader from 'app/shared-components/SimpleHeader';
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
-import { OrderHistoryRow } from 'src/app/shared/services/OrderService';
+import { EStatusOrder } from 'src/app/requests/orders/types';
+import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 
 import { columnsOrdersHistory } from './columns';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
@@ -56,7 +56,7 @@ function OrdersHistory() {
 
 	const isEmpty = !isLoading && rows.length === 0;
 
-	const columns: GridColDef<OrderHistoryRow>[] = [
+	const columns: GridColDef<IOrdersHistoryResponse['data'][number]>[] = [
 		...columnsOrdersHistory,
 		{
 			headerName: 'Acciones',

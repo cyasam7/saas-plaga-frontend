@@ -1,8 +1,9 @@
 import { Box, ButtonBase } from '@mui/material';
 
-import { EOrdersDayFilter, OrdersDatagridStats } from 'src/app/shared/services/OrderService';
+import { EOrdersDayFilter } from 'src/app/requests/orders/types';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 
-const DAY_TABS: { dayFilter: EOrdersDayFilter; label: string; statKey: keyof OrdersDatagridStats }[] = [
+const DAY_TABS: { dayFilter: EOrdersDayFilter; label: string; statKey: keyof IOrdersDatagridResponse['stats'] }[] = [
 	{ dayFilter: EOrdersDayFilter.ALL, label: 'Todas', statKey: 'total' },
 	{ dayFilter: EOrdersDayFilter.TODAY, label: 'Hoy', statKey: 'today' },
 	{ dayFilter: EOrdersDayFilter.TOMORROW, label: 'Mañana', statKey: 'tomorrow' },
@@ -12,7 +13,7 @@ const DAY_TABS: { dayFilter: EOrdersDayFilter; label: string; statKey: keyof Ord
 
 interface OrdersTabsProps {
 	selectedDayFilter: EOrdersDayFilter;
-	stats: OrdersDatagridStats;
+	stats: IOrdersDatagridResponse['stats'];
 	onChange: (dayFilter: EOrdersDayFilter) => void;
 	/** Mobile: pills con scroll horizontal en lugar del control segmentado. */
 	isPill?: boolean;

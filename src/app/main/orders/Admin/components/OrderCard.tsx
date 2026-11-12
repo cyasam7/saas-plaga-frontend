@@ -2,14 +2,14 @@ import { Box, Typography } from '@mui/material';
 import { PhoneOutlined } from '@mui/icons-material';
 
 import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
-import { DatagridRowOrder } from 'src/app/shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { formatOrderWhen } from '../utils';
 import FumigatorAvatar from './FumigatorAvatar';
 import OrderActions from './OrderActions';
 import StatusBadge from './StatusBadge';
 
 interface OrderCardProps {
-	order: DatagridRowOrder;
+	order: IOrdersDatagridResponse['orders'][number];
 	onAssign: (orderId: string) => void;
 	onGenerateReport: (orderId: string) => void;
 }

@@ -3,18 +3,18 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import _ from '@lodash';
 import { PartialDeep } from 'type-fest';
 import { ApiError } from 'src/app/shared-interfaces/ErrorAxios';
-import { UserLoginResponse, AxiosConfigRetry, User as UserType } from '../../user';
+import { AxiosConfigRetry, User as UserType } from '../../user';
+import {
+	IGetCurrentUserResponse,
+	IRefreshTokenPayload,
+	IRefreshTokenResponse,
+	ISignInResponse,
+	ISignUpPayload
+} from 'src/app/requests/auth/types';
 import { formatUserResponse } from './utils';
 import { TIMEZONE } from 'src/app/shared-constants/dateFormat';
 
-export type SignUpPayload = {
-	name: string;
-	phone: string;
-	email: string;
-	password: string;
-	workspaceName: string;
-	companyName: string;
-};
+export type SignUpPayload = ISignUpPayload;
 
 const defaultAuthConfig = {
 	tokenStorageKey: 'jwt_access_token',
@@ -52,9 +52,9 @@ export type JwtAuth<User, SignInPayload, SignUpPayload> = {
 	user: User;
 	isAuthenticated: boolean;
 	isLoading: boolean;
-	signIn: (U: SignInPayload) => Promise<AxiosResponse<UserLoginResponse, AxiosError>>;
+	signIn: (U: SignInPayload) => Promise<AxiosResponse<ISignInResponse, AxiosError>>;
 	signOut: () => void;
-	signUp: (U: SignUpPayload) => Promise<AxiosResponse<UserLoginResponse, AxiosError>>;
+	signUp: (U: SignUpPayload) => Promise<AxiosResponse<ISignInResponse, AxiosError>>;
 	updateUser: (U: PartialDeep<User>) => void;
 	refreshToken: () => void;
 	setIsLoading: (isLoading: boolean) => void;
@@ -159,10 +159,10 @@ const useJwtAuth = <User, SignInPayload, SignUpPayload>(
 	 * Sign in
 	 */
 	const signIn = async (credentials: SignInPayload) => {
-		const response = axios.post(authConfig.signInUrl, credentials);
+		const response = axios.post<ISignInResponse>(authConfig.signInUrl, credentials);
 
 		response.then(
-			(res: AxiosResponse<UserLoginResponse>) => {
+			(res: AxiosResponse<ISignInResponse>) => {
 				const { accessToken, refreshToken } = res.data;
 
 				const formattedUser = formatUserResponse(res.data);
@@ -190,7 +190,7 @@ const useJwtAuth = <User, SignInPayload, SignUpPayload>(
 		const response = axios.post(authConfig.signUpUrl, data);
 
 		response.then(
-			(res: AxiosResponse<UserLoginResponse>) => {
+			(res: AxiosResponse<ISignInResponse>) => {
 				const { accessToken, refreshToken } = res.data;
 
 				const formattedUser = formatUserResponse(res.data) as User;
@@ -250,12 +250,8 @@ const useJwtAuth = <User, SignInPayload, SignUpPayload>(
 		try {
 			const localRefreshToken = localStorage.getItem(authConfig.refreshTokenStorageKey);
 
-			const { data } = await axios.post<{ accessToken: string; user: UserLoginResponse }>(
-				authConfig.tokenRefreshUrl,
-				{
-					refreshToken: localRefreshToken
-				}
-			);
+			const refreshTokenPayload: IRefreshTokenPayload = { refreshToken: localRefreshToken };
+			const { data } = await axios.post<IRefreshTokenResponse>(authConfig.tokenRefreshUrl, refreshTokenPayload);
 
 			setSession(data.accessToken, localRefreshToken, data.user.tenant);
 			return data.accessToken;
@@ -335,7 +331,7 @@ const useJwtAuth = <User, SignInPayload, SignUpPayload>(
 		const attemptAutoLogin = async () => {
 			try {
 				setIsLoading(true);
-				const response: AxiosResponse<UserLoginResponse> = await axios.get(authConfig.getUserUrl);
+				const response: AxiosResponse<IGetCurrentUserResponse> = await axios.get(authConfig.getUserUrl);
 				const userData = response?.data;
 				const formattedUser = formatUserResponse(userData) as User;
 				handleSignInSuccess(formattedUser, userData.accessToken, userData.refreshToken);

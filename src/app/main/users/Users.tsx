@@ -1,8 +1,10 @@
 import PageLayout from 'app/core/page/PageLayout';
 import { Paper, Stack, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridActionsCellItemProps, GridColDef } from '@mui/x-data-grid';
-import { useQuery } from 'react-query';
-import { UserService } from 'src/app/shared/services/UserService';
+import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
+import { useMutationDeleteUser } from 'src/app/requests/users/useMutationDeleteUser';
+import { useMutationSaveUserSign } from 'src/app/requests/users/useMutationSaveUserSign';
+import { userKeys } from 'src/app/requests/users/keys';
 import { Visibility, NotInterested, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
 import { ReactElement, useMemo, useState } from 'react';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
@@ -10,7 +12,6 @@ import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
 import { useAppSelector } from 'app/store/store';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
-import { IDataGridUserRow } from 'src/app/shared/entities/UserEntity';
 import { columnsUsers } from './columns';
 import HeaderGrid from './components/HeaderGrid/HeaderGrid';
 import DialogUser from './components/DialogUser/DialogUser';
@@ -32,13 +33,11 @@ function Users() {
 	const [openChangePassword, setOpenChangePassword] = useState(false);
 	const userLogged = useAppSelector(selectUser);
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => UserService.getUsersDatagrid(userLogged.uid),
-		queryKey: 'users-registered',
-		enabled: !!userLogged.uid
-	});
+	const { data, isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
+	const { mutateAsync: deleteUser } = useMutationDeleteUser();
+	const { mutateAsync: saveUserSign } = useMutationSaveUserSign();
 
-	const columns: GridColDef<IDataGridUserRow>[] = [
+	const columns: GridColDef<IUsersDatagridResponse[number]>[] = [
 		...columnsUsers,
 		{
 			field: 'sign',
@@ -112,7 +111,7 @@ function Users() {
 								title: 'Acción requerida',
 								text: '¿Seguro que deseas eliminar este usuario?',
 								onAccept: async () => {
-									await UserService.remove(params.row.userId);
+									await deleteUser({ userId: params.row.userId });
 									displayToast({
 										message: 'Usuario eliminado correctamente',
 										anchorOrigin: {
@@ -121,7 +120,7 @@ function Users() {
 										},
 										variant: 'success'
 									});
-									invalidate('users-registered');
+									invalidate(userKeys.lists());
 								}
 							});
 						}}
@@ -174,8 +173,11 @@ function Users() {
 	}, [search, isActive, data]);
 
 	async function handleSubmitOnSign(data: Blob): Promise<void> {
-		await UserService.saveSign({ userId, sign: data });
-		invalidate('users-registered');
+		const signFormData = new FormData();
+		signFormData.append('file', data, `${userId}-sign.png`);
+		signFormData.append('userId', userId);
+		await saveUserSign({ formData: signFormData });
+		invalidate(userKeys.lists());
 		setUserId('');
 		setOpenSigner(false);
 		displayToast({

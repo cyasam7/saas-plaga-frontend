@@ -1,6 +1,6 @@
 import { Box, MenuItem, TextField } from '@mui/material';
 
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 import FumigatorFilter from '../../components/HeaderFilters/FumigatorFilter';
 import { statusLabel } from '../../utils';
 import { OrdersAdminFilters } from '../types';

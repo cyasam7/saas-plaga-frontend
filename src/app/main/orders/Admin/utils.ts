@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { DatagridRowOrder } from 'src/app/shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { OrdersAdminFilters } from './types';
 
 export const EMPTY_ADMIN_FILTERS: OrdersAdminFilters = {
@@ -17,7 +17,7 @@ export function countActiveFilters(filters: OrdersAdminFilters, fumigatorId: str
 }
 
 /** Aplica búsqueda, rango de fechas, estatus y cliente; ordena cronológicamente. */
-export function filterOrders(orders: DatagridRowOrder[], filters: OrdersAdminFilters): DatagridRowOrder[] {
+export function filterOrders(orders: IOrdersDatagridResponse['orders'], filters: OrdersAdminFilters): IOrdersDatagridResponse['orders'] {
 	const normalizedSearch = filters.search.trim().toLowerCase();
 
 	return orders
@@ -47,7 +47,7 @@ export function filterOrders(orders: DatagridRowOrder[], filters: OrdersAdminFil
 }
 
 /** "Hoy · 10:00 AM", "Mañana · 8:30 AM", "12 nov · 2:00 PM". */
-export function formatOrderWhen(date: Date, today = dayjs()): string {
+export function formatOrderWhen(date: string, today = dayjs()): string {
 	const orderDate = dayjs(date);
 	const time = orderDate.format('h:mm A');
 	const daysFromToday = orderDate.startOf('day').diff(today.startOf('day'), 'day');

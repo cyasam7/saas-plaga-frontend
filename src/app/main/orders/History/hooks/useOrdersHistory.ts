@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { useInfiniteQuery } from 'react-query';
 
-import { OrderHistoryRow, OrderService } from 'src/app/shared/services/OrderService';
+import { IOrdersHistoryResponse, useQueryOrdersHistory } from 'src/app/requests/orders/useQueryOrdersHistory';
 
 import { HISTORY_PAGE_SIZE, OrdersHistoryFilters } from '../helpers';
 
 interface IUseOrdersHistory {
-	rows: OrderHistoryRow[];
+	rows: IOrdersHistoryResponse['data'];
 	totalCount: number;
 	isLoading: boolean;
 	isFetchingNextPage: boolean;
@@ -18,21 +17,15 @@ interface IUseOrdersHistory {
 export function useOrdersHistory(filters: OrdersHistoryFilters): IUseOrdersHistory {
 	const sentinelRef = useRef<HTMLDivElement>(null);
 
-	const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
-		// Los filtros forman parte de la key: al cambiarlos la paginación se reinicia sola.
-		queryKey: ['orders-history', filters],
-		queryFn: ({ pageParam = 1 }) =>
-			OrderService.getOrdersHistory({
-				page: pageParam as number,
-				take: HISTORY_PAGE_SIZE,
-				status: filters.status,
-				clientType: filters.clientType ?? undefined,
-				dateFrom: filters.dateFrom ?? undefined,
-				dateTo: filters.dateTo ?? undefined,
-				fumigatorId: filters.fumigatorId || undefined,
-				search: filters.search || undefined
-			}),
-		getNextPageParam: (lastPage) => (lastPage.meta.hasNextPage ? lastPage.meta.page + 1 : undefined)
+	// Los filtros forman parte de la key: al cambiarlos la paginación se reinicia sola.
+	const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useQueryOrdersHistory({
+		take: HISTORY_PAGE_SIZE,
+		status: filters.status,
+		clientType: filters.clientType ?? undefined,
+		dateFrom: filters.dateFrom ?? undefined,
+		dateTo: filters.dateTo ?? undefined,
+		fumigatorId: filters.fumigatorId || undefined,
+		search: filters.search || undefined
 	});
 
 	const rows = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data]);

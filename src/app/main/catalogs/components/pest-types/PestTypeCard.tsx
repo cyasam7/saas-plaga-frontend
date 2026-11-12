@@ -3,12 +3,12 @@ import BugReportIcon from '@mui/icons-material/BugReport';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { IPestType } from '../types';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
 
 interface PestTypeCardProps {
-  pest: IPestType;
-  onEdit: (pest: IPestType) => void;
-  onDelete: (pest: IPestType) => void;
+  pest: INamedCatalogItem;
+  onEdit: (pest: INamedCatalogItem) => void;
+  onDelete: (pest: INamedCatalogItem) => void;
 }
 
 export const PestTypeCard = ({ pest, onEdit, onDelete }: PestTypeCardProps) => {

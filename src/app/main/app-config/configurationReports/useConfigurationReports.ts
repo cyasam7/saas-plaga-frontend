@@ -1,11 +1,11 @@
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { selectUser } from 'src/app/auth/user/store/userSlice';
-import { AppConfigService } from 'src/app/shared/services/AppConfig';
-import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
+import { useQueryGetAccountConfig } from 'src/app/requests/app-config/useQueryGetAccountConfig';
+import { useMutationSaveAccountConfig } from 'src/app/requests/app-config/useMutationSaveAccountConfig';
+import { IFormSaveAccount } from './types';
 import { displayToast } from 'app/core/feedback/toast';
 import { accountSchema, defaultValuesAccountUser, validateLogo } from './config';
 import { ReportType } from './entities/ReportPreview';
@@ -17,10 +17,8 @@ export function useConfigurationReports() {
 	const [reportType, setReportType] = useState<ReportType>('certificate');
 	const [previewOpen, setPreviewOpen] = useState(false);
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => AppConfigService.get({ tenantId }),
-		queryKey: ['AccountUser', tenantId]
-	});
+	const { data, isLoading } = useQueryGetAccountConfig({ tenantId });
+	const { mutateAsync: saveAccountConfig } = useMutationSaveAccountConfig();
 
 	const formHandler = useForm<IFormSaveAccount>({
 		defaultValues: defaultValuesAccountUser,
@@ -83,7 +81,14 @@ export function useConfigurationReports() {
 	}
 
 	async function handleSubmit(formValue: IFormSaveAccount): Promise<void> {
-		await AppConfigService.save(formValue);
+		const accountFormData = new FormData();
+		accountFormData.append('logo', formValue.logo);
+		accountFormData.append('address', formValue.address.toString());
+		accountFormData.append('name', formValue.name.toString());
+		accountFormData.append('primaryColor', formValue.primaryColor.toString());
+		accountFormData.append('secondaryColor', formValue.secondaryColor.toString());
+		accountFormData.append('licenseSanitary', formValue.licenseSanitary.toString());
+		await saveAccountConfig({ formData: accountFormData });
 		formHandler.reset(formValue);
 		displayToast({
 			anchorOrigin: { horizontal: 'right', vertical: 'top' },

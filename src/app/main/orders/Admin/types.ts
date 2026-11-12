@@ -1,4 +1,4 @@
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 
 /**
  * Filtros que se resuelven en el cliente sobre la lista que ya devolvió GET /order/datagrid.

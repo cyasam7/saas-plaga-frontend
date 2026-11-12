@@ -15,11 +15,12 @@ import { EClientType, IFormCreatePest } from '../FormOrderProps';
 import { defaultValuesOrder } from '../defaultValues';
 
 // Mocks
+// La búsqueda por teléfono se dispara con `refetch` del hook al salir del campo.
 const getClientInfoByPhone = vi.fn();
-vi.mock('src/app/shared/services/OrderService', () => ({
-	OrderService: {
-		getClientInfoByPhone: (...args: unknown[]) => getClientInfoByPhone(...args)
-	}
+vi.mock('src/app/requests/orders/useQueryClientDataByPhone', () => ({
+	useQueryClientDataByPhone: () => ({
+		refetch: async () => ({ data: await getClientInfoByPhone() })
+	})
 }));
 
 const openDialog = vi.fn();

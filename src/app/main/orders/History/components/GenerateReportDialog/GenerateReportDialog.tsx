@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form';
 import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
-import { OrderService } from 'src/app/shared/services/OrderService';
+import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/useMutationDownloadOrderCertificate';
+import { useMutationDownloadFumigationReport } from 'src/app/requests/orders/useMutationDownloadFumigationReport';
+import { downloadPdfFile } from '../../../utils';
 import { IGenerateReportDialogProps } from './IGenerateReportDialog';
 import { IGenerateReportForm, generateReportSchema, TypeReport } from './schema';
 
@@ -17,6 +19,9 @@ const mapTranslate = {
 
 function GenerateReportDialog(props: IGenerateReportDialogProps) {
 	const { open, onClose, onSubmit } = props;
+
+	const { mutateAsync: downloadOrderCertificate } = useMutationDownloadOrderCertificate();
+	const { mutateAsync: downloadFumigationReport } = useMutationDownloadFumigationReport();
 
 	const formHandler = useForm<IGenerateReportForm>({
 		resolver: yupResolver(generateReportSchema),
@@ -36,12 +41,11 @@ function GenerateReportDialog(props: IGenerateReportDialogProps) {
 
 		try {
 			if (data.typeReport === TypeReport.CERTIFICATE) {
-				await OrderService.downloadCertificate({
-					daysValid: data.months * DAYS_PER_MONTH,
-					id: props.id
-				});
+				const certificatePdf = await downloadOrderCertificate({ orderId: props.id, daysValid: data.months * DAYS_PER_MONTH });
+				downloadPdfFile(certificatePdf, `${props.id}.pdf`);
 			} else if (data.typeReport === TypeReport.SERVICE_ORDER) {
-				await OrderService.downloadServicesOrder(props.id);
+				const fumigationReportPdf = await downloadFumigationReport({ orderId: props.id });
+				downloadPdfFile(fumigationReportPdf, `${props.id}.pdf`);
 			}
 
 			await onSubmit?.();

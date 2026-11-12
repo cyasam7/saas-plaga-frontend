@@ -9,16 +9,17 @@ import { useForm } from 'react-hook-form';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
 import { Box, useTheme } from '@mui/material';
 import BuildIcon from '@mui/icons-material/Build';
-import { IServiceType } from '../types';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
+import { ISaveNamedCatalogPayload } from 'src/app/requests/catalogs/types';
 
 
 
 interface ServiceTypeDialogProps {
     open: boolean;
     isEditing: boolean;
-    selectedService: IServiceType | null;
+    selectedService: INamedCatalogItem | null;
     onClose: () => void;
-    onSubmit: (data: IServiceType) => void;
+    onSubmit: (data: ISaveNamedCatalogPayload) => void;
 }
 
 export default function ServiceTypeDialog({
@@ -29,7 +30,7 @@ export default function ServiceTypeDialog({
     onSubmit
 }: ServiceTypeDialogProps) {
     const theme = useTheme();
-    const { control, handleSubmit, reset } = useForm<IServiceType>({
+    const { control, handleSubmit, reset } = useForm<ISaveNamedCatalogPayload>({
         defaultValues: {
             id: '',
             name: '',
@@ -98,7 +99,7 @@ export default function ServiceTypeDialog({
                         : 'Agrega un nuevo tipo de servicio al catálogo.'}
                 </DialogContentText>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <TextFieldForm<IServiceType>
+                    <TextFieldForm<ISaveNamedCatalogPayload>
                         control={control}
                         name="name"
                         label="Nombre"
@@ -107,7 +108,7 @@ export default function ServiceTypeDialog({
                         margin="dense"
                         sx={{ mt: 2 }}
                     />
-                    <TextFieldForm<IServiceType>
+                    <TextFieldForm<ISaveNamedCatalogPayload>
                         control={control}
                         name="description"
                         label="Descripción"

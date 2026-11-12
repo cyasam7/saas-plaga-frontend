@@ -3,12 +3,12 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { IApplicationType } from '../types';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
 
 interface ApplicationTypeCardProps {
-  application: IApplicationType;
-  onEdit: (application: IApplicationType) => void;
-  onDelete: (application: IApplicationType) => void;
+  application: INamedCatalogItem;
+  onEdit: (application: INamedCatalogItem) => void;
+  onDelete: (application: INamedCatalogItem) => void;
 }
 
 export const ApplicationTypeCard = ({ application, onEdit, onDelete }: ApplicationTypeCardProps) => {

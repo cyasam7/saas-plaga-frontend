@@ -1,13 +1,14 @@
 import dayjs from 'dayjs';
 import { describe, expect, it } from 'vitest';
 
-import { DatagridRowOrder, EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 import { EMPTY_ADMIN_FILTERS, countActiveFilters, filterOrders, formatOrderWhen } from '../utils';
 
-function buildOrder(overrides: Partial<DatagridRowOrder>): DatagridRowOrder {
+function buildOrder(overrides: Partial<IOrdersDatagridResponse['orders'][number]>): IOrdersDatagridResponse['orders'][number] {
 	return {
 		id: 'order-1',
-		date: new Date('2026-11-10T10:00:00'),
+		date: '2026-11-10T10:00:00',
 		folio: 'F-1001',
 		timezone: 'America/Mexico_City',
 		client: { name: 'Hotel Casa Azul', phone: '55 5512 7781', address: 'Calle Londres 247' },
@@ -18,11 +19,11 @@ function buildOrder(overrides: Partial<DatagridRowOrder>): DatagridRowOrder {
 	};
 }
 
-const hotelOrder = buildOrder({ id: 'hotel', date: new Date('2026-11-12T08:00:00') });
+const hotelOrder = buildOrder({ id: 'hotel', date: '2026-11-12T08:00:00' });
 const bakeryOrder = buildOrder({
 	id: 'bakery',
 	folio: 'F-2002',
-	date: new Date('2026-11-09T16:00:00'),
+	date: '2026-11-09T16:00:00',
 	status: EStatusOrder.ASSIGNED,
 	client: { name: 'Panadería San Ángel', phone: '55 2841 0937', address: 'Av. Revolución 1520' }
 });
@@ -72,12 +73,12 @@ describe('formatOrderWhen', () => {
 	const today = dayjs('2026-11-10T09:00:00');
 
 	it('uses relative labels for yesterday, today and tomorrow', () => {
-		expect(formatOrderWhen(new Date('2026-11-09T16:00:00'), today)).toBe('Ayer · 4:00 PM');
-		expect(formatOrderWhen(new Date('2026-11-10T10:00:00'), today)).toBe('Hoy · 10:00 AM');
-		expect(formatOrderWhen(new Date('2026-11-11T08:30:00'), today)).toBe('Mañana · 8:30 AM');
+		expect(formatOrderWhen('2026-11-09T16:00:00', today)).toBe('Ayer · 4:00 PM');
+		expect(formatOrderWhen('2026-11-10T10:00:00', today)).toBe('Hoy · 10:00 AM');
+		expect(formatOrderWhen('2026-11-11T08:30:00', today)).toBe('Mañana · 8:30 AM');
 	});
 
 	it('falls back to day and month for other dates', () => {
-		expect(formatOrderWhen(new Date('2026-11-14T12:00:00'), today)).toMatch(/^14 \S+ · 12:00 PM$/);
+		expect(formatOrderWhen('2026-11-14T12:00:00', today)).toMatch(/^14 \S+ · 12:00 PM$/);
 	});
 });

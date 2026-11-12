@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 
 import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
-import { DatagridRowOrder } from 'src/app/shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { formatOrderWhen } from '../utils';
 import FumigatorAvatar from './FumigatorAvatar';
 import OrderActions from './OrderActions';
@@ -12,7 +12,7 @@ const COLUMN_HEADERS = ['Folio', 'Cliente', 'Dirección', 'Teléfono', 'Costo', 
 const RIGHT_ALIGNED_HEADERS = ['Costo', 'Acciones'];
 
 interface OrdersTableProps {
-	orders: DatagridRowOrder[];
+	orders: IOrdersDatagridResponse['orders'];
 	onAssign: (orderId: string) => void;
 	onGenerateReport: (orderId: string) => void;
 }

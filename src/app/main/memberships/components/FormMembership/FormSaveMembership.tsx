@@ -4,7 +4,7 @@ import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldFor
 import { IFormSaveMembershipData, IFormSaveMembershipProps } from './FormMembershipProps';
 import { DatePickerForm } from 'app/shared-components/DatePicker/DatePicker';
 import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
-import { EMembershipType } from 'src/app/shared/entities/Memberships';
+import { EMembershipType } from 'src/app/requests/memberships/types';
 import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
 
 export const defaultValuesFormMembership = {

@@ -1,7 +1,7 @@
 import { Skeleton, Stack } from '@mui/material';
 import { Palette } from '@mui/icons-material';
 import { Control } from 'react-hook-form';
-import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
+import { IFormSaveAccount } from '../../types';
 import Section from '../Section/Section';
 import ColorField from '../ColorField/ColorField';
 

@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import { ISignInPayload, ISignUpPayload } from 'src/app/requests/auth/types';
 import { BrowserRouter } from 'react-router-dom';
 import { useAppDispatch } from 'app/store/store';
 import SplashScreen from 'app/core/feedback/SplashScreen';
@@ -24,19 +25,10 @@ import UserModel from './user/models/UserModel';
  * Initialize Firebase
  */
 
-export type SignInPayload = {
-	email: string;
-	password: string;
-};
+// Cuerpos de POST /auth/sign-in y /auth/sign-up: viven en `src/app/requests/auth/types.ts`.
+export type SignInPayload = ISignInPayload;
 
-export type SignUpPayload = {
-	name: string;
-	phone: string;
-	email: string;
-	password: string;
-	workspaceName: string;
-	companyName: string;
-};
+export type SignUpPayload = ISignUpPayload;
 
 type AuthContext = {
 	jwtService?: JwtAuth<User, SignInPayload, SignUpPayload>;

@@ -4,9 +4,8 @@ import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldFor
 import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
 import { selectUser, selectUserRole } from 'src/app/auth/user/store/userSlice';
 import { useSelector } from 'react-redux';
-import { useQuery } from 'react-query';
-import { TenantService } from 'src/app/shared/services/TenantService';
-import { ERoleCode } from 'src/app/shared/entities/UserEntity';
+import { useQueryTenantsByUser } from 'src/app/requests/tenants/useQueryTenantsByUser';
+import { ERoleCode } from 'src/app/requests/users/types';
 import { IFormUserProps } from './IFormUser';
 import { ROLE_CATALOG } from './constant';
 import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
@@ -17,11 +16,7 @@ function FormUser(props: IFormUserProps) {
 	const role = useSelector(selectUserRole);
 	const user = useSelector(selectUser);
 
-	const { data: tenants = [] } = useQuery({
-		queryFn: () => TenantService.getByUserId(user.uid),
-		queryKey: [user.uid],
-		enabled: !!user.uid
-	});
+	const { data: tenants = [] } = useQueryTenantsByUser({ userId: user.uid }, !!user.uid);
 
 	useEffect(() => {
 		if (role === 'staff' && tenants.length) {

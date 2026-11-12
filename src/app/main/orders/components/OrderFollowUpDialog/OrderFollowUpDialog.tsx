@@ -7,7 +7,7 @@ import { DateTimePickerField } from 'app/shared-components/DateTimePicker';
 import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
 import { IOrderFollowUpDialogProps } from './IOrderFollowUpDialogProps';
 import { IFollowUpForm, followUppSchema } from './schema';
-import { OrderService } from '../../../../shared/services/OrderService';
+import { useMutationCreateFollowUpOrder } from 'src/app/requests/orders/useMutationCreateFollowUpOrder';
 
 function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 	const { open, onClose, onSubmit, id } = props;
@@ -20,11 +20,13 @@ function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 		}
 	});
 
+	const { mutateAsync: createFollowUpOrder } = useMutationCreateFollowUpOrder();
+
 	async function handleSubmit(formValues: IFollowUpForm): Promise<void> {
 		try {
-			await OrderService.createFollowingOrder({
+			await createFollowUpOrder({
 				id,
-				date: formValues.date.utc().toDate(),
+				date: formValues.date.utc().toISOString(),
 				description: formValues.description
 			});
 			displayToast({

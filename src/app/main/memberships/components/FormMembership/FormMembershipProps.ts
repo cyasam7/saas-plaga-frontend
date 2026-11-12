@@ -1,13 +1,12 @@
 import { Dayjs } from 'dayjs';
 import { UseFormReturn } from 'react-hook-form';
-import { EMembershipType } from 'src/app/shared/entities/Memberships';
+import { EMembershipType } from 'src/app/requests/memberships/types';
 import * as yup from 'yup';
 
 export interface IFormSaveMembershipProps {
   onSubmit: (data: IFormSaveMembershipData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
-  membershipId?: string;
   formHandler: UseFormReturn<IFormSaveMembershipData>;
 }
 

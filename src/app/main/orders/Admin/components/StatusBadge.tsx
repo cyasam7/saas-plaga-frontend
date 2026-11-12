@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 import { statusLabel } from '../../utils';
 
 type BadgeTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral';

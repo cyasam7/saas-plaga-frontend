@@ -18,7 +18,9 @@ import { LoadingButton } from '@mui/lab';
 import FormOrder from '../FormOrder/FormOrder';
 import { EClientType, IFormCreatePest } from '../FormOrder/FormOrderProps';
 import { OrderDialogProps } from './OrderDialogProps';
-import { OrderService } from '../../../../shared/services/OrderService';
+import { ICreateOrderPayload } from 'src/app/requests/orders/types';
+import { useMutationCreateIndividualOrder } from 'src/app/requests/orders/useMutationCreateIndividualOrder';
+import { useMutationCreateBusinessOrder } from 'src/app/requests/orders/useMutationCreateBusinessOrder';
 import { createOrderSchema } from '../FormOrder/schema';
 import { defaultValuesOrder } from '../FormOrder/defaultValues';
 import { Transition } from './transition';
@@ -30,10 +32,12 @@ function OrderDialog(props: OrderDialogProps) {
 		resolver: yupResolver<IFormCreatePest>(createOrderSchema as any),
 		defaultValues: defaultValuesOrder
 	});
+	const { mutateAsync: createIndividualOrder } = useMutationCreateIndividualOrder();
+	const { mutateAsync: createBusinessOrder } = useMutationCreateBusinessOrder();
 
 	async function handleSubmit(formValues: IFormCreatePest): Promise<void> {
 		try {
-			const base = {
+			const createOrderPayload: ICreateOrderPayload = {
 				clientId: formValues.clientId || undefined,
 				clientName: formValues.clientName,
 				clientPhone: formValues.clientPhone,
@@ -45,9 +49,9 @@ function OrderDialog(props: OrderDialogProps) {
 
 			let orderIdSaved: { id: string };
 			if (formValues.clientType === EClientType.BUSINESS) {
-				orderIdSaved = await OrderService.createBusinessOrder(base);
+				orderIdSaved = await createBusinessOrder(createOrderPayload);
 			} else {
-				orderIdSaved = await OrderService.createIndividualOrder(base);
+				orderIdSaved = await createIndividualOrder(createOrderPayload);
 			}
 
 			handleCancel();

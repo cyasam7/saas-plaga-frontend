@@ -11,13 +11,11 @@ import {
 	Stack,
 	Typography
 } from '@mui/material';
-import { useQuery } from 'react-query';
 import dayjs from 'dayjs';
 import { DATE_FORMAT, DATE_TIME_FORMAT } from 'src/app/shared-constants/dateFormat';
 import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
 import ChipOrder from '../../../components/ChipOrder/ChipOrder';
-import { OrderService } from 'src/app/shared/services/OrderService';
-import { OrderDetailSimpleCatalog } from 'src/app/shared/entities/OrderDetail';
+import { IGetOrderDetailResponse, useQueryGetOrderDetail } from 'src/app/requests/orders/useQueryGetOrderDetail';
 import { IOrderDetailDialogProps } from './IOrderDetailDialog';
 
 function Field({ label, value }: { label: string; value?: React.ReactNode }) {
@@ -40,7 +38,7 @@ function Field({ label, value }: { label: string; value?: React.ReactNode }) {
 	);
 }
 
-function CatalogChips({ items }: { items?: OrderDetailSimpleCatalog[] }) {
+function CatalogChips({ items }: { items?: IGetOrderDetailResponse['pests'][number][] }) {
 	if (!items || items.length === 0) return null;
 	return (
 		<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -59,11 +57,7 @@ function CatalogChips({ items }: { items?: OrderDetailSimpleCatalog[] }) {
 function OrderDetailDialog(props: IOrderDetailDialogProps) {
 	const { id, open, onClose } = props;
 
-	const { data: order, isLoading } = useQuery({
-		queryKey: ['order-detail', id],
-		queryFn: () => OrderService.getOrderDetail(id),
-		enabled: Boolean(id) && open
-	});
+	const { data: order, isLoading } = useQueryGetOrderDetail({ orderId: id }, Boolean(id) && open);
 
 	return (
 		<Dialog

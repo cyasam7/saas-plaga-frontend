@@ -3,12 +3,12 @@ import BuildIcon from '@mui/icons-material/Build';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { IServiceType } from '../types';
+import { INamedCatalogItem } from 'src/app/requests/catalogs/types';
 
 interface ServiceTypeCardProps {
-  service: IServiceType;
-  onEdit: (service: IServiceType) => void;
-  onDelete: (service: IServiceType) => void;
+  service: INamedCatalogItem;
+  onEdit: (service: INamedCatalogItem) => void;
+  onDelete: (service: INamedCatalogItem) => void;
 }
 
 export const ServiceTypeCard = ({ service, onEdit, onDelete }: ServiceTypeCardProps) => {

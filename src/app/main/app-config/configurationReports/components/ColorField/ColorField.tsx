@@ -1,6 +1,6 @@
 import { Stack, TextField, Typography } from '@mui/material';
 import { Control, Controller } from 'react-hook-form';
-import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
+import { IFormSaveAccount } from '../../types';
 
 const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 

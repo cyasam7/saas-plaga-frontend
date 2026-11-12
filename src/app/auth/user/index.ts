@@ -15,21 +15,6 @@ export type User = {
   };
 };
 
-export type UserLoginResponse = {
-  id: string;
-  name: string;
-  email: string;
-  accessToken: string;
-  refreshToken: string;
-  tenant: string;
-  role: {
-    id: string;
-    name: string;
-    code: string;
-  };
-  isTenantConfigured?: boolean;
-};
-
 export interface AxiosConfigRetry extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }

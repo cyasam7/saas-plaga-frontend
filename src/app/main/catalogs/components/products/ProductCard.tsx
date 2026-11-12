@@ -4,12 +4,12 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ScaleIcon from '@mui/icons-material/Scale';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { IProduct } from '../types';
+import { IInsecticideTypesResponse } from 'src/app/requests/catalogs/useQueryInsecticideTypes';
 
 interface ProductCardProps {
-  product: IProduct;
-  onEdit: (product: IProduct) => void;
-  onDelete: (product: IProduct) => void;
+  product: IInsecticideTypesResponse[number];
+  onEdit: (product: IInsecticideTypesResponse[number]) => void;
+  onDelete: (product: IInsecticideTypesResponse[number]) => void;
 }
 
 export const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {

@@ -3,26 +3,27 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
-import { IProduct } from '../types';
+import { IInsecticideTypesResponse } from 'src/app/requests/catalogs/useQueryInsecticideTypes';
+import { ISaveInsecticideTypePayload } from 'src/app/requests/catalogs/useMutationSaveInsecticideType';
 import ProductDialog from './ProductDialog';
-import { InsecticideTypeService } from 'src/app/shared/services/Catalogs/InsecticideTypeService';
+import { useQueryInsecticideTypes } from 'src/app/requests/catalogs/useQueryInsecticideTypes';
+import { useMutationSaveInsecticideType } from 'src/app/requests/catalogs/useMutationSaveInsecticideType';
+import { useMutationDeleteInsecticideType } from 'src/app/requests/catalogs/useMutationDeleteInsecticideType';
 import { displayToast } from 'app/core/feedback/toast';
-import { useQuery } from 'react-query';
 import { ProductCard } from './ProductCard';
 import { ProductsLoading } from './ProductsLoading';
 import { ProductsEmpty } from './ProductsEmpty';
 import { openDialog as openGlobalDialog } from 'app/shared-components/GlobalDialog/openDialog';
 
 export default function Products() {
-    const { data: products = [], refetch, isLoading } = useQuery({
-        queryKey: ['products'],
-        queryFn: () => InsecticideTypeService.byQuery("")
-    })
+    const { data: products = [], refetch, isLoading } = useQueryInsecticideTypes()
+    const { mutateAsync: saveInsecticideType } = useMutationSaveInsecticideType()
+    const { mutateAsync: deleteInsecticideType } = useMutationDeleteInsecticideType()
     const [openDialog, setOpenDialog] = React.useState(false);
     const [isEditing, setIsEditing] = React.useState(false);
-    const [selectedProduct, setSelectedProduct] = React.useState<IProduct | null>(null);
+    const [selectedProduct, setSelectedProduct] = React.useState<IInsecticideTypesResponse[number] | null>(null);
 
-    const handleOpenDialog = (product?: IProduct) => {
+    const handleOpenDialog = (product?: IInsecticideTypesResponse[number]) => {
         if (product) {
             setIsEditing(true);
             setSelectedProduct(product);
@@ -39,8 +40,8 @@ export default function Products() {
         setSelectedProduct(null);
     };
 
-    const handleSubmit = async (data: IProduct) => {
-        await InsecticideTypeService.save(data)
+    const handleSubmit = async (data: ISaveInsecticideTypePayload) => {
+        await saveInsecticideType(data)
         await refetch()
         displayToast({
             message: isEditing ? 'Producto actualizado correctamente' : 'Producto creado correctamente',
@@ -50,12 +51,12 @@ export default function Products() {
         handleCloseDialog();
     };
 
-    const handleDelete = async (product: IProduct) => {
+    const handleDelete = async (product: IInsecticideTypesResponse[number]) => {
         openGlobalDialog({
             title: 'Eliminar Producto',
             text: '¿Estás seguro de querer eliminar este producto?',
             onAccept: async () => {
-                await InsecticideTypeService.delete(product.id)
+                await deleteInsecticideType({ id: product.id })
                 await refetch()
                 displayToast({
                     message: 'Producto eliminado correctamente',

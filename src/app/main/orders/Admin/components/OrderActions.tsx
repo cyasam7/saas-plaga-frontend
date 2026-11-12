@@ -1,12 +1,12 @@
 import { Box, Button, IconButton, Tooltip } from '@mui/material';
 import { FileDownloadOutlined } from '@mui/icons-material';
 
-import { DatagridRowOrder } from 'src/app/shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { validateIfOrderIsPending } from '../../utils';
 import { primaryButtonSx, secondaryButtonSx } from '../utils';
 
 interface OrderActionsProps {
-	order: DatagridRowOrder;
+	order: IOrdersDatagridResponse['orders'][number];
 	onAssign: (orderId: string) => void;
 	onGenerateReport: (orderId: string) => void;
 	/** Mobile: botones a todo lo ancho con etiqueta en el reporte. */

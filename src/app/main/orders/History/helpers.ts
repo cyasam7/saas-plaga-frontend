@@ -1,4 +1,5 @@
-import { EClientType, EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { EClientType } from 'src/app/requests/clients/types';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 
 /** Estatus que componen el historial. Debe coincidir con HISTORY_ORDER_STATUSES del API. */
 export const HISTORY_STATUSES: EStatusOrder[] = [

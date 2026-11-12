@@ -5,11 +5,11 @@ import dayjs from 'dayjs';
 import ChipOrder from 'src/app/main/orders/components/ChipOrder/ChipOrder';
 import { DATE_FORMAT, TIME_FORMAT } from 'src/app/shared-constants/dateFormat';
 import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
-import { OrderHistoryRow } from 'src/app/shared/services/OrderService';
+import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 
 import { statusLabel } from '../utils';
 
-export const columnsOrdersHistory: GridColDef<OrderHistoryRow>[] = [
+export const columnsOrdersHistory: GridColDef<IOrdersHistoryResponse['data'][number]>[] = [
 	{
 		headerName: 'Folio',
 		field: 'folio',

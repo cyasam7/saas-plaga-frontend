@@ -5,8 +5,10 @@ import HeaderDialog from 'app/shared-components/DialogSkeleton/HeaderDialog/Head
 import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton';
 import { useForm } from 'react-hook-form';
 import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import { useQuery, useQueryClient } from 'react-query';
-import { OrderService } from 'src/app/shared/services/OrderService';
+import { useQueryClient } from 'react-query';
+import { useQueryFumigatorsToAssignOrder } from 'src/app/requests/orders/useQueryFumigatorsToAssignOrder';
+import { useMutationAssignOrder } from 'src/app/requests/orders/useMutationAssignOrder';
+import { orderKeys } from 'src/app/requests/orders/keys';
 import { displayToast } from 'app/core/feedback/toast';
 import { IAssignOrderDialog, IAssignOrderForm } from './IAssignOrderDialog';
 
@@ -14,10 +16,8 @@ function AssignOrderDialog(props: IAssignOrderDialog) {
 	const { onClose, open, orderId } = props;
 	const queryClient = useQueryClient();
 
-	const { data: fumigators = [], isLoading } = useQuery({
-		queryFn: () => OrderService.getFumigatorToAssignOrder(),
-		queryKey: 'users-assign'
-	});
+	const { data: fumigators = [], isLoading } = useQueryFumigatorsToAssignOrder();
+	const { mutateAsync: assignOrder } = useMutationAssignOrder();
 
 	const formHandler = useForm<IAssignOrderForm>({
 		defaultValues: {
@@ -27,7 +27,7 @@ function AssignOrderDialog(props: IAssignOrderDialog) {
 
 	async function successRequest({ userId }: IAssignOrderForm): Promise<void> {
 		try {
-			await OrderService.updateOrderAssigned({
+			await assignOrder({
 				orderId,
 				userId
 			});
@@ -40,7 +40,7 @@ function AssignOrderDialog(props: IAssignOrderDialog) {
 				message: 'Se a actualizado correctamente',
 				variant: 'success'
 			});
-			await queryClient.invalidateQueries('orders');
+			await queryClient.invalidateQueries(orderKeys.all);
 			handleClose();
 		} catch {
 			displayToast({

@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 
-import { OrderService } from 'src/app/shared/services/OrderService';
+import { useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import useOrdersFilters from '../../hooks/useOrdersFilters';
 import { OrdersAdminFilters } from '../types';
 import { EMPTY_ADMIN_FILTERS, countActiveFilters, filterOrders } from '../utils';
@@ -16,11 +15,8 @@ export function useOrdersAdmin() {
 	const { filters: urlFilters, query, setFilter: setUrlFilter } = useOrdersFilters();
 	const [adminFilters, setAdminFilters] = useState<OrdersAdminFilters>(EMPTY_ADMIN_FILTERS);
 
-	// Misma key que la página de órdenes: los diálogos reutilizados invalidan 'orders'.
-	const { data = EMPTY_DATAGRID, isLoading, refetch } = useQuery({
-		queryKey: ['orders', query],
-		queryFn: () => OrderService.getDatagridOrders(query)
-	});
+	// Los diálogos reutilizados invalidan `orderKeys.all`, que incluye este listado.
+	const { data = EMPTY_DATAGRID, isLoading, refetch } = useQueryOrdersDatagrid(query);
 
 	const visibleOrders = useMemo(() => filterOrders(data.orders, adminFilters), [data.orders, adminFilters]);
 
