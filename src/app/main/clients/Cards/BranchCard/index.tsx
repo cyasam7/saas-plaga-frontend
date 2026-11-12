@@ -1,11 +1,21 @@
-import { Card, CardHeader, CardContent, List, ListItem, ListItemIcon, ListItemText, IconButton, Typography, Box, Chip, Stack } from "@mui/material"
-import { MoreVert, Phone, LocationOn, Person, Store } from "@mui/icons-material"
+import { useState } from "react"
+import { Card, CardHeader, CardContent, List, ListItem, ListItemIcon, ListItemText, IconButton, Typography, Box, Chip, Stack, Button, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from "@mui/material"
+import { MoreVert, Phone, LocationOn, Person, Store, GridViewOutlined } from "@mui/icons-material"
 import { BranchCardProps } from "./types"
+
+/** Áreas visibles en la tarjeta; el resto se consulta en el diálogo "Ver todas". */
+const VISIBLE_AREAS_COUNT = 3
 
 const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)"
 
 export function BranchCard({ branch, onMenuClick }: BranchCardProps) {
+  const [isAreasDialogOpen, setIsAreasDialogOpen] = useState(false)
+  const areas = branch.areas ?? []
+  const visibleAreas = areas.slice(0, VISIBLE_AREAS_COUNT)
+  const hiddenAreasCount = areas.length - visibleAreas.length
+
   return (
+    <>
     <Card sx={{
       height: "100%",
       display: "flex",
@@ -92,8 +102,71 @@ export function BranchCard({ branch, onMenuClick }: BranchCardProps) {
             </ListItem>
           )}
         </List>
+
+        <Divider sx={{ my: 1.5 }} />
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <GridViewOutlined fontSize="small" color="primary" />
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              Áreas ({areas.length})
+            </Typography>
+          </Stack>
+          {areas.length > 0 && (
+            <Button size="small" onClick={() => setIsAreasDialogOpen(true)} sx={{ minWidth: 0 }}>
+              Ver todas
+            </Button>
+          )}
+        </Box>
+        {areas.length === 0 ? (
+          <Typography variant="caption" color="text.secondary">
+            Sin áreas registradas
+          </Typography>
+        ) : (
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+            {visibleAreas.map((area) => (
+              <Chip key={area.id} label={area.name} size="small" variant="outlined" />
+            ))}
+            {hiddenAreasCount > 0 && (
+              <Chip
+                label={`+${hiddenAreasCount} más`}
+                size="small"
+                color="primary"
+                variant="outlined"
+                onClick={() => setIsAreasDialogOpen(true)}
+              />
+            )}
+          </Box>
+        )}
       </CardContent>
     </Card>
+
+    <Dialog open={isAreasDialogOpen} onClose={() => setIsAreasDialogOpen(false)} fullWidth maxWidth="xs">
+      <DialogTitle sx={{ pb: 1 }}>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          Áreas de {branch.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {areas.length} {areas.length === 1 ? "área registrada" : "áreas registradas"}
+        </Typography>
+      </DialogTitle>
+      <DialogContent dividers sx={{ p: 0 }}>
+        <List dense disablePadding>
+          {areas.map((area, areaIndex) => (
+            <ListItem key={area.id} divider={areaIndex < areas.length - 1} sx={{ px: 3 }}>
+              <ListItemText
+                primary={area.name}
+                secondary={area.description || undefined}
+                primaryTypographyProps={{ variant: "body2", sx: { fontWeight: 500 } }}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, py: 1.5 }}>
+        <Button onClick={() => setIsAreasDialogOpen(false)}>Cerrar</Button>
+      </DialogActions>
+    </Dialog>
+    </>
   )
 }
 

@@ -25,7 +25,6 @@ import { openDialog } from "app/shared-components/GlobalDialog/openDialog"
 import { HistoryTab } from "./Tabs/History"
 import { BranchesTab } from "./Tabs/Branches"
 import PageHeader from "../PageHeader"
-import { FormBranchValues } from "../Forms/BranchForm/types"
 import { FormClientValues } from "../Forms/NewClientForm/types"
 
 
@@ -61,9 +60,10 @@ export function ClientDetail() {
   })
 
   const [searchParams, setSearchParams] = useSearchParams()
-  const [showBranchForm, setShowBranchForm] = useState(false)
+  const [isBranchFormOpen, setIsBranchFormOpen] = useState(false)
   const [currentBranch, setCurrentBranch] = useState<Branch | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
+  // Vacío = alta de sucursal; con id = edición.
+  const [editingBranchId, setEditingBranchId] = useState("")
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
 
   // Tab selection is driven by the `tabSelected` query param so it is linkable and
@@ -84,15 +84,19 @@ export function ClientDetail() {
   }
 
   const handleAddBranch = () => {
-    setCurrentBranch(null)
-    setIsEditing(false)
-    setShowBranchForm(true)
+    setEditingBranchId("")
+    setIsBranchFormOpen(true)
   }
 
   const handleEditBranch = (branch: Branch) => {
-    setCurrentBranch(branch)
-    setIsEditing(true)
-    setShowBranchForm(true)
+    setEditingBranchId(branch.id)
+    setIsBranchFormOpen(true)
+    handleMenuClose()
+  }
+
+  // El cliente también trae sus ubicaciones con áreas, así que se refrescan ambos.
+  async function handleBranchFormSaved() {
+    await Promise.all([refetchBranches(), refetchClient()])
   }
 
   const handleDeleteBranch = (branchId: string) => {
@@ -105,13 +109,6 @@ export function ClientDetail() {
         await refetchBranches()
       },
     })
-  }
-
-  async function handleSaveBranch(branch: FormBranchValues) {
-    await BranchService.save(branch)
-    await refetchBranches()
-    setShowBranchForm(false)
-    handleMenuClose()
   }
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, branchId: string) => {
@@ -190,12 +187,11 @@ export function ClientDetail() {
         </Button>
       </Menu>
       <BranchForm
+        open={isBranchFormOpen}
         clientId={clientId}
-        open={showBranchForm}
-        onClose={() => setShowBranchForm(false)}
-        onSave={handleSaveBranch}
-        branch={currentBranch}
-        isEditing={isEditing}
+        branchId={editingBranchId}
+        onClose={() => setIsBranchFormOpen(false)}
+        onSaved={handleBranchFormSaved}
       />
     </Box>
   )

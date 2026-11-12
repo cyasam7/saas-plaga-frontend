@@ -10,6 +10,37 @@ export interface Branch {
   description?: string;
   area?: number;
   notes?: string;
+  /** Áreas de la ubicación (GET /branch). */
+  areas: IBranchArea[];
+}
+
+export interface IBranchArea {
+  id: string;
+  name: string;
+  description: string | null;
+}
+
+/**
+ * `form` de GET /branch/:id/form; el PUT /branch/:id recibe exactamente esta estructura.
+ * Un área sin `id` es nueva; las que no se envían se eliminan.
+ */
+export interface IBranchForm {
+  name: string;
+  address: string;
+  contactPhone: string;
+  contactPerson: string | null;
+  notes: string | null;
+  areas: {
+    id?: string;
+    name: string;
+    description: string | null;
+  }[];
+}
+
+export interface IGetBranchFormResponse {
+  id: string;
+  clientId: string;
+  form: IBranchForm;
 }
 
 export interface Area {
