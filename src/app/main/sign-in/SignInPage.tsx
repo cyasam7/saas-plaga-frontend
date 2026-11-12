@@ -5,21 +5,6 @@ import CardContent from '@mui/material/CardContent';
 import LoginInformation from 'app/shared/components/LoginInformation/LoginInformation';
 import JwtLoginTab from './tabs/JwtSignInTab';
 
-const tabs = [
-	{
-		id: 'jwt',
-		title: 'JWT',
-		logo: 'assets/images/logo/jwt.svg',
-		logoClass: 'h-40 p-4 bg-black rounded-12'
-	},
-	{
-		id: 'firebase',
-		title: 'Firebase',
-		logo: 'assets/images/logo/firebase.svg',
-		logoClass: 'h-40'
-	}
-];
-
 /**
  * The sign in page.
  */
