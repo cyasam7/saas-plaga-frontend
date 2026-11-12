@@ -1,13 +1,13 @@
-import { useQueryClient } from 'react-query';
+import { QueryKey, useQueryClient } from 'react-query';
 
 interface UseQueryInvalidator {
-	invalidate: (value: string | string[]) => void;
+	invalidate: (value: QueryKey) => void;
 }
 
 const useQueryInvalidator = (): UseQueryInvalidator => {
 	const queryClient = useQueryClient();
 
-	function invalidate(value?: string | string[]): void {
+	function invalidate(value?: QueryKey): void {
 		if (value) {
 			queryClient.invalidateQueries(value);
 		}

@@ -1,6 +1,12 @@
 /** Value sets del API (`EClientType`, `ETaxpayerType`, `EPropertyType` en `api/.../client/domain/ClientEntity.ts`). */
 export type ClientType = 'business' | 'individual';
 
+/** Mismo value set que `ClientType`, como enum (lo usan órdenes e historial para comparar valores). */
+export enum EClientType {
+  INDIVIDUAL = 'individual',
+  BUSINESS = 'business'
+}
+
 export type TaxpayerType = 'fisica' | 'moral';
 
 export type PropertyType = 'house' | 'apartment';
