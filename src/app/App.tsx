@@ -9,7 +9,6 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
 import dayjs from 'dayjs';
-import { pdfjs } from 'react-pdf';
 import withAppProviders from './withAppProviders';
 import { AuthRouteProvider } from './core/auth/AuthRouteProvider';
 import { GlobalDialogProvider } from './shared/components/GlobalDialog/GlobalDialogContext';
@@ -23,9 +22,6 @@ import 'dayjs/locale/es'; // import locale
  */
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 axios.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString();
 
 dayjs.locale('es');
 dayjs.extend(utc);

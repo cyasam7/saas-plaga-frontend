@@ -214,7 +214,7 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 						url: originalRequest.url,
 						method: originalRequest.method,
 						headers: {
-							...originalRequest.headers,
+							...originalRequest.headers.toJSON(),
 							Authorization: `Bearer ${updatedAccessToken}`,
 							'Content-Type': 'application/json',
 							Accept: 'application/json'
