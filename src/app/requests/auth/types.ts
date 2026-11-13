@@ -3,21 +3,21 @@ import { ERoleCode } from 'src/app/requests/users/types';
 /**
  * Endpoints de sesión. Los llama `core/auth/AuthRouteProvider.tsx` y su
  * interceptor fuera de React Query, así que solo sus tipos viven aquí.
+ * El web usa los endpoints `auth/web/*`: los tokens viajan en cookies httpOnly
+ * que pone el API, nunca en el body ni en JavaScript.
  */
 
-/** Cuerpo de `POST /auth/sign-in` (`LoginAuthDTO`). */
+/** Cuerpo de `POST /auth/web/sign-in` (`LoginAuthDTO`). */
 export interface ISignInPayload {
   email: string;
   password: string;
 }
 
-/** Espejo de `ILoginAuthResponse` (api/.../_shared/auth/application/LoginAuth.ts). */
+/** Espejo de `IWebSignInResponse` (api/.../_shared/auth/infrastructure/AuthController.ts). */
 export interface ISignInResponse {
   id: string;
   name: string;
   email: string;
-  accessToken: string;
-  refreshToken: string;
   role: {
     id: string;
     name: string;
@@ -38,27 +38,17 @@ export interface ISignUpPayload {
   companyName: string;
 }
 
-/** Cuerpo de `POST /auth/refresh` (`RefreshTokenDTO`). */
-export interface IRefreshTokenPayload {
-  refreshToken: string;
-}
-
-/** Espejo de `IRefreshUserTokenResponse` (api/.../_shared/auth/application/RefreshTokenAuth.ts). */
+/** Espejo de `IWebRefreshResponse` (api/.../_shared/auth/infrastructure/AuthController.ts). Sin cuerpo: el refresh token va en su cookie. */
 export interface IRefreshTokenResponse {
-  accessToken: string;
-  user: {
+  id: string;
+  name: string;
+  email: string;
+  role: {
     id: string;
     name: string;
-    email: string;
-    accessToken: string;
-    refreshToken: string;
-    role: {
-      id: string;
-      name: string;
-      code: ERoleCode;
-    };
-    tenant: string;
+    code: ERoleCode;
   };
+  tenant: string;
 }
 
 /** Espejo de `IGetCurrentUserResponse` (api/.../_shared/auth/application/GetCurrentUserAuth.ts). */
@@ -66,8 +56,6 @@ export interface IGetCurrentUserResponse {
   id: string;
   name: string;
   email: string;
-  accessToken?: string;
-  refreshToken?: string;
   role: {
     id: string;
     name: string;

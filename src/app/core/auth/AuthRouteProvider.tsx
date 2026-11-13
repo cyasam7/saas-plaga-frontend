@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import SplashScreen from 'app/core/feedback/SplashScreen';
@@ -7,18 +7,19 @@ import { TIMEZONE } from 'src/app/shared/constants/dateFormat';
 import {
 	IApiErrorResponse,
 	IGetCurrentUserResponse,
-	IRefreshTokenPayload,
 	IRefreshTokenResponse,
 	ISignInPayload,
 	ISignInResponse,
 	ISignUpPayload
 } from 'src/app/requests/auth/types';
 
-const ACCESS_TOKEN_STORAGE_KEY = 'jwt_access_token';
-const REFRESH_TOKEN_STORAGE_KEY = 'jwt_refresh_token';
-const SIGN_IN_URL = '/auth/sign-in';
+/** Donde versiones anteriores guardaban los tokens; se borran al cargar para no dejarlos expuestos. */
+const LEGACY_TOKEN_STORAGE_KEYS = ['jwt_access_token', 'jwt_refresh_token'];
+// Endpoints `auth/web/*`: el API guarda los tokens en cookies httpOnly, que JavaScript no puede leer.
+const SIGN_IN_URL = '/auth/web/sign-in';
+const TOKEN_REFRESH_URL = '/auth/web/refresh';
+const SIGN_OUT_URL = '/auth/web/sign-out';
 const SIGN_UP_URL = '/auth/sign-up';
-const TOKEN_REFRESH_URL = '/auth/refresh';
 const CURRENT_USER_URL = '/auth/user';
 
 /**
@@ -78,19 +79,14 @@ function formatUserResponse(response: ISignInResponse | IGetCurrentUserResponse)
 	} as User;
 }
 
-function setSession(accessToken: string, refreshToken: string, tenant?: string) {
-	localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, refreshToken);
-	localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, accessToken);
-	axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+/** Los tokens viajan solos en sus cookies; aquí solo quedan los headers que el API pide aparte. */
+function setSession(tenant?: string) {
 	axios.defaults.headers.common['x-tenant'] = tenant;
 	axios.defaults.headers.common['x-timezone'] = TIMEZONE;
 	axios.defaults.headers.common['Content-Type'] = 'application/json';
 }
 
 function resetSession() {
-	localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
-	localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
-	delete axios.defaults.headers.common.Authorization;
 	delete axios.defaults.headers.common['x-tenant'];
 }
 
@@ -108,8 +104,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 type AuthRouteProviderProps = { children: React.ReactNode };
 
 /**
- * Owns the JWT session: stores the tokens, sets the axios auth/tenant headers, refreshes the
- * access token on a 401, restores the session on load and exposes the signed-in user.
+ * Owns the session: the API keeps the JWTs in httpOnly cookies, so this sets the tenant headers,
+ * refreshes the session on a 401, restores it on load and exposes the signed-in user.
  */
 function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 	const queryClient = useQueryClient();
@@ -120,8 +116,8 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 	/**
 	 * Starts the session and replaces the user.
 	 */
-	const handleSignInSuccess = useCallback((signedInUser: User, accessToken: string, refreshToken: string) => {
-		setSession(accessToken, refreshToken, signedInUser.data.tenant);
+	const handleSignInSuccess = useCallback((signedInUser: User) => {
+		setSession(signedInUser.data.tenant);
 		setIsAuthenticated(true);
 		setUser(signedInUser);
 	}, []);
@@ -138,10 +134,7 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 			const signInRequest = axios.post<ISignInResponse>(SIGN_IN_URL, credentials);
 
 			signInRequest.then(
-				(signInResponse) => {
-					const { accessToken, refreshToken } = signInResponse.data;
-					handleSignInSuccess(formatUserResponse(signInResponse.data), accessToken, refreshToken);
-				},
+				(signInResponse) => handleSignInSuccess(formatUserResponse(signInResponse.data)),
 				(error) => handleSignInFailure(error as AxiosError)
 			);
 
@@ -156,42 +149,32 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 	);
 
 	const signOut = useCallback(() => {
+		// Las cookies son httpOnly: solo el API puede borrarlas. Si falla, la sesión local se cierra igual.
+		axios.post<void>(SIGN_OUT_URL).catch(() => undefined);
 		resetSession();
 		setIsAuthenticated(false);
 		queryClient.removeQueries();
 		setUser(createGuestUser());
 	}, [queryClient]);
 
-	const refreshAccessToken = useCallback(async (): Promise<string | null> => {
+	/** Renueva las cookies de sesión con la cookie del refresh token. */
+	const refreshSession = useCallback(async (): Promise<boolean> => {
 		try {
-			const storedRefreshToken = localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY);
-			const refreshTokenPayload: IRefreshTokenPayload = { refreshToken: storedRefreshToken };
-			const { data: refreshTokenResponse } = await axios.post<IRefreshTokenResponse>(
-				TOKEN_REFRESH_URL,
-				refreshTokenPayload
-			);
+			const { data: refreshTokenResponse } = await axios.post<IRefreshTokenResponse>(TOKEN_REFRESH_URL);
 
-			setSession(refreshTokenResponse.accessToken, storedRefreshToken, refreshTokenResponse.user.tenant);
-			return refreshTokenResponse.accessToken;
+			setSession(refreshTokenResponse.tenant);
+			return true;
 		} catch {
 			signOut();
-			return null;
+			return false;
 		}
 	}, [signOut]);
 
 	/**
-	 * Sends the stored access token on every request and, on a 401, refreshes it once and retries.
-	 * Registered once; the cleanup ejects them so they never stack up.
+	 * On a 401, refreshes the session once and retries the request (the browser sends the new cookies).
+	 * Registered once; the cleanup ejects it so it never stacks up.
 	 */
 	useEffect(() => {
-		const requestInterceptorId = axios.interceptors.request.use(async (requestConfig) => {
-			const accessToken = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-
-			if (accessToken) {
-				requestConfig.headers.Authorization = `Bearer ${accessToken}`;
-			}
-			return requestConfig;
-		});
 		const responseInterceptorId = axios.interceptors.response.use(
 			(response) => response,
 			async (error) => {
@@ -199,34 +182,19 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 				// No `response` on network errors or timeouts: pass those through untouched.
 				const statusError = axiosError.response?.status;
 				const originalRequest = axiosError.config as AxiosConfigRetry;
-				const isAuthRequest =
-					originalRequest?.url?.includes(TOKEN_REFRESH_URL) || originalRequest?.url?.includes(SIGN_IN_URL);
+				const isAuthRequest = [TOKEN_REFRESH_URL, SIGN_IN_URL, SIGN_OUT_URL].some((authUrl) =>
+					originalRequest?.url?.includes(authUrl)
+				);
 
 				if (statusError === 401 && !isAuthRequest && !originalRequest._retry) {
-					// Lock the token refresh process to avoid multiple simultaneous requests
 					originalRequest._retry = true;
-					const updatedAccessToken = await refreshAccessToken();
-					if (!updatedAccessToken) {
-						signOut();
+					const isSessionRefreshed = await refreshSession();
+					if (!isSessionRefreshed) {
 						return Promise.reject(axiosError);
 					}
-					const retryRequestConfig: AxiosRequestConfig = {
-						url: originalRequest.url,
-						method: originalRequest.method,
-						headers: {
-							...originalRequest.headers.toJSON(),
-							Authorization: `Bearer ${updatedAccessToken}`,
-							'Content-Type': 'application/json',
-							Accept: 'application/json'
-						}
-					};
 
-					if (originalRequest.data) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-						retryRequestConfig.data = JSON.parse(originalRequest.data);
-					}
-
-					return Promise.resolve(axios(retryRequestConfig));
+					// Se reenvía la config original: conserva params, body y headers como x-timezone.
+					return axios(originalRequest);
 				}
 
 				return Promise.reject(axiosError);
@@ -234,25 +202,21 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 		);
 
 		return () => {
-			axios.interceptors.request.eject(requestInterceptorId);
 			axios.interceptors.response.eject(responseInterceptorId);
 		};
-	}, [refreshAccessToken, signOut]);
+	}, [refreshSession]);
 
 	/**
-	 * On page load, restores the session from the stored token: if `GET /auth/user` succeeds the
+	 * On page load, restores the session from the cookies: if `GET /auth/user` succeeds the
 	 * user is signed in. Runs once; sign-in and sign-out update the session themselves.
 	 */
 	useEffect(() => {
 		const attemptAutoLogin = async () => {
+			LEGACY_TOKEN_STORAGE_KEYS.forEach((legacyStorageKey) => localStorage.removeItem(legacyStorageKey));
 			try {
 				setIsLoading(true);
 				const { data: currentUserResponse } = await axios.get<IGetCurrentUserResponse>(CURRENT_USER_URL);
-				handleSignInSuccess(
-					formatUserResponse(currentUserResponse),
-					currentUserResponse.accessToken,
-					currentUserResponse.refreshToken
-				);
+				handleSignInSuccess(formatUserResponse(currentUserResponse));
 			} catch {
 				// No valid session: stay signed out.
 			}

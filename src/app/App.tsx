@@ -21,6 +21,8 @@ import 'dayjs/locale/es'; // import locale
  * Axios HTTP Request defaults
  */
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+// La sesión viaja en cookies httpOnly del API (ver core/auth/AuthRouteProvider.tsx).
+axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
 
 dayjs.locale('es');
