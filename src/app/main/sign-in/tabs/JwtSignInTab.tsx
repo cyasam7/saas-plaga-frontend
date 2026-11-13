@@ -34,7 +34,7 @@ const defaultValues = {
 };
 
 function jwtSignInTab() {
-	const { jwtService } = useAuth();
+	const { signIn } = useAuth();
 
 	const { control, formState, handleSubmit, setValue, setError } = useForm<FormType>({
 		mode: 'onChange',
@@ -52,11 +52,10 @@ function jwtSignInTab() {
 	function onSubmit(formData: FormType) {
 		const { email, password } = formData;
 
-		jwtService
-			.signIn({
-				email,
-				password
-			})
+		signIn({
+			email,
+			password
+		})
 			.catch(
 				(
 					error: AxiosError<

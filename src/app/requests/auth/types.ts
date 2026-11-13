@@ -1,7 +1,7 @@
 import { ERoleCode } from 'src/app/requests/users/types';
 
 /**
- * Endpoints de sesión. Los llama el proveedor JWT (`core/auth/useJwtAuth.tsx`) y su
+ * Endpoints de sesión. Los llama `core/auth/AuthRouteProvider.tsx` y su
  * interceptor fuera de React Query, así que solo sus tipos viven aquí.
  */
 
@@ -76,7 +76,7 @@ export interface IGetCurrentUserResponse {
   tenant?: string;
 }
 
-/** Cuerpo de error que devuelve el API (`HttpExceptionFilter`); lo lee el interceptor de `useJwtAuth`. */
+/** Cuerpo de error que devuelve el API (`HttpExceptionFilter`); lo lee el interceptor de `AuthRouteProvider`. */
 export interface IApiErrorResponse {
   statusCode: number;
   message: string;

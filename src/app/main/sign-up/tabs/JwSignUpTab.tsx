@@ -16,7 +16,8 @@ import {
 	FIELD_TERMS_CONDITIONS
 } from 'src/app/shared/constants/yupMessages';
 import { AxiosError } from 'axios';
-import { SignUpPayload, useAuth } from 'src/app/core/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
+import { ISignUpPayload } from 'src/app/requests/auth/types';
 import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 
 /**
@@ -50,7 +51,7 @@ const defaultValues = {
 };
 
 function JwtSignUpTab() {
-	const { jwtService } = useAuth();
+	const { signUp } = useAuth();
 
 	const { control, formState, handleSubmit, setError } = useForm({
 		mode: 'onChange',
@@ -60,11 +61,10 @@ function JwtSignUpTab() {
 
 	const { isValid, dirtyFields, errors } = formState;
 
-	function onSubmit(formData: SignUpPayload) {
-		jwtService
-			.signUp({
-				...formData
-			})
+	function onSubmit(formData: ISignUpPayload) {
+		signUp({
+			...formData
+		})
 			.then(() => {
 				//
 			})
