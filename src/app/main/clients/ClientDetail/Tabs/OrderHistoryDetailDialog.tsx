@@ -11,17 +11,16 @@ import {
   Chip,
 } from "@mui/material"
 import dayjs from "dayjs"
-import { DATE_TIME_FORMAT, DATE_FORMAT } from "src/app/shared-constants/dateFormat"
-import { formatCurrency } from "src/app/shared-constants/formatCurrency"
+import { DATE_TIME_FORMAT, DATE_FORMAT } from "src/app/shared/constants/dateFormat"
+import { formatCurrency } from "src/app/shared/constants/formatCurrency"
 import ChipOrder from "src/app/main/orders/components/ChipOrder/ChipOrder"
-import {
-  ClientOrderHistoryResponse,
-  ClientOrderHistorySimpleCatalog,
-} from "src/app/shared/entities/ClientOrderHistory"
+import { IClientOrdersHistoryResponse } from "src/app/requests/clients/useQueryClientOrdersHistory"
+
+type ClientOrderHistoryItem = IClientOrdersHistoryResponse[number]
 
 interface OrderHistoryDetailDialogProps {
   open: boolean
-  order: ClientOrderHistoryResponse | null
+  order: ClientOrderHistoryItem | null
   onClose: () => void
 }
 
@@ -41,7 +40,7 @@ function Field({ label, value }: { label: string; value?: React.ReactNode }) {
   )
 }
 
-function CatalogChips({ items }: { items?: ClientOrderHistorySimpleCatalog[] }) {
+function CatalogChips({ items }: { items?: ClientOrderHistoryItem["pests"] }) {
   if (!items || items.length === 0) return null
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>

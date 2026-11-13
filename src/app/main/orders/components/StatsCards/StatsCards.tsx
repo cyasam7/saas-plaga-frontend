@@ -1,12 +1,12 @@
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { ReceiptLong, PendingActions, Today, Event, EventBusy } from '@mui/icons-material';
-import { OrdersDatagridStats } from 'src/app/shared/services/OrderService';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { statusColor } from '../../utils';
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 
 interface StatsCardsProps {
-	stats: OrdersDatagridStats;
+	stats: IOrdersDatagridResponse['stats'];
 }
 
 interface StatItem {

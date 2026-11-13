@@ -1,7 +1,7 @@
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
-import LoginInformation from 'app/shared-components/LoginInformation/LoginInformation';
+import LoginInformation from 'app/shared/components/LoginInformation/LoginInformation';
 import JwtSignUpTab from './tabs/JwSignUpTab';
 
 /**

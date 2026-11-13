@@ -1,17 +1,6 @@
-// import createGenerateClassName from '@mui/styles/createGenerateClassName';
-// import jssPreset from '@mui/styles/jssPreset';
-// import { create } from 'jss';
-// import jssExtend from 'jss-plugin-extend';
-// import rtl from 'jss-rtl';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { ComponentType, PropsWithChildren } from 'react';
 import { StyledEngineProvider } from '@mui/material/styles';
-import routes from 'app/configs/routesConfig';
-import { useMemo } from 'react';
-import { Provider } from 'react-redux';
-import ErrorBoundary from '@fuse/utils/ErrorBoundary';
-import AppContext from './AppContext';
-import store from './store/store';
+import ErrorBoundary from 'app/core/feedback/ErrorBoundary';
 
 type ComponentProps = {
 	name?: string;
@@ -20,30 +9,13 @@ type ComponentProps = {
 /**
  * A Higher Order Component that provides the necessary context providers for the app.
  */
-function withAppProviders(Component: React.ComponentType<ComponentProps>) {
-	/**
-	 * The component that wraps the provided component with the necessary context providers.
-	 */
-	function WithAppProviders(props: React.PropsWithChildren<ComponentProps>) {
-		/**
-		 * The value to pass to the AppContext provider.
-		 */
-		const val = useMemo(
-			() => ({
-				routes
-			}),
-			[routes]
-		);
-
+function withAppProviders(Component: ComponentType<ComponentProps>) {
+	function WithAppProviders(props: PropsWithChildren<ComponentProps>) {
 		return (
 			<ErrorBoundary>
-				<AppContext.Provider value={val}>
-					<Provider store={store}>
-						<StyledEngineProvider injectFirst>
-							<Component {...props} />
-						</StyledEngineProvider>
-					</Provider>
-				</AppContext.Provider>
+				<StyledEngineProvider injectFirst>
+					<Component {...props} />
+				</StyledEngineProvider>
 			</ErrorBoundary>
 		);
 	}

@@ -1,6 +1,6 @@
 import { Chip } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 import { statusColor, statusLabel } from '../../utils';
 
 export interface IChipOrderProps {

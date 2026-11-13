@@ -2,16 +2,15 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import _ from '@lodash';
 import { AxiosError } from 'axios';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
+import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
 
 /**
  * Form Validation Schema
@@ -34,7 +33,7 @@ const defaultValues = {
 };
 
 function jwtSignInTab() {
-	const { jwtService } = useAuth();
+	const { signIn } = useAuth();
 
 	const { control, formState, handleSubmit, setValue, setError } = useForm<FormType>({
 		mode: 'onChange',
@@ -52,11 +51,10 @@ function jwtSignInTab() {
 	function onSubmit(formData: FormType) {
 		const { email, password } = formData;
 
-		jwtService
-			.signIn({
-				email,
-				password
-			})
+		signIn({
+			email,
+			password
+		})
 			.catch(
 				(
 					error: AxiosError<
@@ -153,7 +151,7 @@ function jwtSignInTab() {
 					color="secondary"
 					className=" mt-16 w-full"
 					aria-label="Sign in"
-					disabled={_.isEmpty(dirtyFields) || !isValid}
+					disabled={Object.keys(dirtyFields).length === 0 || !isValid}
 					type="submit"
 					size="large"
 				>

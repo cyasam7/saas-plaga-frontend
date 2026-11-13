@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { EOrdersDayFilter, IQueryDatagridOrders } from 'src/app/shared/services/OrderService';
+import { EOrdersDayFilter } from 'src/app/requests/orders/types';
+import { IOrdersDatagridPayload } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 
 const DAY_FILTER_PARAM = 'dayFilter';
 const FUMIGATOR_PARAM = 'fumigatorId';
@@ -17,7 +18,7 @@ export interface OrdersFilters {
 interface IUseOrdersFilters {
 	filters: OrdersFilters;
 	/** Lo que se manda al API: se omiten los valores neutros. */
-	query: IQueryDatagridOrders;
+	query: IOrdersDatagridPayload;
 	setFilter: <K extends keyof OrdersFilters>(key: K, value: OrdersFilters[K]) => void;
 }
 
@@ -54,7 +55,7 @@ export function useOrdersFilters(): IUseOrdersFilters {
 		[filters, setSearchParams]
 	);
 
-	const query = useMemo<IQueryDatagridOrders>(
+	const query = useMemo<IOrdersDatagridPayload>(
 		() => ({
 			dayFilter: filters.dayFilter,
 			...(filters.fumigatorId ? { fumigatorId: filters.fumigatorId } : {})

@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest"
 import { clientToFormValues } from "../mapper"
-import { Client } from "../../../types"
+import { IGetClientResponse } from "src/app/requests/clients/useQueryGetClient"
 
-const businessClient: Client = {
+const businessClient: IGetClientResponse = {
   id: "client-1",
+  tenantId: "tenant-1",
   name: "Acme SA",
   type: "business",
   legalName: "Acme Sociedad Anónima",
@@ -24,8 +25,9 @@ const businessClient: Client = {
   ],
 }
 
-const individualClient: Client = {
+const individualClient: IGetClientResponse = {
   id: "client-2",
+  tenantId: "tenant-1",
   name: "Jane Doe",
   type: "individual",
   phone: "+5215544332211",
@@ -57,7 +59,7 @@ describe("clientToFormValues", () => {
   })
 
   it("normalizes missing optional strings to empty strings", () => {
-    const bare: Client = { id: "c3", name: "Sin datos", type: "individual" }
+    const bare: IGetClientResponse = { id: "c3", tenantId: "tenant-1", name: "Sin datos", type: "individual" }
     const values = clientToFormValues(bare)
 
     expect(values.legalName).toBe("")

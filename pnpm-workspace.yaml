@@ -5,4 +5,3 @@ allowBuilds:
   core-js-pure: true
   esbuild: true
   protobufjs: true
-  yarn: true

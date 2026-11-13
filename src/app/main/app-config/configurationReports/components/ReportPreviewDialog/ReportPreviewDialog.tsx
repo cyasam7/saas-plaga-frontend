@@ -11,7 +11,8 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { MouseEvent } from 'react';
-import { IReportPreviewProps, REPORT_TYPE_OPTIONS, ReportType } from '../../entities/ReportPreview';
+import { IReportPreviewProps, ReportType } from '../../types';
+import { REPORT_TYPE_OPTIONS } from '../../utils';
 import { PREVIEW_BY_REPORT_TYPE } from '../../config';
 
 interface ReportPreviewDialogProps {

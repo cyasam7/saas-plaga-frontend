@@ -4,29 +4,15 @@ import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Paper from '@mui/material/Paper';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 
 import TabPanel from './components/TabPanel';
-import ApplicationTypes from './components/application-types/ApplicationTypes';
+import ApplicationTypes from './components/ApplicationTypes';
 import { Container, Stack } from '@mui/material';
-import ServiceTypes from './components/service-types/ServiceTypes';
+import ServiceTypes from './components/ServiceTypes';
 import Products from './components/products/Products';
-import PestTypes from './components/pest-types/PestTypes';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
+import PestTypes from './components/PestTypes';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 
 export default function CatalogsV2() {
@@ -37,15 +23,11 @@ export default function CatalogsV2() {
 	};
 
 	return (
-		<Root
+		<PageLayout
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Catálogos"
-							subtitle="Gestiona los catálogos del sistema: tipos de servicio, tipos de aplicación, productos y plagas"
-						/>
-					}
+				<SimpleHeader
+					title="Catálogos"
+					subtitle="Gestiona los catálogos del sistema: tipos de servicio, tipos de aplicación, productos y plagas"
 				/>
 			}
 			content={

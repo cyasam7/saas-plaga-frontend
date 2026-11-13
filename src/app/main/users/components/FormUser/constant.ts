@@ -1,4 +1,4 @@
-import { ERoleCode } from 'src/app/shared/entities/UserEntity';
+import { ERoleCode } from 'src/app/requests/users/types';
 
 export const ROLE_CATALOG = [
 	{

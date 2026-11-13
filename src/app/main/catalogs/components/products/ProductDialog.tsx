@@ -6,20 +6,21 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { useForm, useFieldArray } from 'react-hook-form';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import { Box, useTheme, IconButton, Typography, Grid, Paper, MenuItem } from '@mui/material';
 import ScienceIcon from '@mui/icons-material/Science';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { IProduct } from '../types';
+import { IInsecticideTypesResponse } from 'src/app/requests/catalogs/useQueryInsecticideTypes';
+import { ISaveInsecticideTypePayload } from 'src/app/requests/catalogs/useMutationSaveInsecticideType';
 
 interface ProductDialogProps {
     open: boolean;
     isEditing: boolean;
-    selectedProduct: IProduct | null;
+    selectedProduct: IInsecticideTypesResponse[number] | null;
     onClose: () => void;
-    onSubmit: (data: IProduct) => void;
+    onSubmit: (data: ISaveInsecticideTypePayload) => void;
 }
 
 const units = [
@@ -37,7 +38,7 @@ export default function ProductDialog({
     onSubmit
 }: ProductDialogProps) {
     const theme = useTheme();
-    const { control, handleSubmit, reset } = useForm<IProduct>({
+    const { control, handleSubmit, reset } = useForm<ISaveInsecticideTypePayload>({
         defaultValues: {
             id: '',
             commercialName: '',
@@ -126,7 +127,7 @@ export default function ProductDialog({
                 </DialogContentText>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Box sx={{ mb: 4 }}>
-                        <TextFieldForm<IProduct>
+                        <TextFieldForm<ISaveInsecticideTypePayload>
                             control={control}
                             name="commercialName"
                             label="Nombre Comercial"
@@ -135,7 +136,7 @@ export default function ProductDialog({
                             margin="dense"
                             sx={{ mt: 2 }}
                         />
-                        <TextFieldForm<IProduct>
+                        <TextFieldForm<ISaveInsecticideTypePayload>
                             control={control}
                             name="chemicalName"
                             label="Nombre Químico"
@@ -143,7 +144,7 @@ export default function ProductDialog({
                             margin="dense"
                             sx={{ mt: 2 }}
                         />
-                        <TextFieldForm<IProduct>
+                        <TextFieldForm<ISaveInsecticideTypePayload>
                             control={control}
                             name="description"
                             label="Descripción del Producto"
@@ -176,7 +177,7 @@ export default function ProductDialog({
                             >
                                 <Grid container spacing={2} alignItems="center">
                                     <Grid item xs={5}>
-                                        <TextFieldForm<IProduct>
+                                        <TextFieldForm<ISaveInsecticideTypePayload>
                                             control={control}
                                             name={`doses.${index}.amount`}
                                             label="Cantidad"
@@ -186,7 +187,7 @@ export default function ProductDialog({
                                         />
                                     </Grid>
                                     <Grid item xs={5}>
-                                        <TextFieldForm<IProduct>
+                                        <TextFieldForm<ISaveInsecticideTypePayload>
                                             control={control}
                                             name={`doses.${index}.unit`}
                                             label="Unidad"

@@ -2,16 +2,14 @@ import { useState } from 'react';
 import { Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
 import { FileDownload, ReceiptLong, Visibility } from '@mui/icons-material';
 import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from '@mui/x-data-grid';
-import { styled } from '@mui/material/styles';
 
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
-import { EStatusOrder } from 'src/app/shared/entities/OrderEntity';
-import { OrderHistoryRow } from 'src/app/shared/services/OrderService';
+import PageLayout from 'app/core/page/PageLayout';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
+import { EStatusOrder } from 'src/app/requests/orders/types';
+import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 
 import { columnsOrdersHistory } from './columns';
-import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
+import GenerateReportDialog from '../components/GenerateReportDialog/GenerateReportDialog';
 import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
 import HistoryFilters from './components/HistoryFilters/HistoryFilters';
 import { hasActiveFilters } from './helpers';
@@ -19,15 +17,6 @@ import useOrdersHistory from './hooks/useOrdersHistory';
 import useOrdersHistoryFilters from './hooks/useOrdersHistoryFilters';
 
 const CAN_GENERATE_REPORT_STATUSES = [EStatusOrder.DONE, EStatusOrder.FINISHED];
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	}
-}));
 
 function EmptyState() {
 	return (
@@ -67,7 +56,7 @@ function OrdersHistory() {
 
 	const isEmpty = !isLoading && rows.length === 0;
 
-	const columns: GridColDef<OrderHistoryRow>[] = [
+	const columns: GridColDef<IOrdersHistoryResponse['data'][number]>[] = [
 		...columnsOrdersHistory,
 		{
 			headerName: 'Acciones',
@@ -103,17 +92,12 @@ function OrdersHistory() {
 	];
 
 	return (
-		<Root
+		<PageLayout
 			scroll="content"
 			header={
-				<FusePageSimpleHeader
-					
-					header={
-						<SimpleHeader
-							title="Historial de órdenes"
-							subtitle="Consulta las órdenes que ya salieron del flujo inicial"
-						/>
-					}
+				<SimpleHeader
+					title="Historial de órdenes"
+					subtitle="Consulta las órdenes que ya salieron del flujo inicial"
 				/>
 			}
 			content={

@@ -1,64 +1,46 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import { Container } from '@mui/material';
-import { ClientService } from 'src/app/shared/services/ClientService';
-import { useQuery } from 'react-query';
+import { useQueryClient } from 'react-query';
+import { useQueryClients } from 'src/app/requests/clients/useQueryClients';
+import { useMutationSaveClient } from 'src/app/requests/clients/useMutationSaveClient';
+import { useMutationDeleteClient } from 'src/app/requests/clients/useMutationDeleteClient';
+import { clientKeys } from 'src/app/requests/clients/keys';
 import { ClientList } from './ClientDetail/ClientList';
 import { FormClientValues } from './Forms/NewClientForm/types';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 /**
  * The ContactsApp page.
  */
 export function ClientsApp() {
-	const {
-		data = [],
-		refetch
-	} = useQuery({
-		queryKey: ['clients'],
-		queryFn: () => ClientService.getByQuery()
-	});
+	const queryClient = useQueryClient();
+	const { data: clients = [] } = useQueryClients({});
+	const { mutateAsync: saveClient } = useMutationSaveClient();
+	const { mutateAsync: deleteClient } = useMutationDeleteClient();
 
-	async function handleSaveClient(data: FormClientValues, id?: string) {
-		await ClientService.save(data, id);
-		await refetch();
+	async function handleSaveClient(clientFormValues: FormClientValues, clientId?: string) {
+		await saveClient({ ...clientFormValues, ...(clientId ? { id: clientId } : {}) });
+		await queryClient.invalidateQueries(clientKeys.all);
 	}
 
-	async function handleDeleteClient(id: string) {
-		await ClientService.remove(id);
-		await refetch();
+	async function handleDeleteClient(clientId: string) {
+		await deleteClient({ clientId });
+		await queryClient.invalidateQueries(clientKeys.all);
 	}
 
 	return (
-		<Root
+		<PageLayout
 			scroll="content"
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Clientes"
-							subtitle="Gestiona los clientes del sistema"
-						/>
-					}
+				<SimpleHeader
+					title="Clientes"
+					subtitle="Gestiona los clientes del sistema"
 				/>
 			}
 			content={
 				<Container maxWidth="xl" sx={{ pb: 4 }}>
 					<ClientList
-						clients={data}
+						clients={clients}
 						onSaveClient={handleSaveClient}
 						onDeleteClient={handleDeleteClient}
 					/>

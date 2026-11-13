@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { ISaveClientPayload } from "src/app/requests/clients/useMutationSaveClient"
 
 const emptyToUndefined = (schema: z.ZodTypeAny) =>
   z.preprocess((v) => (v === "" || v === null ? undefined : v), schema)
@@ -16,7 +17,7 @@ const locationSchema = z.object({
   contactPhone: z.string().min(8, { message: "Ingrese un teléfono válido" }),
   contactPerson: z.string().optional(),
   references: z.string().optional(),
-  areas: z.array(areaSchema),
+  areas: z.array(areaSchema).min(1, { message: "Agregue al menos un área" }),
 })
 
 // Base object (pre-refinement) so individual sections can derive sub-schemas
@@ -66,11 +67,12 @@ export const formSchema = baseClientObject
     }
   })
 
-export type FormClientValues = z.infer<typeof formSchema>
+// El formulario edita exactamente lo que recibe POST /clients (sin `id`, que va aparte).
+export type FormClientValues = Omit<ISaveClientPayload, "id">
 
 export interface NewClientFormProps {
   open: boolean
   onClose: () => void
-  onSubmit?: (data: FormClientValues) => void
+  onSubmit?: (data: FormClientValues) => Promise<void> | void
   defaultValues?: Partial<FormClientValues>
 }

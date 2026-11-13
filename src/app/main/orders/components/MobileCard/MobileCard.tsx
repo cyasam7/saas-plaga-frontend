@@ -3,13 +3,14 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
 import { FileDownload, Delete } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
-import { DatagridRowOrder, EStatusOrder } from '../../../../shared/entities/OrderEntity';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
+import { displayToast } from 'app/core/feedback/toast';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 import ChipOrder from '../ChipOrder/ChipOrder';
 
 interface MobileCardProps {
-	order: DatagridRowOrder;
+	order: IOrdersDatagridResponse['orders'][number];
 	onAssign: (id: string) => void;
 	onFollow: (id: string) => void;
 	onDownloadCertificate: (id: string) => Promise<void>;
@@ -23,6 +24,8 @@ export function MobileCard({
 	onDownloadCertificate,
 	onDelete
 }: MobileCardProps) {
+	const { openDialog } = useGlobalDialog();
+
 	return (
 		<Box key={order.id}>
 			<Card sx={{ mb: 2, width: '100%' }}>

@@ -29,12 +29,13 @@ import {
   Edit,
 } from "@mui/icons-material"
 import { useState } from "react"
-import { Client, CLIENT_TYPE_LABELS, PROPERTY_TYPE_LABELS, TAXPAYER_TYPE_LABELS } from "../../types"
+import { IGetClientResponse } from "src/app/requests/clients/useQueryGetClient"
+import { CLIENT_TYPE_LABELS, PROPERTY_TYPE_LABELS, TAXPAYER_TYPE_LABELS } from "../../types"
 import { FormClientValues } from "../../Forms/NewClientForm/types"
 import { EditSectionDialog, ClientSection } from "./EditSectionDialog"
 
 interface ClientInfoProps {
-  client: Client | null
+  client: IGetClientResponse | null
   loading: boolean
   onSave?: (values: FormClientValues) => Promise<void> | void
 }

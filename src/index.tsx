@@ -1,4 +1,3 @@
-import './i18n';
 import './styles/app-base.css';
 import './styles/app-components.css';
 import './styles/app-utilities.css';

@@ -1,29 +1,9 @@
-import { FuseRouteConfigType } from '@fuse/utils/FuseUtils';
+import { IRouteConfig } from 'app/core/routing/types';
 import SignUpPage from './SignUpPage';
-import authRoles from '../../auth/authRoles';
+import authRoles from 'src/app/core/auth/authRoles';
 
-const SignUpConfig: FuseRouteConfigType = {
-	settings: {
-		layout: {
-			config: {
-				navbar: {
-					display: false
-				},
-				toolbar: {
-					display: false
-				},
-				footer: {
-					display: false
-				},
-				leftSidePanel: {
-					display: false
-				},
-				rightSidePanel: {
-					display: false
-				}
-			}
-		}
-	},
+const SignUpConfig: IRouteConfig = {
+	isFullScreen: true,
 	auth: authRoles.onlyGuest,
 	routes: [
 		{

@@ -1,4 +1,4 @@
-import { FIELD_EMAIL_VALID, FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
+import { FIELD_EMAIL_VALID, FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
 import * as yup from 'yup';
 
 export const userSchema = yup.object().shape({

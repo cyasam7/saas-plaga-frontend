@@ -1,40 +1,27 @@
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { Paper, Stack, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridActionsCellItemProps, GridColDef } from '@mui/x-data-grid';
-import { useQuery } from 'react-query';
-import { UserService } from 'src/app/shared/services/UserService';
+import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
+import { useMutationDeleteUser } from 'src/app/requests/users/useMutationDeleteUser';
+import { useMutationSaveUserSign } from 'src/app/requests/users/useMutationSaveUserSign';
+import { userKeys } from 'src/app/requests/users/keys';
 import { Visibility, NotInterested, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
 import { ReactElement, useMemo, useState } from 'react';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
-import { useAppSelector } from 'app/store/store';
-import { selectUser } from 'src/app/auth/user/store/userSlice';
-import { IDataGridUserRow } from 'src/app/shared/entities/UserEntity';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
+import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
+import { displayToast } from 'app/core/feedback/toast';
 import { columnsUsers } from './columns';
 import HeaderGrid from './components/HeaderGrid/HeaderGrid';
 import DialogUser from './components/DialogUser/DialogUser';
-import DialogSigner from '../../shared-components/DialogSigner/DialogSigner';
+import DialogSigner from '../../shared/components/DialogSigner/DialogSigner';
 import SignViewer from './components/SignViewer/SignViewer';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
 
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
-
 function Users() {
+	const { openDialog } = useGlobalDialog();
 	const [userId, setUserId] = useState('');
 	const [openSigner, setOpenSigner] = useState(false);
 	const [openPreviewSign, setOpenPreviewSign] = useState(false);
@@ -44,15 +31,13 @@ function Users() {
 	const { invalidate } = useQueryInvalidator();
 	const [openUserDialog, setOpenUserDialog] = useState(false);
 	const [openChangePassword, setOpenChangePassword] = useState(false);
-	const userLogged = useAppSelector(selectUser);
+	const { user: userLogged } = useAuth();
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => UserService.getUsersDatagrid(userLogged.uid),
-		queryKey: 'users-registered',
-		enabled: !!userLogged.uid
-	});
+	const { data, isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
+	const { mutateAsync: deleteUser } = useMutationDeleteUser();
+	const { mutateAsync: saveUserSign } = useMutationSaveUserSign();
 
-	const columns: GridColDef<IDataGridUserRow>[] = [
+	const columns: GridColDef<IUsersDatagridResponse[number]>[] = [
 		...columnsUsers,
 		{
 			field: 'sign',
@@ -126,7 +111,7 @@ function Users() {
 								title: 'Acción requerida',
 								text: '¿Seguro que deseas eliminar este usuario?',
 								onAccept: async () => {
-									await UserService.remove(params.row.userId);
+									await deleteUser({ userId: params.row.userId });
 									displayToast({
 										message: 'Usuario eliminado correctamente',
 										anchorOrigin: {
@@ -135,7 +120,7 @@ function Users() {
 										},
 										variant: 'success'
 									});
-									invalidate('users-registered');
+									invalidate(userKeys.lists());
 								}
 							});
 						}}
@@ -188,8 +173,11 @@ function Users() {
 	}, [search, isActive, data]);
 
 	async function handleSubmitOnSign(data: Blob): Promise<void> {
-		await UserService.saveSign({ userId, sign: data });
-		invalidate('users-registered');
+		const signFormData = new FormData();
+		signFormData.append('file', data, `${userId}-sign.png`);
+		signFormData.append('userId', userId);
+		await saveUserSign({ formData: signFormData });
+		invalidate(userKeys.lists());
 		setUserId('');
 		setOpenSigner(false);
 		displayToast({
@@ -208,15 +196,11 @@ function Users() {
 	}
 
 	return (
-		<Root
+		<PageLayout
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Usuarios"
-							subtitle="Gestiona los usuarios dentro de tu organización"
-						/>
-					}
+				<SimpleHeader
+					title="Usuarios"
+					subtitle="Gestiona los usuarios dentro de tu organización"
 				/>
 			}
 			content={

@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton';
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import HeaderDialog from 'app/shared-components/DialogSkeleton/HeaderDialog/HeaderDialog';
-import { UserService } from 'src/app/shared/services/UserService';
-import useQueryInvalidator from 'src/app/shared-hooks/useQueryInvalidator';
-import { useQuery } from 'react-query';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import HeaderDialog from 'app/shared/components/DialogSkeleton/HeaderDialog/HeaderDialog';
+import { useQueryGetUser } from 'src/app/requests/users/useQueryGetUser';
+import { useMutationSaveUser } from 'src/app/requests/users/useMutationSaveUser';
+import { userKeys } from 'src/app/requests/users/keys';
+import { ERoleCode } from 'src/app/requests/users/types';
+import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
+import { displayToast } from 'app/core/feedback/toast';
 import FormUser from '../FormUser/FormUser';
 import { IDialogUserProps } from './IDialogUserProps';
 import { IFormUser } from '../FormUser/IFormUser';
@@ -22,11 +24,8 @@ function DialogUser(props: IDialogUserProps) {
 		defaultValues: defaultValuesFormUser
 	});
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => UserService.getById(userId),
-		queryKey: [userId],
-		enabled: !!userId
-	});
+	const { data, isLoading } = useQueryGetUser({ userId }, !!userId);
+	const { mutateAsync: saveUser } = useMutationSaveUser();
 
 	useEffect(() => {
 		if (data) {
@@ -51,17 +50,18 @@ function DialogUser(props: IDialogUserProps) {
 				});
 				return;
 			}
-			await UserService.save({
+			await saveUser({
 				id: userId,
 				email: values.email,
 				name: values.name,
 				phone: values.phone,
-				roleCode: values.roleId,
+				// El select solo ofrece valores de ROLE_CATALOG (ERoleCode) y el schema lo exige.
+				roleCode: values.roleId as ERoleCode,
 				tenantId: values.tenantId,
 				password: values.password
 			});
-			invalidate('users-registered');
-			invalidate([userId]);
+			invalidate(userKeys.lists());
+			invalidate(userKeys.detail(userId));
 
 			displayToast({
 				message: 'Usuario guardado correctamente',
@@ -73,8 +73,8 @@ function DialogUser(props: IDialogUserProps) {
 			});
 			handleClose();
 		} catch {
-			invalidate('users-registered');
-			invalidate([userId]);
+			invalidate(userKeys.lists());
+			invalidate(userKeys.detail(userId));
 		}
 	}
 

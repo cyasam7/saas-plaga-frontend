@@ -2,13 +2,13 @@ import { Chip, Stack, Typography, Box } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 
-import { DATE_FORMAT, TIME_FORMAT } from 'src/app/shared-constants/dateFormat';
-import { formatCurrency } from 'src/app/shared-constants/formatCurrency';
+import { DATE_FORMAT, TIME_FORMAT } from 'src/app/shared/constants/dateFormat';
+import { formatCurrency } from 'src/app/shared/constants/formatCurrency';
 import ChipOrder from 'src/app/main/orders/components/ChipOrder/ChipOrder';
-import { DatagridRowOrder } from '../../shared/entities/OrderEntity';
+import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { statusLabel } from './utils';
 
-export const columnsOrders: GridColDef<DatagridRowOrder>[] = [
+export const columnsOrders: GridColDef<IOrdersDatagridResponse['orders'][number]>[] = [
 	{
 		headerName: 'Cliente',
 		field: 'client',

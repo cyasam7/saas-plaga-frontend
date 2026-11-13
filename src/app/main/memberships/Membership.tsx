@@ -1,38 +1,24 @@
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
-import { useQuery } from 'react-query';
 import { Button, Paper, Stack, useTheme } from '@mui/material';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import { Add } from '@mui/icons-material';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
-import { MembershipService } from 'src/app/shared/services/MembershipService';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
+import { useQueryMembershipsDatagrid } from 'src/app/requests/memberships/useQueryMembershipsDatagrid';
+import { useMutationChangeMembershipIsActive } from 'src/app/requests/memberships/useMutationChangeMembershipIsActive';
+import { useMutationExtendMembershipDueDate } from 'src/app/requests/memberships/useMutationExtendMembershipDueDate';
 import dayjs from 'dayjs';
-import { DATE_FORMAT } from 'src/app/shared-constants/dateFormat';
+import { DATE_FORMAT } from 'src/app/shared/constants/dateFormat';
 import DialogMembership from './components/DialogMembership/DialogMembership';
 import { useState } from 'react';
-
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
 
 function Order() {
 	const {
 		data = [],
 		isLoading,
 		refetch
-	} = useQuery({
-		queryKey: 'memberships',
-		queryFn: () => MembershipService.getAll()
-	});
+	} = useQueryMembershipsDatagrid();
+	const { mutateAsync: changeMembershipIsActive } = useMutationChangeMembershipIsActive();
+	const { mutateAsync: extendMembershipDueDate } = useMutationExtendMembershipDueDate();
 
 	const [openCreateMembershipDialog, setOpenCreateMembershipDialog] = useState(false);
 
@@ -59,7 +45,7 @@ function Order() {
 						label={`Cambiar estado ${params.row.isActive ? 'Inactivo' : 'Activo'}`}
 						showInMenu
 						onClick={() => {
-							MembershipService.changeIsActive(params.row.id, !params.row.isActive, tenantId).then(() => {
+							changeMembershipIsActive({ membershipId: params.row.id, isActive: !params.row.isActive, tenantId }).then(() => {
 								refetch();
 							});
 						}}
@@ -69,7 +55,7 @@ function Order() {
 						label={`Cambiar fecha de vencimiento`}
 						showInMenu
 						onClick={() => {
-							MembershipService.extendDueDate(params.row.id, dayjs().add(1, 'month').toDate(), tenantId).then(() => {
+							extendMembershipDueDate({ membershipId: params.row.id, dueDate: dayjs().add(1, 'month').toISOString(), tenantId }).then(() => {
 								refetch();
 							});
 						}}
@@ -81,24 +67,20 @@ function Order() {
 
 
 	return (
-		<Root
+		<PageLayout
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Membresías"
-							subtitle="Gestiona las membresías"
-							actions={
-								<Button
-									color="primary"
-									variant="contained"
-									startIcon={<Add />}
-									onClick={() => setOpenCreateMembershipDialog(true)}
-								>
-									Nuevo
-								</Button>
-							}
-						/>
+				<SimpleHeader
+					title="Membresías"
+					subtitle="Gestiona las membresías"
+					actions={
+						<Button
+							color="primary"
+							variant="contained"
+							startIcon={<Add />}
+							onClick={() => setOpenCreateMembershipDialog(true)}
+						>
+							Nuevo
+						</Button>
 					}
 				/>
 			}

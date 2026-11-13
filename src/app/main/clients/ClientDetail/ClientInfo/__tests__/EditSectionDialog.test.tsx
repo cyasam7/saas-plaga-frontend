@@ -1,10 +1,11 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { EditSectionDialog } from "../EditSectionDialog"
-import { Client } from "../../../types"
+import { IGetClientResponse } from "src/app/requests/clients/useQueryGetClient"
 
-const businessClient: Client = {
+const businessClient: IGetClientResponse = {
   id: "client-1",
+  tenantId: "tenant-1",
   name: "Acme SA",
   type: "business",
   legalName: "Acme Sociedad Anónima",
@@ -25,8 +26,9 @@ const businessClient: Client = {
   ],
 }
 
-const individualClient: Client = {
+const individualClient: IGetClientResponse = {
   id: "client-2",
+  tenantId: "tenant-1",
   name: "Jane Doe",
   type: "individual",
   phone: "+5215544332211",

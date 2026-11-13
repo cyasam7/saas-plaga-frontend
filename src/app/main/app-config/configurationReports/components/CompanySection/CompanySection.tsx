@@ -1,8 +1,8 @@
 import { Skeleton, Stack } from '@mui/material';
 import { Business } from '@mui/icons-material';
 import { Control } from 'react-hook-form';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
-import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
+import { IFormSaveAccount } from '../../types';
 import Section from '../Section/Section';
 
 interface CompanySectionProps {

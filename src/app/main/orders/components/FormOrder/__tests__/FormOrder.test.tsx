@@ -15,28 +15,25 @@ import { EClientType, IFormCreatePest } from '../FormOrderProps';
 import { defaultValuesOrder } from '../defaultValues';
 
 // Mocks
+// La búsqueda por teléfono se dispara con `refetch` del hook al salir del campo.
 const getClientInfoByPhone = vi.fn();
-vi.mock('src/app/shared/services/OrderService', () => ({
-	OrderService: {
-		getClientInfoByPhone: (...args: unknown[]) => getClientInfoByPhone(...args)
-	}
+vi.mock('src/app/requests/orders/useQueryClientDataByPhone', () => ({
+	useQueryClientDataByPhone: () => ({
+		refetch: async () => ({ data: await getClientInfoByPhone() })
+	})
 }));
 
 const openDialog = vi.fn();
-vi.mock('app/shared-components/GlobalDialog/openDialog', () => ({
-	openDialog: (...args: unknown[]) => openDialog(...args)
+vi.mock('app/shared/components/GlobalDialog/GlobalDialogContext', () => ({
+	useGlobalDialog: () => ({ openDialog: (...args: unknown[]) => openDialog(...args) })
 }));
 
-// Business form data services
-vi.mock('src/app/shared/services/ClientService', () => ({
-	ClientService: {
-		getByQuery: vi.fn().mockResolvedValue([])
-	}
+// Business form data (request hooks)
+vi.mock('src/app/requests/clients/useQueryClients', () => ({
+	useQueryClients: () => ({ data: [], isLoading: false })
 }));
-vi.mock('src/app/shared/services/BranchService', () => ({
-	BranchService: {
-		byQuery: vi.fn().mockResolvedValue([])
-	}
+vi.mock('src/app/requests/branches/useQueryBranches', () => ({
+	useQueryBranches: () => ({ data: [], isLoading: false, refetch: vi.fn() })
 }));
 
 const CLIENT_FOUND = {

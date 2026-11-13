@@ -2,17 +2,9 @@
 	"compilerOptions": {
 		"baseUrl": "./",
 		"paths": {
-			"@fuse/*": ["./src/@fuse/*"],
-			"@history*": ["./src/@history"],
-			"@lodash": ["./src/@lodash"],
-			"@mock-api/*": ["./src/@mock-api/*"],
 			"@schema": ["./src/@schema"],
-			"app/store": ["./src/app/store/index"],
-			"app/store/*": ["./src/app/store/*"],
-			"app/shared-components/*": ["./src/app/shared-components/*"],
-			"app/configs/*": ["./src/app/configs/*"],
-			"app/theme-layouts/*": ["./src/app/theme-layouts/*"],
-			"app/AppContext": ["./src/app/AppContext"]
+			"app/shared/components/*": ["./src/app/shared/components/*"],
+			"app/core/*": ["./src/app/core/*"]
 		},
 		"declaration": false,
 		"target": "esnext",
@@ -34,8 +26,6 @@
 		"jsx": "react-jsx"
 	},
 	"exclude": [
-		"src/app/main/documentation/material-ui-components/components/**/*",
-		"src/app/main/documentation/material-ui-components/pages/**/*",
 		"node_modules"
 	],
 	"include": ["src", "tailwind.config.js", "vite.config.mts", "vite-env.d.ts"]

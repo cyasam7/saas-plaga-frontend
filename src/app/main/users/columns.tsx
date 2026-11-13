@@ -1,8 +1,8 @@
 import { GridColDef } from '@mui/x-data-grid';
 import { Chip } from '@mui/material';
-import { IDataGridUserRow } from 'src/app/shared/entities/UserEntity';
+import { IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
 
-export const columnsUsers: GridColDef<IDataGridUserRow>[] = [
+export const columnsUsers: GridColDef<IUsersDatagridResponse[number]>[] = [
   {
     field: 'name',
     headerName: 'NOMBRE',

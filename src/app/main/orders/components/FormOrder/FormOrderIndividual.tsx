@@ -1,10 +1,10 @@
 import { Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { LocationOn, Person } from '@mui/icons-material';
 import { Controller, UseFormReturn } from 'react-hook-form';
-import PhoneInputForm from 'app/shared-components/Form/PhoneInputForm/PhoneInputForm';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import TextFieldForm from 'app/shared-components/Form/TextFieldForm/TextFieldForm';
-import { OrderService } from 'src/app/shared/services/OrderService';
+import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
+import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
+import { useQueryClientDataByPhone } from 'src/app/requests/orders/useQueryClientDataByPhone';
 import { EClientType, IFormCreatePest } from './FormOrderProps';
 
 interface IFormOrderIndividualProps {
@@ -13,15 +13,18 @@ interface IFormOrderIndividualProps {
 }
 
 function FormOrderIndividual(props: IFormOrderIndividualProps) {
+	const { openDialog } = useGlobalDialog();
 	const { formHandler, disabled } = props;
+	const phone = formHandler.watch('clientPhone');
+	// Solo se consulta al salir del campo teléfono (refetch), no mientras se escribe.
+	const { refetch: fetchClientDataByPhone } = useQueryClientDataByPhone({ phone }, false);
 
 	async function handleAutoCompleteClient(): Promise<void> {
-		const phone = formHandler.watch('clientPhone');
 		if (!phone) {
 			return;
 		}
 
-		const clientFound = await OrderService.getClientInfoByPhone(phone);
+		const { data: clientFound } = await fetchClientDataByPhone();
 
 		if (!clientFound || clientFound.clientType !== EClientType.INDIVIDUAL) {
 			return;

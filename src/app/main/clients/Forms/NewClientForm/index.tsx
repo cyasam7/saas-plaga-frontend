@@ -22,13 +22,13 @@ import {
   PlaceOutlined,
   CheckCircleRounded,
 } from "@mui/icons-material"
-import { useForm, useFieldArray, Control, Controller } from "react-hook-form"
+import { useForm, useFieldArray, useFormState, Control, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormClientValues, NewClientFormProps, formSchema } from "./types"
 import { useEffect } from "react"
-import PhoneInputForm from "app/shared-components/Form/PhoneInputForm/PhoneInputForm"
-import TextFieldForm from "app/shared-components/Form/TextFieldForm/TextFieldForm"
-import CheckboxForm from "app/shared-components/Form/CheckboxForm/CheckboxForm"
+import PhoneInputForm from "app/shared/components/Form/PhoneInputForm/PhoneInputForm"
+import TextFieldForm from "app/shared/components/Form/TextFieldForm/TextFieldForm"
+import CheckboxForm from "app/shared/components/Form/CheckboxForm/CheckboxForm"
 
 const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)"
 
@@ -156,11 +156,19 @@ function ClientTypeSelector({ control, disabled }: { control: Control<FormClient
   )
 }
 
+/** Áreas con las que nace cada ubicación nueva; el usuario puede editarlas o agregar más. */
+const DEFAULT_LOCATION_AREAS = [
+  { name: "Exterior", description: "" },
+  { name: "Interior", description: "" },
+]
+
 function AreasFieldArray({ control, locationIndex }: { control: Control<FormClientValues>; locationIndex: number }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `locations.${locationIndex}.areas`,
   })
+  const { errors } = useFormState({ control, name: `locations.${locationIndex}.areas` })
+  const areasErrorMessage = errors.locations?.[locationIndex]?.areas?.root?.message ?? errors.locations?.[locationIndex]?.areas?.message
 
   return (
     <Box>
@@ -170,6 +178,11 @@ function AreasFieldArray({ control, locationIndex }: { control: Control<FormClie
       {fields.length === 0 && (
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 1 }}>
           Sin áreas registradas.
+        </Typography>
+      )}
+      {areasErrorMessage && (
+        <Typography variant="body2" color="error" sx={{ mt: 0.5 }}>
+          {areasErrorMessage}
         </Typography>
       )}
       <Stack spacing={1} sx={{ mt: 1 }}>
@@ -206,8 +219,11 @@ function LocationsFieldArray({ control, disabled }: { control: Control<FormClien
     name: "locations",
   })
 
+  const { errors } = useFormState({ control, name: "locations" })
+  const locationsErrorMessage = errors.locations?.root?.message ?? errors.locations?.message
+
   const addLocation = () =>
-    append({ name: "", address: "", contactPhone: "", contactPerson: "", references: "", areas: [] })
+    append({ name: "", address: "", contactPhone: "", contactPerson: "", references: "", areas: DEFAULT_LOCATION_AREAS })
 
   return (
     <Box>
@@ -237,6 +253,11 @@ function LocationsFieldArray({ control, disabled }: { control: Control<FormClien
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Aún no has agregado ubicaciones. Cada empresa necesita al menos una.
           </Typography>
+          {locationsErrorMessage && (
+            <Typography variant="body2" color="error" sx={{ mb: 2 }}>
+              {locationsErrorMessage}
+            </Typography>
+          )}
           <Button startIcon={<Add />} variant="contained" size="small" sx={pressFeedback} onClick={addLocation}>
             Agregar ubicación
           </Button>
@@ -341,11 +362,13 @@ export function NewClientForm({ open, onClose, onSubmit, defaultValues }: NewCli
   const clientType = watch("type")
   const isBusiness = clientType === "business"
 
-  function onFormSubmit(data: FormClientValues) {
-    if (onSubmit) {
-      onSubmit(data)
+  async function onFormSubmit(data: FormClientValues) {
+    try {
+      await onSubmit?.(data)
+      reset(resetValues)
+    } catch {
+      // El fetcher ya mostró el error del API; se conserva el formulario para corregirlo.
     }
-    reset(resetValues)
   }
 
   const handleClose = () => {

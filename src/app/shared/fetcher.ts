@@ -1,4 +1,4 @@
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { displayToast } from 'app/core/feedback/toast';
 import axios, { AxiosError, AxiosRequestConfig, isAxiosError } from 'axios';
 
 export async function AxiosFetcher<T>(config: AxiosRequestConfig): Promise<T> {

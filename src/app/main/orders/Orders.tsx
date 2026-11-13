@@ -1,42 +1,31 @@
 import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
-import { useQuery } from 'react-query';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
-import FusePageSimple from '@fuse/core/FusePageSimple';
-import { styled } from '@mui/material/styles';
+import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-material';
-import { openDialog } from 'app/shared-components/GlobalDialog/openDialog';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
+import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
-import { OrderService } from '../../shared/services/OrderService';
-import { DatagridRowOrder, EStatusOrder } from '../../shared/entities/OrderEntity';
+import { IOrdersDatagridResponse, useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
+import { useMutationDeleteOrder } from 'src/app/requests/orders/useMutationDeleteOrder';
+import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/useMutationDownloadOrderCertificate';
+import { EStatusOrder } from 'src/app/requests/orders/types';
+import { downloadPdfFile } from './utils';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
 import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
 import useOrdersFilters from './hooks/useOrdersFilters';
 import { MobileCard } from './components/MobileCard/MobileCard';
-import FusePageSimpleHeader from '@fuse/core/FusePageSimple/FusePageSimpleHeader';
-import SimpleHeader from 'app/shared-components/SimpleHeader';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 import { StatsCards } from './components/StatsCards/StatsCards';
 import './styles/actionButtons.css';
 import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
 
-const Root = styled(FusePageSimple)(({ theme }) => ({
-	'& .FusePageSimple-header': {
-		backgroundColor: theme.palette.background.paper,
-		borderBottomWidth: 1,
-		borderStyle: 'solid',
-		borderColor: theme.palette.divider
-	},
-	'& .FusePageSimple-content': {},
-	'& .FusePageSimple-sidebarHeader': {},
-	'& .FusePageSimple-sidebarContent': {}
-}));
-
 function Order() {
+	const { openDialog } = useGlobalDialog();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [open, setOpen] = useState<boolean>(false);
@@ -54,14 +43,13 @@ function Order() {
 		data = { orders: [], stats: { total: 0, today: 0, tomorrow: 0, pending: 0, passed: 0 } },
 		isLoading,
 		refetch
-	} = useQuery({
-		queryKey: ['orders', query],
-		queryFn: () => OrderService.getDatagridOrders(query)
-	});
+	} = useQueryOrdersDatagrid(query);
+	const { mutateAsync: deleteOrder } = useMutationDeleteOrder();
+	const { mutateAsync: downloadOrderCertificate } = useMutationDownloadOrderCertificate();
 
 	const orders = data.orders;
 
-	const columns: GridColDef<DatagridRowOrder>[] = [
+	const columns: GridColDef<IOrdersDatagridResponse['orders'][number]>[] = [
 		...columnsOrders,
 		{
 			headerName: 'Acciones',
@@ -119,7 +107,7 @@ function Order() {
 								title: 'Advertencia',
 								text: '¿Estas seguro que deseas eliminar la orden de servicio?',
 								onAccept: async () => {
-									await OrderService.deleteById(params.row.id);
+									await deleteOrder({ orderId: params.row.id });
 									await refetch();
 									displayToast({
 										message: 'Se ha eliminado correctamente',
@@ -150,28 +138,24 @@ function Order() {
 	);
 
 	return (
-		<Root
+		<PageLayout
 			scroll='content'
 			header={
-				<FusePageSimpleHeader
-					header={
-						<SimpleHeader
-							title="Ordenes de servicio"
-							subtitle="Gestiona las ordenes de servicio"
-							actions={
-								<Button
-									color="primary"
-									variant="contained"
-									startIcon={<Add />}
-									onClick={() => {
-										setOpen(true);
-										setShouldOpenDialogAssign(true);
-									}}
-								>
-									Nuevo
-								</Button>
-							}
-						/>
+				<SimpleHeader
+					title="Ordenes de servicio"
+					subtitle="Gestiona las ordenes de servicio"
+					actions={
+						<Button
+							color="primary"
+							variant="contained"
+							startIcon={<Add />}
+							onClick={() => {
+								setOpen(true);
+								setShouldOpenDialogAssign(true);
+							}}
+						>
+							Nuevo
+						</Button>
 					}
 				/>
 			}
@@ -325,13 +309,11 @@ function Order() {
 												setOpenFollow(true);
 											}}
 											onDownloadCertificate={async (id) => {
-												await OrderService.downloadCertificate({
-													daysValid: 30,
-													id
-												});
+												const certificatePdf = await downloadOrderCertificate({ orderId: id, daysValid: 30 });
+												downloadPdfFile(certificatePdf, `${id}.pdf`);
 											}}
 											onDelete={async (id) => {
-												await OrderService.deleteById(id);
+												await deleteOrder({ orderId: id });
 												await refetch();
 											}}
 										/>

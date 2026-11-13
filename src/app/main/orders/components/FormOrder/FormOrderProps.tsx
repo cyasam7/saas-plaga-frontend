@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs';
 import { UseFormReturn } from 'react-hook-form';
-import { EClientType } from 'src/app/shared/entities/OrderEntity';
+import { EClientType } from 'src/app/requests/clients/types';
 
 export { EClientType };
 

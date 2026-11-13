@@ -1,36 +1,22 @@
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton'
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton'
 import FormSaveMembership, { defaultValuesFormMembership } from '../FormMembership/FormSaveMembership'
 import { IDialogMembershipProps } from './DialogMembershipProps';
 import { IFormSaveMembershipData, schemaSaveMembership } from '../FormMembership/FormMembershipProps';
-import { MembershipService } from 'src/app/shared/services/MembershipService';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { ICreateMembershipPayload, useMutationCreateMembership } from 'src/app/requests/memberships/useMutationCreateMembership';
+import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { useQuery } from 'react-query';
-import { useEffect } from 'react';
 import { Box, Button } from '@mui/material';
 import { Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { CreateMembershipDTO } from 'src/app/shared/entities/Memberships';
 
 const DialogMembership = (props: IDialogMembershipProps) => {
-  const { open, onClose, membershipId, onSubmit } = props;
+  const { open, onClose, onSubmit } = props;
   const formHandler = useForm<IFormSaveMembershipData>({
     resolver: yupResolver(schemaSaveMembership),
     defaultValues: defaultValuesFormMembership
   });
-  const { data: membership } = useQuery({
-    queryKey: ['membership', membershipId],
-    queryFn: () => MembershipService.getById(membershipId),
-    enabled: !!membershipId
-  });
-
-  useEffect(() => {
-    formHandler.reset(!!membership ? membership : defaultValuesFormMembership);
-    return () => {
-      formHandler.reset(defaultValuesFormMembership);
-    }
-  }, [membership]);
+  const { mutateAsync: createMembership } = useMutationCreateMembership();
 
   const handleSubmit = async (data: IFormSaveMembershipData) => {
     try {
@@ -41,12 +27,17 @@ const DialogMembership = (props: IDialogMembershipProps) => {
         return;
       }
 
-      const formattedValuesForm: CreateMembershipDTO = {
-        ...data,
+      const createMembershipPayload: ICreateMembershipPayload = {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        password: data.password,
+        workspaceName: data.workspaceName,
+        companyName: data.companyName,
         membershipType: data.membershipType,
-        dueDate: data.dueDate.toDate(),
+        dueDate: data.dueDate.toISOString(),
       }
-      await MembershipService.create(formattedValuesForm);
+      await createMembership(createMembershipPayload);
       displayToast({
         message: 'Membresía creada correctamente',
         variant: 'success',
@@ -75,7 +66,6 @@ const DialogMembership = (props: IDialogMembershipProps) => {
         <Stack>
           <FormSaveMembership
             formHandler={formHandler}
-            membershipId={membershipId}
             onSubmit={handleSubmit}
             onCancel={onClose}
           />

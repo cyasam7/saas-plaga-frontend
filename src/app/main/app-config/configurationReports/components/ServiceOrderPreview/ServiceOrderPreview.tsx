@@ -1,8 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
 import PreviewPage from '../PreviewPage/PreviewPage';
 import ReportSection from '../ReportSection/ReportSection';
-import { safeColor } from '../../utils/safeColor';
-import { IReportPreviewProps } from '../../entities/ReportPreview';
+import { safeColor } from '../../utils';
+import { IReportPreviewProps } from '../../types';
 
 /** Datos de una orden ficticia: la configuración no los define, sólo dan contexto al preview. */
 const SAMPLE = {

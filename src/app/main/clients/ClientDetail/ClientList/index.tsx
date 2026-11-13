@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Box,
   Grid,
@@ -18,13 +18,13 @@ import {
   Typography,
 } from '@mui/material';
 import { Search, Edit, Delete, Add, People } from '@mui/icons-material';
-import { Client, ClientType } from '../../types';
+import { ClientType } from 'src/app/requests/clients/types';
+import { useQueryGetClient } from 'src/app/requests/clients/useQueryGetClient';
 import { ClientListProps } from './types';
 import { NewClientForm } from '../../Forms/NewClientForm';
 import { FormClientValues } from '../../Forms/NewClientForm/types';
 import { clientToFormValues } from '../../Forms/NewClientForm/mapper';
 import { ClientCard } from '../../Cards/ClientCard';
-import { ClientService } from 'src/app/shared/services/ClientService';
 
 const EmptyClientList = ({ onAddClick }: { onAddClick: () => void }) => {
   return (
@@ -67,7 +67,14 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [showSaveClientForm, setShowSaveClientForm] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  // Al editar se carga el cliente completo (con ubicaciones) antes de abrir el formulario.
+  const [editingClientId, setEditingClientId] = useState('');
+  const { data: editingClient } = useQueryGetClient({ clientId: editingClientId }, Boolean(editingClientId));
+  const editingClientFormValues = useMemo(
+    () => (editingClient ? clientToFormValues(editingClient) : undefined),
+    [editingClient]
+  );
+  const isLoadingEditingClient = Boolean(editingClientId) && !editingClient;
 
   // Filtrar clientes según búsqueda y tipo
   const filteredClients = clients.filter((client) => {
@@ -94,12 +101,9 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
     setActiveTab(newValue);
   };
 
-  const handleEdit = async () => {
+  const handleEdit = () => {
     handleMenuClose();
-    if (selectedClientId) {
-      const fullClient = await ClientService.byId(selectedClientId);
-      setEditingClient(fullClient);
-    }
+    if (selectedClientId) setEditingClientId(selectedClientId);
     setShowSaveClientForm(true);
   };
 
@@ -116,15 +120,15 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
     setSelectedClientId(null);
   };
 
-  const handleFormSubmit = (data: FormClientValues) => {
-    onSaveClient(data, selectedClientId);
+  const handleFormSubmit = async (data: FormClientValues) => {
+    await onSaveClient?.(data, selectedClientId);
     handleFormClose();
   };
 
   const handleFormClose = () => {
     setShowSaveClientForm(false);
     setSelectedClientId(null);
-    setEditingClient(null);
+    setEditingClientId('');
   };
 
   const showEmptyState = clients.length === 0;
@@ -249,10 +253,10 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
 
       {/* Form unificado para crear/editar cliente */}
       <NewClientForm
-        open={showSaveClientForm}
+        open={showSaveClientForm && !isLoadingEditingClient}
         onClose={handleFormClose}
         onSubmit={handleFormSubmit}
-        defaultValues={editingClient ? clientToFormValues(editingClient) : undefined}
+        defaultValues={editingClientFormValues}
       />
 
       {/* Dialog de confirmación para eliminar */}

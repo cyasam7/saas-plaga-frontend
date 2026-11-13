@@ -1,16 +1,18 @@
 import React from 'react'
 import { Button, Stack } from '@mui/material';
-import DialogSkeleton from 'app/shared-components/DialogSkeleton/DialogSkeleton'
-import { TextFieldPasswordForm } from 'app/shared-components/Form/TextFieldForm/PasswordInputForm';
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton'
+import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 import { useForm } from 'react-hook-form';
 import { FormChangePassword, IChangePasswordDialog } from './IChangePasswordDialog';
-import { UserService } from 'src/app/shared/services/UserService';
-import { displayToast } from '@fuse/core/FuseMessage/DisplayToast';
+import { useMutationChangeUserPassword } from 'src/app/requests/users/useMutationChangeUserPassword';
+import { userKeys } from 'src/app/requests/users/keys';
+import { displayToast } from 'app/core/feedback/toast';
 import { useQueryClient } from 'react-query';
 
 const ChangePasswordDialog = (props: IChangePasswordDialog) => {
   const { onClose, open, userId } = props;
   const queryClient = useQueryClient()
+  const { mutateAsync: changeUserPassword } = useMutationChangeUserPassword()
 
   const formHandler = useForm<FormChangePassword>({
     defaultValues: {
@@ -32,11 +34,8 @@ const ChangePasswordDialog = (props: IChangePasswordDialog) => {
       });
       return;
     }
-    await UserService.changePassword(
-      userId,
-      data.password
-    )
-    queryClient.invalidateQueries('users-registered')
+    await changeUserPassword({ userId, password: data.password })
+    queryClient.invalidateQueries(userKeys.lists())
     displayToast({
       anchorOrigin: {
         horizontal: 'right',

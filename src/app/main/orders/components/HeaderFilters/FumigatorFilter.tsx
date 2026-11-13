@@ -1,6 +1,5 @@
 import { MenuItem, TextField } from '@mui/material';
-import { useQuery } from 'react-query';
-import { OrderService } from 'src/app/shared/services/OrderService';
+import { useQueryFumigatorsToAssignOrder } from 'src/app/requests/orders/useQueryFumigatorsToAssignOrder';
 
 interface FumigatorFilterProps {
 	/** Cadena vacía = todos los fumigadores. */
@@ -12,10 +11,7 @@ interface FumigatorFilterProps {
 const ALL_FUMIGATORS = '';
 
 export function FumigatorFilter({ value, onChange, fullWidth }: FumigatorFilterProps) {
-	const { data: fumigators = [], isLoading } = useQuery({
-		queryFn: () => OrderService.getFumigatorToAssignOrder(),
-		queryKey: 'users-assign'
-	});
+	const { data: fumigators = [], isLoading } = useQueryFumigatorsToAssignOrder();
 
 	return (
 		<TextField

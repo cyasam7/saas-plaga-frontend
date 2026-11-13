@@ -1,5 +1,5 @@
 import { TextField, useTheme, useMediaQuery, MenuItem, Tabs, Tab, Stack } from '@mui/material';
-import { EOrdersDayFilter } from 'src/app/shared/services/OrderService';
+import { EOrdersDayFilter } from 'src/app/requests/orders/types';
 import FumigatorFilter from './FumigatorFilter';
 
 const dayFilterOptions = [

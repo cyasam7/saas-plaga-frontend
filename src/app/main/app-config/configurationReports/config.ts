@@ -1,10 +1,10 @@
 import * as yup from 'yup';
-import { FIELD_REQUIRED } from 'src/app/shared-constants/yupMessages';
-import { IFormSaveAccount } from 'src/app/shared/entities/AppConfig';
+import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
+import { IFormSaveAccount, IReportPreviewProps, ReportType } from './types';
 import { ComponentType } from 'react';
 import CertificatePreview from './components/CertificatePreview/CertificatePreview';
 import ServiceOrderPreview from './components/ServiceOrderPreview/ServiceOrderPreview';
-import { IReportPreviewProps, ReportType } from './entities/ReportPreview';
+import { HEX_PATTERN } from './utils';
 
 const INVALID_COLOR = 'Usa un color en formato #RRGGBB';
 
@@ -16,8 +16,8 @@ export const accountSchema = yup.object().shape({
 	name: yup.string().required(FIELD_REQUIRED),
 	address: yup.string().required(FIELD_REQUIRED),
 	logo: yup.mixed().nullable(),
-	primaryColor: yup.string().required(FIELD_REQUIRED).matches(/^#[0-9a-fA-F]{6}$/, INVALID_COLOR),
-	secondaryColor: yup.string().required(FIELD_REQUIRED).matches(/^#[0-9a-fA-F]{6}$/, INVALID_COLOR),
+	primaryColor: yup.string().required(FIELD_REQUIRED).matches(HEX_PATTERN, INVALID_COLOR),
+	secondaryColor: yup.string().required(FIELD_REQUIRED).matches(HEX_PATTERN, INVALID_COLOR),
 	licenseSanitary: yup.string().required(FIELD_REQUIRED)
 });
 

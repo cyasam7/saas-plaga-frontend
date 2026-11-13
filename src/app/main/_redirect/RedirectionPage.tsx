@@ -1,10 +1,9 @@
 import React from 'react'
-import { useSelector } from 'react-redux';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { Navigate } from 'react-router';
-import { selectUserRole } from 'src/app/auth/user/store/userSlice';
 
 const RedirectionPage = () => {
-  const role = useSelector(selectUserRole);
+  const role = useAuth().user.role;
   if (role === 'admin') {
     return <Navigate to="/membership" />
   }
