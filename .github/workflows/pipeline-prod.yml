@@ -7,25 +7,27 @@ jobs:
   build:
     runs-on: self-hosted
 
-    strategy:
-      matrix:
-        node-version: [18.17.0]
-
     env:
       VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          version: 10
 
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      # --frozen-lockfile: instala exactamente lo de pnpm-lock.yaml y falla si no coincide con package.json.
       - name: Build
         run: |
-          npm i
-          npm run build
+          pnpm install --frozen-lockfile
+          pnpm build
 
       - name: Deploy
         run: |

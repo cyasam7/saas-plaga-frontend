@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import { IRouteConfig } from 'app/core/routing/types';
-import authRoles from 'src/app/core/auth/authRoles';
 import ViewReportOrder from './ViewReportOrder';
 
 const Orders = lazy(() => import('./Orders'));
@@ -23,12 +22,6 @@ const OrdersConfig: IRouteConfig = {
 			path: 'orders/history',
 			auth: ['staff', 'admin'],
 			element: <OrdersHistory />
-		},
-		{
-			path: 'orders/:orderId/download',
-			auth: authRoles.onlyGuest,
-			isFullScreen: true,
-			element: <ViewReportOrder />
 		},
 		{
 			path: 'orders/:orderId/view',
