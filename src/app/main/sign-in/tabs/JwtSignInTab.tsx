@@ -2,7 +2,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import _ from '@lodash';
 import { AxiosError } from 'axios';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -152,7 +151,7 @@ function jwtSignInTab() {
 					color="secondary"
 					className=" mt-16 w-full"
 					aria-label="Sign in"
-					disabled={_.isEmpty(dirtyFields) || !isValid}
+					disabled={Object.keys(dirtyFields).length === 0 || !isValid}
 					type="submit"
 					size="large"
 				>

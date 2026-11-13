@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"baseUrl": "./",
 		"paths": {
-			"@lodash": ["./src/@lodash"],
 			"@schema": ["./src/@schema"],
 			"app/shared/components/*": ["./src/app/shared/components/*"],
 			"app/core/*": ["./src/app/core/*"]

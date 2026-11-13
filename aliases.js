@@ -2,7 +2,6 @@
  * Create aliases for the paths
  */
 const aliases = (prefix = `src`) => ({
-  '@lodash': `${prefix}/@lodash`,
   '@schema': `${prefix}/@schema`,
   'app/shared/components': `${prefix}/app/shared/components`,
   'app/core': `${prefix}/app/core`,

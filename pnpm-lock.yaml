@@ -131,9 +131,6 @@ importers:
       keycode:
         specifier: 2.2.1
         version: 2.2.1
-      lodash:
-        specifier: 4.17.21
-        version: 4.17.21
       mobile-detect:
         specifier: 1.4.5
         version: 1.4.5
@@ -324,9 +321,6 @@ importers:
       '@types/js-beautify':
         specifier: 1.14.3
         version: 1.14.3
-      '@types/lodash':
-        specifier: 4.14.202
-        version: 4.14.202
       '@types/material-ui':
         specifier: 0.21.16
         version: 0.21.16
@@ -2471,9 +2465,6 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-
-  '@types/lodash@4.14.202':
-    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
 
   '@types/material-ui@0.21.16':
     resolution: {integrity: sha512-US8P5IsLguspYFDtkG4097KZDyqz/GqBm0uftcZ2h2fTzyzLqJuFk8BliEQ9VS3EviRDJaB6l29gps3hkCTm7Q==}
@@ -9536,8 +9527,6 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
-
-  '@types/lodash@4.14.202': {}
 
   '@types/material-ui@0.21.16':
     dependencies:

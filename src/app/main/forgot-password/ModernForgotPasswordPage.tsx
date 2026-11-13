@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-import _ from '@lodash';
 import Paper from '@mui/material/Paper';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Avatar from '@mui/material/Avatar';
@@ -85,7 +84,7 @@ function ModernForgotPasswordPage() {
 								color="secondary"
 								className=" mt-4 w-full"
 								aria-label="Register"
-								disabled={_.isEmpty(dirtyFields) || !isValid}
+								disabled={Object.keys(dirtyFields).length === 0 || !isValid}
 								type="submit"
 								size="large"
 							>

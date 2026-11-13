@@ -1,5 +1,4 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
-import _ from '@lodash';
 
 const lightTextPalette = {
 	primary: 'rgb(17, 24, 39)',
@@ -98,7 +97,11 @@ const pickersThemeOptions = {
 } as ThemeOptions;
 
 function buildTheme(paletteOptions: ThemeOptions['palette']) {
-	return createTheme(_.merge({}, baseThemeOptions, pickersThemeOptions, { palette: paletteOptions }));
+	return createTheme({
+		...baseThemeOptions,
+		components: { ...baseThemeOptions.components, ...pickersThemeOptions.components },
+		palette: paletteOptions
+	});
 }
 
 /** Light "charcoal teal" theme used by pages and the toolbar. */

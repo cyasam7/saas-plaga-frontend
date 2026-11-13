@@ -39,14 +39,13 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': '/src',
-			"@lodash": "/src/@lodash",
 			"@schema": "/src/@schema",
 			"app/shared/components": "/src/app/shared/components",
 			"app/core": "/src/app/core"
 		},
 	},
 	"optimizeDeps": {
-		"include": ['@mui/icons-material','@mui/material','@mui/base','@mui/styles','@mui/system','@mui/utils','@emotion/cache','@emotion/react','@emotion/styled','lodash'],
+		"include": ['@mui/icons-material','@mui/material','@mui/base','@mui/styles','@mui/system','@mui/utils','@emotion/cache','@emotion/react','@emotion/styled'],
 		"exclude": [],
 		"esbuildOptions": {
 			"loader": {

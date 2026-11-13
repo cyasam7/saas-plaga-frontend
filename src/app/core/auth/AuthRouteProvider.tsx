@@ -2,7 +2,6 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
-import _ from '@lodash';
 import SplashScreen from 'app/core/feedback/SplashScreen';
 import { TIMEZONE } from 'src/app/shared/constants/dateFormat';
 import {
@@ -119,12 +118,12 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 	/**
-	 * Starts the session and replaces the user, keeping fields the new user doesn't define.
+	 * Starts the session and replaces the user.
 	 */
 	const handleSignInSuccess = useCallback((signedInUser: User, accessToken: string, refreshToken: string) => {
 		setSession(accessToken, refreshToken, signedInUser.data.tenant);
 		setIsAuthenticated(true);
-		setUser((currentUser) => _.defaults({}, signedInUser, currentUser));
+		setUser(signedInUser);
 	}, []);
 
 	const handleSignInFailure = useCallback((error: AxiosError) => {

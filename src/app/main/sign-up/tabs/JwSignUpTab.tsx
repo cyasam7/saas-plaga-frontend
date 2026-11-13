@@ -5,7 +5,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
-import _ from '@lodash';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -231,7 +230,7 @@ function JwtSignUpTab() {
 				color="secondary"
 				className="mt-24 w-full"
 				aria-label="Register"
-				disabled={_.isEmpty(dirtyFields) || !isValid}
+				disabled={Object.keys(dirtyFields).length === 0 || !isValid}
 				type="submit"
 				size="large"
 			>
