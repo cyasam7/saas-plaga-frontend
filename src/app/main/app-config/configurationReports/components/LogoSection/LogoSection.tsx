@@ -88,7 +88,7 @@ function LogoSection({ logoUrl, logoError, isLoading, isSubmitting, onChangeImag
 						display="block"
 						mt={1}
 					>
-						PNG, JPG, WEBP o SVG. Recomendado 300x300px, máximo 2MB.
+						PNG, JPG o WEBP. Recomendado 300x300px, máximo 2MB.
 					</Typography>
 					{logoError && <FormHelperText error>{logoError}</FormHelperText>}
 				</Box>

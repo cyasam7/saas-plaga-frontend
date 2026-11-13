@@ -8,9 +8,9 @@ import { HEX_PATTERN } from './utils';
 
 const INVALID_COLOR = 'Usa un color en formato #RRGGBB';
 
-/** El backend todavía no valida el archivo: esto es sólo feedback, no una garantía. */
+/** Mismos límites que valida el API en `POST /app-config/account`; aquí sólo dan feedback inmediato. */
 export const MAX_LOGO_BYTES = 2 * 1024 * 1024;
-export const ACCEPTED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+export const ACCEPTED_LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
 export const accountSchema = yup.object().shape({
 	name: yup.string().required(FIELD_REQUIRED),
@@ -32,7 +32,7 @@ export const defaultValuesAccountUser: IFormSaveAccount = {
 
 export function validateLogo(file: File): string | null {
 	if (!ACCEPTED_LOGO_TYPES.includes(file.type)) {
-		return 'Formato no válido. Usa PNG, JPG, WEBP o SVG.';
+		return 'Formato no válido. Usa PNG, JPG o WEBP.';
 	}
 
 	if (file.size > MAX_LOGO_BYTES) {
