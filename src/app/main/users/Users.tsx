@@ -1,5 +1,5 @@
 import PageLayout from 'app/core/page/PageLayout';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { Paper, Stack, Typography } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridActionsCellItemProps, GridColDef } from '@mui/x-data-grid';
 import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';

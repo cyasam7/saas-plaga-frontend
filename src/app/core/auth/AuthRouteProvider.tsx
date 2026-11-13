@@ -5,14 +5,26 @@ import SplashScreen from 'app/core/feedback/SplashScreen';
 import { PartialDeep } from 'type-fest';
 import _ from '@lodash';
 import { useQueryClient } from 'react-query';
-import useJwtAuth, { JwtAuth } from './services/jwt/useJwtAuth';
-import { User } from './user';
-import UserModel from './user/models/UserModel';
+import useJwtAuth, { JwtAuth } from './useJwtAuth';
+import { User } from './types';
 
 // Cuerpos de POST /auth/sign-in y /auth/sign-up: viven en `src/app/requests/auth/types.ts`.
 export type SignInPayload = ISignInPayload;
 
 export type SignUpPayload = ISignUpPayload;
+
+/** The user held while nobody is signed in. */
+function createGuestUser(): User {
+	return {
+		uid: '',
+		role: null,
+		data: {
+			displayName: 'Guest User',
+			photoURL: '',
+			email: ''
+		}
+	};
+}
 
 type AuthContext = {
 	user: User;
@@ -28,7 +40,7 @@ type AuthProviderProps = { children: React.ReactNode };
 function AuthRouteProvider(props: AuthProviderProps) {
 	const { children } = props;
 	const queryClient = useQueryClient();
-	const [user, setUser] = useState<User>(() => UserModel({}));
+	const [user, setUser] = useState<User>(() => createGuestUser());
 
 	/**
 	 * Replaces the logged-in user, keeping fields the new user doesn't define.
@@ -38,7 +50,7 @@ function AuthRouteProvider(props: AuthProviderProps) {
 	}, []);
 
 	const resetUser = useCallback(() => {
-		setUser(UserModel({}));
+		setUser(createGuestUser());
 	}, []);
 
 	const mergeUser = useCallback((userChanges: PartialDeep<User>) => {

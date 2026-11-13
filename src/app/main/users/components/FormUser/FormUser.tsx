@@ -1,5 +1,5 @@
 import { Grid, MenuItem } from '@mui/material';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import React, { useEffect } from 'react';
 import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
 import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';

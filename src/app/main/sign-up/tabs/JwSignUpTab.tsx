@@ -16,7 +16,7 @@ import {
 	FIELD_TERMS_CONDITIONS
 } from 'src/app/shared/constants/yupMessages';
 import { AxiosError } from 'axios';
-import { SignUpPayload, useAuth } from '../../../auth/AuthRouteProvider';
+import { SignUpPayload, useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 
 /**

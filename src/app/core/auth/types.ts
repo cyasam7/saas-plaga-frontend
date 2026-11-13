@@ -1,5 +1,3 @@
-import { InternalAxiosRequestConfig } from 'axios';
-
 /**
  * The type definition for a user object.
  */
@@ -14,7 +12,3 @@ export type User = {
     isTenantConfigured?: boolean;
   };
 };
-
-export interface AxiosConfigRetry extends InternalAxiosRequestConfig {
-  _retry?: boolean;
-}

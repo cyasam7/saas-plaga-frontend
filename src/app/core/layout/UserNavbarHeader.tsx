@@ -1,5 +1,5 @@
 import Avatar from '@mui/material/Avatar';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import Typography from '@mui/material/Typography';
 
 /**

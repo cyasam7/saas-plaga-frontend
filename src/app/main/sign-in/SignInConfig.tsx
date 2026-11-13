@@ -1,6 +1,6 @@
 import { IRouteConfig } from 'app/core/routing/types';
 import SignInPage from './SignInPage';
-import authRoles from '../../auth/authRoles';
+import authRoles from 'src/app/core/auth/authRoles';
 
 const SignInConfig: IRouteConfig = {
 	isFullScreen: true,

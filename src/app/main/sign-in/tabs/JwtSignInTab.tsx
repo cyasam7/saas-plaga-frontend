@@ -8,7 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';

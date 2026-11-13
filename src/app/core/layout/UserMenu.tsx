@@ -8,7 +8,7 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import { darken } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 
 /**
  * Toolbar button with the signed-in user's name/role and a sign-out menu.

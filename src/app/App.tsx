@@ -11,7 +11,7 @@ import timezone from 'dayjs/plugin/timezone';
 import dayjs from 'dayjs';
 import { pdfjs } from 'react-pdf';
 import withAppProviders from './withAppProviders';
-import { AuthRouteProvider } from './auth/AuthRouteProvider';
+import { AuthRouteProvider } from './core/auth/AuthRouteProvider';
 import { GlobalDialogProvider } from './shared/components/GlobalDialog/GlobalDialogContext';
 import Toaster from './core/feedback/Toaster';
 import AppThemeProvider from './core/theme/AppThemeProvider';

@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 import { IRouteConfig } from 'app/core/routing/types';
-import { authRoles } from 'src/app/auth';
+import authRoles from 'src/app/core/auth/authRoles';
 import ViewReportOrder from './ViewReportOrder';
 
 const Orders = lazy(() => import('./Orders'));

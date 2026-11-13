@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import _ from '@lodash';
 import { PartialDeep } from 'type-fest';
-import { AxiosConfigRetry, User as UserType } from '../../user';
+import { User as UserType } from './types';
 import {
 	IApiErrorResponse,
 	IGetCurrentUserResponse,
@@ -11,10 +11,39 @@ import {
 	ISignInResponse,
 	ISignUpPayload
 } from 'src/app/requests/auth/types';
-import { formatUserResponse } from './utils';
 import { TIMEZONE } from 'src/app/shared/constants/dateFormat';
 
 export type SignUpPayload = ISignUpPayload;
+
+interface AxiosConfigRetry extends InternalAxiosRequestConfig {
+	_retry?: boolean;
+}
+
+function toTemplateRole(params: string): string {
+	const map = {
+		RL000: 'admin',
+		RL001: 'staff',
+		RL002: 'fumigador'
+	};
+
+	return map[params] as string;
+}
+
+function formatUserResponse(response: ISignInResponse | IGetCurrentUserResponse): UserType {
+	const user = {
+		uid: response.id,
+		role: toTemplateRole(response.role.code),
+		data: {
+			displayName: response.name,
+			photoURL: response.name,
+			email: response.email,
+			tenant: response.tenant,
+			// Solo el sign-in lo envía; GET /auth/user no lo incluye.
+			isTenantConfigured: 'isTenantConfigured' in response ? response.isTenantConfigured : undefined
+		}
+	} as UserType;
+	return user;
+}
 
 const defaultAuthConfig = {
 	tokenStorageKey: 'jwt_access_token',

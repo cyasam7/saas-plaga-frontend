@@ -1,5 +1,5 @@
 import { ChangeEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQueryGetAccountConfig } from 'src/app/requests/app-config/useQueryGetAccountConfig';

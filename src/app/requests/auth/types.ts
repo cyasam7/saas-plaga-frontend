@@ -1,7 +1,7 @@
 import { ERoleCode } from 'src/app/requests/users/types';
 
 /**
- * Endpoints de sesión. Los llama el proveedor JWT (`auth/services/jwt/useJwtAuth.tsx`) y su
+ * Endpoints de sesión. Los llama el proveedor JWT (`core/auth/useJwtAuth.tsx`) y su
  * interceptor fuera de React Query, así que solo sus tipos viven aquí.
  */
 

@@ -1,5 +1,5 @@
 import { Suspense, useEffect } from 'react';
-import { useAuth } from 'src/app/auth/AuthRouteProvider';
+import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { useLocation, useRoutes } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import routes from 'app/core/routing/routesConfig';
