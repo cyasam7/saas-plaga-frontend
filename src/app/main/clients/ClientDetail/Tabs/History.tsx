@@ -2,6 +2,7 @@ import { CalendarMonth, Visibility } from "@mui/icons-material"
 import {
   Box,
   Button,
+  Chip,
   Paper,
   Skeleton,
   Table,
@@ -43,7 +44,7 @@ function LoadingRows() {
     <>
       {[1, 2, 3].map((i) => (
         <TableRow key={i}>
-          {[1, 2, 3, 4, 5].map((j) => (
+          {[1, 2, 3, 4, 5, 6].map((j) => (
             <TableCell key={j}>
               <Skeleton variant="text" />
             </TableCell>
@@ -74,6 +75,7 @@ export const HistoryTab = ({ clientId }: HistoryTabProps) => {
             <TableRow>
               <TableCell>Folio</TableCell>
               <TableCell>Fecha</TableCell>
+              <TableCell>Tipo</TableCell>
               <TableCell>Fumigador</TableCell>
               <TableCell>Estatus</TableCell>
               <TableCell align="right">Acciones</TableCell>
@@ -87,6 +89,20 @@ export const HistoryTab = ({ clientId }: HistoryTabProps) => {
                 <TableRow key={order.id} hover>
                   <TableCell>{order.folioNumber || "—"}</TableCell>
                   <TableCell>{dayjs(order.date).format(DATE_FORMAT)}</TableCell>
+                  <TableCell>
+                    {order.previousOrder ? (
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                        <Chip label="Seguimiento" size="small" color="info" variant="outlined" />
+                        <Typography variant="caption" color="text.secondary">
+                          de {order.previousOrder.folioNumber}
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        Servicio
+                      </Typography>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Typography
                       variant="body2"
@@ -118,6 +134,9 @@ export const HistoryTab = ({ clientId }: HistoryTabProps) => {
         open={Boolean(selectedOrder)}
         order={selectedOrder}
         onClose={() => setSelectedOrder(null)}
+        onOpenOrder={(orderId) =>
+          setSelectedOrder(orders.find((clientOrder) => clientOrder.id === orderId) ?? null)
+        }
       />
     </Box>
   )

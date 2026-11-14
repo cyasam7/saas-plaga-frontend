@@ -15,6 +15,7 @@ function buildOrder(overrides: Partial<IOrdersDatagridResponse['orders'][number]
 		status: EStatusOrder.CREATED,
 		price: 1000,
 		isFollowUp: false,
+		hasNextOrder: false,
 		...overrides
 	};
 }

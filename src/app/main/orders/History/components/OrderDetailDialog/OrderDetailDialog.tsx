@@ -190,12 +190,12 @@ function OrderDetailDialog(props: IOrderDetailDialogProps) {
 						<Divider />
 						<Field
 							label="¿Tuvo seguimiento?"
-							value={order.isFollowUp ? 'Sí' : 'No'}
+							value={order.nextOrder ? `Sí — folio ${order.nextOrder.folioNumber}` : 'No'}
 						/>
-						{order.dateFollowUp && (
+						{order.nextOrder && (
 							<Field
 								label="Fecha de seguimiento"
-								value={dayjs(order.dateFollowUp).format(DATE_FORMAT)}
+								value={dayjs(order.nextOrder.date).format(DATE_FORMAT)}
 							/>
 						)}
 						<Field

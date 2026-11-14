@@ -9,9 +9,11 @@ import {
   Divider,
   Box,
   Chip,
+  Paper,
 } from "@mui/material"
+import { Visibility } from "@mui/icons-material"
 import dayjs from "dayjs"
-import { DATE_TIME_FORMAT, DATE_FORMAT } from "src/app/shared/constants/dateFormat"
+import { DATE_TIME_FORMAT } from "src/app/shared/constants/dateFormat"
 import { formatCurrency } from "src/app/shared/constants/formatCurrency"
 import ChipOrder from "src/app/main/orders/components/ChipOrder/ChipOrder"
 import { IClientOrdersHistoryResponse } from "src/app/requests/clients/useQueryClientOrdersHistory"
@@ -22,6 +24,8 @@ interface OrderHistoryDetailDialogProps {
   open: boolean
   order: ClientOrderHistoryItem | null
   onClose: () => void
+  /** Abre otra orden del historial en este mismo diálogo (el seguimiento o la orden anterior). */
+  onOpenOrder: (orderId: string) => void
 }
 
 function Field({ label, value }: { label: string; value?: React.ReactNode }) {
@@ -51,7 +55,40 @@ function CatalogChips({ items }: { items?: ClientOrderHistoryItem["pests"] }) {
   )
 }
 
-export function OrderHistoryDetailDialog({ open, order, onClose }: OrderHistoryDetailDialogProps) {
+interface LinkedOrderCardProps {
+  title: string
+  /** Orden anterior o siguiente de la cadena de seguimientos (`previousOrder` / `nextOrder`). */
+  linkedOrder: NonNullable<ClientOrderHistoryItem["nextOrder"] | ClientOrderHistoryItem["previousOrder"]>
+  onOpenOrder: (orderId: string) => void
+}
+
+/** Datos básicos de una orden enlazada por seguimiento, con un botón para abrirla en este diálogo. */
+function LinkedOrderCard({ title, linkedOrder, onOpenOrder }: LinkedOrderCardProps) {
+  return (
+    <Paper variant="outlined" sx={{ p: 2 }}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ mb: 1.5 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+          {title}
+        </Typography>
+        <ChipOrder status={linkedOrder.status} />
+      </Stack>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
+        <Field label="Folio" value={linkedOrder.folioNumber || "Sin folio"} />
+        <Field label="Fecha" value={dayjs(linkedOrder.date).format(DATE_TIME_FORMAT)} />
+      </Box>
+      <Button
+        size="small"
+        startIcon={<Visibility fontSize="small" />}
+        sx={{ mt: 1.5 }}
+        onClick={() => onOpenOrder(linkedOrder.id)}
+      >
+        Ver orden
+      </Button>
+    </Paper>
+  )
+}
+
+export function OrderHistoryDetailDialog({ open, order, onClose, onOpenOrder }: OrderHistoryDetailDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ pb: 1 }}>
@@ -121,12 +158,13 @@ export function OrderHistoryDetailDialog({ open, order, onClose }: OrderHistoryD
             )}
 
             <Divider />
-            <Field
-              label="¿Tuvo seguimiento?"
-              value={order.isFollowUp ? "Sí" : "No"}
-            />
-            {order.dateFollowUp && (
-              <Field label="Fecha de seguimiento" value={dayjs(order.dateFollowUp).format(DATE_FORMAT)} />
+            {/* Solo en seguimientos: la orden de la que salió esta. */}
+            {order.previousOrder && (
+              <LinkedOrderCard title="Orden anterior" linkedOrder={order.previousOrder} onOpenOrder={onOpenOrder} />
+            )}
+            <Field label="¿Tuvo seguimiento?" value={order.nextOrder ? "Sí" : "No"} />
+            {order.nextOrder && (
+              <LinkedOrderCard title="Siguiente orden" linkedOrder={order.nextOrder} onOpenOrder={onOpenOrder} />
             )}
             <Field label="Observaciones" value={order.observations} />
           </Stack>

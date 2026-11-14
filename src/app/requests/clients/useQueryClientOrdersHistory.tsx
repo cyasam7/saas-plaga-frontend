@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 
 import { AxiosFetcher } from 'src/app/shared/fetcher';
-import { ClientType } from 'src/app/requests/clients/types';
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import { clientKeys } from 'src/app/requests/clients/keys';
 
@@ -23,18 +22,10 @@ export type IClientOrdersHistoryResponse = {
   date: string;
   status: EStatusOrder;
   price: number;
-  isFollowUp: boolean;
-  hasFollowUp: boolean;
-  /** ISO. */
-  dateFollowUp: string | null;
-  daysFollowUp: number | null;
   observations: string | null;
-  timeZone: string;
-  clientId: string;
   clientName: string;
   clientAddress: string;
   clientPhone: string;
-  clientType: ClientType;
   assigned: { id: string; name: string } | null;
   servicesType: IClientOrderHistoryCatalog[];
   applicationsType: IClientOrderHistoryCatalog[];
@@ -45,15 +36,22 @@ export type IClientOrdersHistoryResponse = {
     chemicalName: string;
     productDose: string;
   }[];
-  areaInfestations: {
-    areaId?: string;
-    areaName?: string;
-    skipped: boolean;
-    infestationLvl?: string;
-    skipReason?: string;
-    skipReasonOther?: string;
-  }[];
-  includeCertificate: boolean;
+  /** Siguiente orden de la cadena (el seguimiento que generó); `null` si no tiene. */
+  nextOrder: {
+    id: string;
+    folioNumber: string;
+    /** ISO. */
+    date: string;
+    status: EStatusOrder;
+  } | null;
+  /** Orden de la que salió este seguimiento; `null` si no es seguimiento. */
+  previousOrder: {
+    id: string;
+    folioNumber: string;
+    /** ISO. */
+    date: string;
+    status: EStatusOrder;
+  } | null;
 }[];
 
 /** `GET /clients/:id/orders`: historial completo de órdenes del cliente. */

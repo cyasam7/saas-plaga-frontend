@@ -24,7 +24,10 @@ export interface IOrdersDatagridResponse {
     };
     status: EStatusOrder;
     price: number;
+    /** Es seguimiento de otra orden. */
     isFollowUp: boolean;
+    /** Ya tiene seguimiento: no se puede crear otro. */
+    hasNextOrder: boolean;
     assignedId?: string;
     assignedName?: string;
     timezone: string;

@@ -23,11 +23,7 @@ export interface IGetOrderDetailResponse {
   date: string;
   status: EStatusOrder;
   price: number;
-  isFollowUp: boolean;
-  hasFollowUp: boolean;
-  /** ISO. */
-  dateFollowUp: string | null;
-  daysFollowUp: number | null;
+  countDaysForFollowUp: number | null;
   observations: string | null;
   timeZone: string;
   clientId: string;
@@ -54,6 +50,14 @@ export interface IGetOrderDetailResponse {
     skipReasonOther?: string;
   }[];
   includeCertificate: boolean;
+  /** Seguimiento que generó esta orden; `null` si no tiene. */
+  nextOrder: {
+    id: string;
+    folioNumber: string;
+    /** ISO. */
+    date: string;
+    status: EStatusOrder;
+  } | null;
 }
 
 /** `GET /order/:id`: detalle completo de una orden. */

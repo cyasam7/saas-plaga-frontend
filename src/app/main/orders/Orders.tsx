@@ -61,7 +61,7 @@ function Order() {
 			type: 'actions',
 			disableColumnMenu: true,
 			getActions: (params) => {
-				const { status, assignedId } = params.row;
+				const { status, assignedId, hasNextOrder } = params.row;
 				return [
 					<GridActionsCellItem
 						key="assign"
@@ -84,6 +84,8 @@ function Order() {
 							setOrderId(params.row.id);
 							setOpenFollow(true);
 						}}
+						// Una orden solo tiene un seguimiento: el API rechaza un segundo.
+						disabled={hasNextOrder}
 						className="action-button"
 					/>,
 					<GridActionsCellItem

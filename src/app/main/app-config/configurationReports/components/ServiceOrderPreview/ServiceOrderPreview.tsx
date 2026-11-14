@@ -18,7 +18,7 @@ const SAMPLE = {
 		'Se aplicará manejo integral de plagas en todas las áreas indicadas, con seguimiento programado y reporte de resultados al finalizar cada visita.',
 	includeCertificate: 'Sí',
 	scheduleFollowUp: 'Sí',
-	daysFollowUp: '10 días',
+	countDaysForFollowUp: '10 días',
 	servicePrice: '$4,500.00'
 };
 
@@ -203,7 +203,7 @@ function ServiceOrderPreview({ name, address, primaryColor, secondaryColor, logo
 							<Box flex={1}>
 								<Field
 									label="Días para seguimiento:"
-									value={SAMPLE.daysFollowUp}
+									value={SAMPLE.countDaysForFollowUp}
 								/>
 							</Box>
 							<Box flex={1}>
