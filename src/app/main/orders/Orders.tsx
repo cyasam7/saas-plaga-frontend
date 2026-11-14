@@ -1,10 +1,9 @@
 import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import MoveUpIcon from '@mui/icons-material/MoveUp';
 import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import { Delete, FileDownload, FilterList, Add, ReceiptLong } from '@mui/icons-material';
+import { Delete, FileDownload, FilterList, Add, ReceiptLong, EventRepeat } from '@mui/icons-material';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
@@ -14,9 +13,9 @@ import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/use
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import { downloadPdfFile } from './utils';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
-import OrderFollowUpDialog from './components/OrderFollowUpDialog/OrderFollowUpDialog';
 import HeaderFilters from './components/HeaderFilters/HeaderFilters';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
+import RescheduleOrderDialog from './components/RescheduleOrderDialog/RescheduleOrderDialog';
 import useOrdersFilters from './hooks/useOrdersFilters';
 import { MobileCard } from './components/MobileCard/MobileCard';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
@@ -30,7 +29,7 @@ function Order() {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAssign, setOpenAssign] = useState<boolean>(false);
-	const [openFollow, setOpenFollow] = useState<boolean>(false);
+	const [openReschedule, setOpenReschedule] = useState<boolean>(false);
 	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
 	const [shouldOpenDialogAssign, setShouldOpenDialogAssign] = useState<boolean>(false);
 	const [orderId, setOrderId] = useState<string>('');
@@ -61,7 +60,7 @@ function Order() {
 			type: 'actions',
 			disableColumnMenu: true,
 			getActions: (params) => {
-				const { status, assignedId, hasNextOrder } = params.row;
+				const { status, assignedId } = params.row;
 				return [
 					<GridActionsCellItem
 						key="assign"
@@ -76,25 +75,16 @@ function Order() {
 						className="action-button"
 					/>,
 					<GridActionsCellItem
-						key="follow"
-						label="Crear seguimiento"
-						icon={<MoveUpIcon />}
+						key="reschedule"
+						label="Cambiar fecha"
+						icon={<EventRepeat />}
 						showInMenu
 						onClick={() => {
-							// Con hover habilitado, el ítem deshabilitado vuelve a recibir clics: se ignoran aquí.
-							if (hasNextOrder) return;
 							setOrderId(params.row.id);
-							setOpenFollow(true);
+							setOpenReschedule(true);
 						}}
-						// Una orden solo tiene un seguimiento: el API rechaza un segundo.
-						disabled={hasNextOrder}
-						title={
-							hasNextOrder
-								? 'Esta orden ya tiene un seguimiento. Para crear uno nuevo, primero elimina el seguimiento actual.'
-								: undefined
-						}
-						// MUI quita los eventos del puntero a los ítems deshabilitados; sin esto el aviso nunca aparece.
-						sx={{ '&.Mui-disabled': { pointerEvents: 'auto' } }}
+						// Mismos estatus que acepta el API: en curso o cerrada, la fecha es la del servicio hecho.
+						disabled={![EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED].includes(status)}
 						className="action-button"
 					/>,
 					<GridActionsCellItem
@@ -206,16 +196,13 @@ function Order() {
 							setOrderId('');
 						}}
 					/>
-					<OrderFollowUpDialog
-						id={orderId}
-						referenceOrderDate={orders.find((order) => order.id === orderId)?.date ?? null}
+					<RescheduleOrderDialog
+						orderId={orderId}
+						open={openReschedule}
+						currentOrderDate={orders.find((order) => order.id === orderId)?.date ?? null}
 						onClose={() => {
+							setOpenReschedule(false);
 							setOrderId('');
-							setOpenFollow(false);
-						}}
-						open={openFollow}
-						onSubmit={async () => {
-							await refetch();
 						}}
 					/>
 					<Paper
@@ -316,9 +303,9 @@ function Order() {
 												setOrderId(id);
 												setOpenAssign(true);
 											}}
-											onFollow={(id) => {
+											onReschedule={(id) => {
 												setOrderId(id);
-												setOpenFollow(true);
+												setOpenReschedule(true);
 											}}
 											onDownloadCertificate={async (id) => {
 												const certificatePdf = await downloadOrderCertificate({ orderId: id, daysValid: 30 });

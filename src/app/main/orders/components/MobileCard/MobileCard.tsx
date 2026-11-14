@@ -1,7 +1,6 @@
 import { Card, CardContent, Stack, Box, Typography, IconButton, Tooltip } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import MoveUpIcon from '@mui/icons-material/MoveUp';
-import { FileDownload, Delete } from '@mui/icons-material';
+import { FileDownload, Delete, EventRepeat } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
@@ -12,7 +11,7 @@ import ChipOrder from '../ChipOrder/ChipOrder';
 interface MobileCardProps {
 	order: IOrdersDatagridResponse['orders'][number];
 	onAssign: (id: string) => void;
-	onFollow: (id: string) => void;
+	onReschedule: (id: string) => void;
 	onDownloadCertificate: (id: string) => Promise<void>;
 	onDelete: (id: string) => Promise<void>;
 }
@@ -20,7 +19,7 @@ interface MobileCardProps {
 export function MobileCard({
 	order,
 	onAssign,
-	onFollow,
+	onReschedule,
 	onDownloadCertificate,
 	onDelete
 }: MobileCardProps) {
@@ -76,14 +75,21 @@ export function MobileCard({
 									</IconButton>
 								</span>
 							</Tooltip>
-							<Tooltip title="Crear seguimiento">
-								<IconButton
-									size="small"
-									aria-label="Crear seguimiento"
-									onClick={() => onFollow(order.id)}
-								>
-									<MoveUpIcon fontSize="small" />
-								</IconButton>
+							<Tooltip title="Cambiar fecha">
+								<span>
+									<IconButton
+										size="small"
+										aria-label="Cambiar fecha"
+										onClick={() => onReschedule(order.id)}
+										disabled={
+											![EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED].includes(
+												order.status
+											)
+										}
+									>
+										<EventRepeat fontSize="small" />
+									</IconButton>
+								</span>
 							</Tooltip>
 							<Tooltip title="Generar reporte">
 								<span>
