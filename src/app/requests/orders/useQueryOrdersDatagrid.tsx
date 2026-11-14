@@ -8,6 +8,10 @@ import { orderKeys } from 'src/app/requests/orders/keys';
 export interface IOrdersDatagridPayload {
   dayFilter?: EOrdersDayFilter;
   fumigatorId?: string;
+  /** Folio, cliente (nombre, teléfono, dirección) o nombre del fumigador. */
+  search?: string;
+  status?: EStatusOrder;
+  clientId?: string;
 }
 
 /** Espejo de `GetDatagridOrdersResponse` (api/.../orders/application/GetDatagridOrders.ts). */
@@ -47,6 +51,8 @@ export const useQueryOrdersDatagrid = (payload: IOrdersDatagridPayload, enabled?
   return useQuery<IOrdersDatagridResponse>({
     queryKey: orderKeys.datagrid(payload),
     queryFn: () => AxiosFetcher<IOrdersDatagridResponse>({ url: '/order/datagrid', method: 'GET', params: payload }),
+    // Al cambiar un filtro se sigue mostrando la lista anterior hasta que llega la nueva.
+    keepPreviousData: true,
     enabled
   });
 };

@@ -35,6 +35,9 @@ export const statusToneColors: Record<StatusTone, { background: string; text: st
 	muted: { background: '#ffffff', text: '#7c8880', dot: '#c6ccc6', border: '#c6ccc6' }
 };
 
+/** Estatus que devuelve GET /order/datagrid (OPERATIONAL_STATUSES del API). */
+export const DATAGRID_STATUSES = [EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED];
+
 const finalStatus = [EStatusOrder.DONE, EStatusOrder.FINISHED];
 export function validateIfOrderIsPending(value: EStatusOrder): boolean {
 	return !finalStatus.includes(value);

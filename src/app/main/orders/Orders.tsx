@@ -1,28 +1,25 @@
 import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import { Block, Delete, FileDownload, FilterList, Add, ReceiptLong, EventRepeat } from '@mui/icons-material';
+import { Block, Delete, FilterList, ReceiptLong, EventRepeat } from '@mui/icons-material';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
 import { IOrdersDatagridResponse, useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { useMutationDeleteOrder } from 'src/app/requests/orders/useMutationDeleteOrder';
 import { useMutationCancelOrder } from 'src/app/requests/orders/useMutationCancelOrder';
-import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/useMutationDownloadOrderCertificate';
 import { EStatusOrder } from 'src/app/requests/orders/types';
-import { downloadPdfFile } from './utils';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
-import HeaderFilters from './components/HeaderFilters/HeaderFilters';
+import OrdersFilters from './components/OrdersFilters/OrdersFilters';
+import { useQueryClients } from 'src/app/requests/clients/useQueryClients';
+import OrdersHeader from './components/OrdersHeader/OrdersHeader';
 import AssignOrderDialog from './components/AssignOrderDialog/AssignOrderDialog';
 import RescheduleOrderDialog from './components/RescheduleOrderDialog/RescheduleOrderDialog';
 import useOrdersFilters from './hooks/useOrdersFilters';
 import { MobileCard } from './components/MobileCard/MobileCard';
-import SimpleHeader from 'app/shared/components/SimpleHeader';
-import { StatsCards } from './components/StatsCards/StatsCards';
 import './styles/actionButtons.css';
-import GenerateReportDialog from './components/GenerateReportDialog/GenerateReportDialog';
 
 function Order() {
 	const { openDialog } = useGlobalDialog();
@@ -31,13 +28,12 @@ function Order() {
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAssign, setOpenAssign] = useState<boolean>(false);
 	const [openReschedule, setOpenReschedule] = useState<boolean>(false);
-	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
 	const [shouldOpenDialogAssign, setShouldOpenDialogAssign] = useState<boolean>(false);
 	const [orderId, setOrderId] = useState<string>('');
 	const [openFilterDrawer, setOpenFilterDrawer] = useState(false);
 
 	// Los filtros viven en la URL y se resuelven en el backend: se mandan como query params.
-	const { filters, query, setFilter } = useOrdersFilters();
+	const { filters, query, setFilter, clearFilters } = useOrdersFilters();
 
 	const {
 		data = { orders: [], stats: { total: 0, today: 0, tomorrow: 0, pending: 0, passed: 0 } },
@@ -66,9 +62,10 @@ function Order() {
 			}
 		});
 	};
-	const { mutateAsync: downloadOrderCertificate } = useMutationDownloadOrderCertificate();
 
+	// Todos los filtros se resuelven en el API (`useOrdersFilters` arma el query).
 	const orders = data.orders;
+	const { data: clients = [] } = useQueryClients({});
 
 	const columns: GridColDef<IOrdersDatagridResponse['orders'][number]>[] = [
 		...columnsOrders,
@@ -108,17 +105,6 @@ function Order() {
 						// Mismos estatus que acepta el API: en curso o cerrada, la fecha es la del servicio hecho.
 						disabled={![EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED].includes(status)}
 						className="action-button"
-					/>,
-					<GridActionsCellItem
-						key="certificate"
-						label="Generar reporte"
-						icon={<FileDownload />}
-						disabled={![EStatusOrder.DONE, EStatusOrder.FINISHED].includes(params.row.status)}
-						onClick={async () => {
-							setOrderId(params.row.id);
-							setOpenDownloadReport(true)
-						}}
-						className="action-button download"
 					/>,
 					<GridActionsCellItem
 						key="cancel"
@@ -161,12 +147,14 @@ function Order() {
 		}
 	];
 
+	// El filtro de día vive en las pestañas del header.
 	const renderFilters = () => (
-		<HeaderFilters
-			dayFilter={filters.dayFilter}
-			onDayFilterChange={(value) => setFilter('dayFilter', value)}
-			fumigatorId={filters.fumigatorId}
-			onFumigatorChange={(value) => setFilter('fumigatorId', value)}
+		<OrdersFilters
+			filters={filters}
+			onFilterChange={setFilter}
+			onClearFilters={clearFilters}
+			clients={clients}
+			isStacked={isMobile}
 		/>
 	);
 
@@ -174,36 +162,18 @@ function Order() {
 		<PageLayout
 			scroll='content'
 			header={
-				<SimpleHeader
-					title="Ordenes de servicio"
-					subtitle="Gestiona las ordenes de servicio"
-					actions={
-						<Button
-							color="primary"
-							variant="contained"
-							startIcon={<Add />}
-							onClick={() => {
-								setOpen(true);
-								setShouldOpenDialogAssign(true);
-							}}
-						>
-							Nuevo
-						</Button>
-					}
+				<OrdersHeader
+					stats={data.stats}
+					selectedDayFilter={filters.dayFilter}
+					onDayFilterChange={(dayFilter) => setFilter('dayFilter', dayFilter)}
+					onCreateOrder={() => {
+						setOpen(true);
+						setShouldOpenDialogAssign(true);
+					}}
 				/>
 			}
 			content={
 				<div className="p-16 sm:p-24 w-full flex flex-col flex-1 min-h-0">
-					<StatsCards stats={data.stats} />
-
-					<GenerateReportDialog
-						id={orderId}
-						open={openDownloadReport}
-						onClose={() => {
-							setOrderId("")
-							setOpenDownloadReport(false)
-						}}
-					/>
 					<OrderDialog
 						open={open}
 						onCancel={() => {
@@ -338,10 +308,6 @@ function Order() {
 											onReschedule={(id) => {
 												setOrderId(id);
 												setOpenReschedule(true);
-											}}
-											onDownloadCertificate={async (id) => {
-												const certificatePdf = await downloadOrderCertificate({ orderId: id, daysValid: 30 });
-												downloadPdfFile(certificatePdf, `${id}.pdf`);
 											}}
 											onCancel={handleCancelOrder}
 											onDelete={async (id) => {

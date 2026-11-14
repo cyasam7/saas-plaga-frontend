@@ -1,6 +1,6 @@
 import { Card, CardContent, Stack, Box, Typography, IconButton, Tooltip } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import { Block, FileDownload, Delete, EventRepeat } from '@mui/icons-material';
+import { Block, Delete, EventRepeat } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
@@ -12,7 +12,6 @@ interface MobileCardProps {
 	order: IOrdersDatagridResponse['orders'][number];
 	onAssign: (id: string) => void;
 	onReschedule: (id: string) => void;
-	onDownloadCertificate: (id: string) => Promise<void>;
 	onCancel: (id: string) => void;
 	onDelete: (id: string) => Promise<void>;
 }
@@ -21,7 +20,6 @@ export function MobileCard({
 	order,
 	onAssign,
 	onReschedule,
-	onDownloadCertificate,
 	onCancel,
 	onDelete
 }: MobileCardProps) {
@@ -90,18 +88,6 @@ export function MobileCard({
 										}
 									>
 										<EventRepeat fontSize="small" />
-									</IconButton>
-								</span>
-							</Tooltip>
-							<Tooltip title="Generar reporte">
-								<span>
-									<IconButton
-										size="small"
-										aria-label="Generar reporte"
-										disabled={![EStatusOrder.DONE, EStatusOrder.FINISHED].includes(order.status)}
-										onClick={() => onDownloadCertificate(order.id)}
-									>
-										<FileDownload fontSize="small" />
 									</IconButton>
 								</span>
 							</Tooltip>

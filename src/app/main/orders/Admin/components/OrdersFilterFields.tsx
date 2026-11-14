@@ -1,13 +1,9 @@
 import { Box, MenuItem, TextField } from '@mui/material';
 
-import { EStatusOrder } from 'src/app/requests/orders/types';
 import FumigatorFilter from '../../components/HeaderFilters/FumigatorFilter';
-import { statusLabel } from '../../utils';
+import { DATAGRID_STATUSES, statusLabel } from '../../utils';
 import { OrdersAdminFilters } from '../types';
 import { fieldSx } from '../utils';
-
-/** Estatus que devuelve GET /order/datagrid (OPERATIONAL_STATUSES del API). */
-const DATAGRID_STATUSES = [EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED];
 
 interface OrdersFilterFieldsProps {
 	filters: OrdersAdminFilters;
