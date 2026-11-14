@@ -12,7 +12,8 @@ interface DateTimePickerFieldProps<T extends FieldValues> {
 	label?: string;
 	disabled?: boolean;
 	required?: boolean;
-	minDate?: Dayjs;
+	/** Fecha y hora mínimas que se pueden elegir (por defecto, ahora): bloquea también las horas ya pasadas de hoy. */
+	minDateTime?: Dayjs;
 	fullWidth?: boolean;
 	datePickerProps?: DateTimePickerProps<Dayjs>
 }
@@ -23,7 +24,7 @@ export function DateTimePickerField<T extends FieldValues>({
 	label = 'Fecha',
 	disabled = false,
 	required = true,
-	minDate = dayjs(),
+	minDateTime = dayjs(),
 	fullWidth = true,
 	datePickerProps
 }: DateTimePickerFieldProps<T>) {
@@ -40,7 +41,7 @@ export function DateTimePickerField<T extends FieldValues>({
 						disabled={disabled}
 						sx={{ width: fullWidth ? '100%' : 'auto' }}
 						value={field.value}
-						minDate={minDate}
+						minDateTime={minDateTime}
 						onChange={(newValue) => field.onChange(newValue)}
 						ampm={true}
 						{...datePickerProps}
@@ -58,7 +59,7 @@ export function DateTimePickerField<T extends FieldValues>({
 							sx={{ paddingLeft: 1.7 }}
 							error={!!fieldState.error.message}
 						>
-							{FIELD_REQUIRED}
+							{fieldState.error.message || FIELD_REQUIRED}
 						</FormHelperText>
 					)}
 				</>

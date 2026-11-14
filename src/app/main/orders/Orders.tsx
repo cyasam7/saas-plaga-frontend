@@ -81,11 +81,20 @@ function Order() {
 						icon={<MoveUpIcon />}
 						showInMenu
 						onClick={() => {
+							// Con hover habilitado, el ítem deshabilitado vuelve a recibir clics: se ignoran aquí.
+							if (hasNextOrder) return;
 							setOrderId(params.row.id);
 							setOpenFollow(true);
 						}}
 						// Una orden solo tiene un seguimiento: el API rechaza un segundo.
 						disabled={hasNextOrder}
+						title={
+							hasNextOrder
+								? 'Esta orden ya tiene un seguimiento. Para crear uno nuevo, primero elimina el seguimiento actual.'
+								: undefined
+						}
+						// MUI quita los eventos del puntero a los ítems deshabilitados; sin esto el aviso nunca aparece.
+						sx={{ '&.Mui-disabled': { pointerEvents: 'auto' } }}
 						className="action-button"
 					/>,
 					<GridActionsCellItem
@@ -199,6 +208,7 @@ function Order() {
 					/>
 					<OrderFollowUpDialog
 						id={orderId}
+						referenceOrderDate={orders.find((order) => order.id === orderId)?.date ?? null}
 						onClose={() => {
 							setOrderId('');
 							setOpenFollow(false);

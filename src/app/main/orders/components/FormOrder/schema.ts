@@ -4,6 +4,7 @@
 import { FIELD_PHONE_ERROR_MESSAGE, FIELD_REQUIRED } from 'src/app/shared/constants/yupMessages';
 import { yupPhoneProperty } from 'src/app/shared/constants/yupPhone';
 import * as yup from 'yup';
+import dayjs, { Dayjs } from 'dayjs';
 import { EBusinessMode, EClientType } from './FormOrderProps';
 
 export const createOrderSchema = yup.object().shape({
@@ -29,5 +30,11 @@ export const createOrderSchema = yup.object().shape({
 		then: (s) => s.optional(),
 		otherwise: () => yupPhoneProperty(FIELD_PHONE_ERROR_MESSAGE)
 	}),
-	date: yup.mixed().nonNullable().typeError(FIELD_REQUIRED)
+	date: yup
+		.mixed<Dayjs>()
+		.nonNullable(FIELD_REQUIRED)
+		.typeError(FIELD_REQUIRED)
+		// El picker bloquea lo pasado, pero una hora escrita a mano puede saltarse ese límite. Por minuto:
+		// elegir el minuto actual es válido.
+		.test('not-in-the-past', 'La fecha y hora no pueden ser anteriores a este momento', (date) => !date || !dayjs(date).isBefore(dayjs(), 'minute'))
 });
