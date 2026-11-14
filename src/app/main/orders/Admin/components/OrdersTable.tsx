@@ -5,7 +5,7 @@ import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersD
 import { formatOrderWhen } from '../utils';
 import FumigatorAvatar from './FumigatorAvatar';
 import OrderActions from './OrderActions';
-import StatusBadge from './StatusBadge';
+import ChipOrder from '../../components/ChipOrder/ChipOrder';
 
 const GRID_COLUMNS = '132px minmax(0,1.2fr) minmax(0,1.6fr) 130px 108px 128px minmax(0,1.2fr) 148px';
 const COLUMN_HEADERS = ['Folio', 'Cliente', 'Dirección', 'Teléfono', 'Costo', 'Estatus', 'Fumigador', 'Acciones'];
@@ -98,7 +98,7 @@ function OrdersTable({ orders, onAssign, onGenerateReport }: OrdersTableProps) {
 						${formatCurrency(order.price)}
 					</Typography>
 					<Box role="cell">
-						<StatusBadge status={order.status} />
+						<ChipOrder status={order.status} />
 					</Box>
 					<Box role="cell" sx={{ minWidth: 0 }}>
 						<FumigatorAvatar fumigatorName={order.assignedName} size={28} />

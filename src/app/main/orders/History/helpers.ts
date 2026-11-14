@@ -5,7 +5,8 @@ import { EStatusOrder } from 'src/app/requests/orders/types';
 export const HISTORY_STATUSES: EStatusOrder[] = [
 	EStatusOrder.IN_PROGRESS,
 	EStatusOrder.DONE,
-	EStatusOrder.FINISHED
+	EStatusOrder.FINISHED,
+	EStatusOrder.CANCELLED
 ];
 
 export const HISTORY_PAGE_SIZE = 20;

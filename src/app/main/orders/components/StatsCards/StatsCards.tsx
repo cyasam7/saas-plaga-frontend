@@ -2,7 +2,7 @@ import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { ReceiptLong, PendingActions, Today, Event, EventBusy } from '@mui/icons-material';
 import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
-import { statusColor } from '../../utils';
+import { statusTone, statusToneColors } from '../../utils';
 import { EStatusOrder } from 'src/app/requests/orders/types';
 
 interface StatsCardsProps {
@@ -53,8 +53,8 @@ export function StatsCards({ stats }: StatsCardsProps) {
 			label: 'Pasadas',
 			value: stats.passed,
 			icon: <EventBusy />,
-			color: statusColor[EStatusOrder.PASSED],
-			bgColor: alpha(statusColor[EStatusOrder.PASSED], 0.12)
+			color: statusToneColors[statusTone[EStatusOrder.PASSED]].text,
+			bgColor: statusToneColors[statusTone[EStatusOrder.PASSED]].background
 		}
 	];
 

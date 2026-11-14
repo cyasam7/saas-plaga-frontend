@@ -5,7 +5,8 @@ export enum EStatusOrder {
   IN_PROGRESS = 'IN_PROGRESS',
   PASSED = 'PASSED',
   DONE = 'DONE',
-  FINISHED = 'FINISHED'
+  FINISHED = 'FINISHED',
+  CANCELLED = 'CANCELLED'
 }
 
 /** Filtro de día de GET /order/datagrid (`EOrdersDayFilter` en `api/.../orders/domain/OrderEntity.ts`). */

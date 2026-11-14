@@ -1,6 +1,6 @@
 import { Card, CardContent, Stack, Box, Typography, IconButton, Tooltip } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import { FileDownload, Delete, EventRepeat } from '@mui/icons-material';
+import { Block, FileDownload, Delete, EventRepeat } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
@@ -13,6 +13,7 @@ interface MobileCardProps {
 	onAssign: (id: string) => void;
 	onReschedule: (id: string) => void;
 	onDownloadCertificate: (id: string) => Promise<void>;
+	onCancel: (id: string) => void;
 	onDelete: (id: string) => Promise<void>;
 }
 
@@ -21,6 +22,7 @@ export function MobileCard({
 	onAssign,
 	onReschedule,
 	onDownloadCertificate,
+	onCancel,
 	onDelete
 }: MobileCardProps) {
 	const { openDialog } = useGlobalDialog();
@@ -100,6 +102,22 @@ export function MobileCard({
 										onClick={() => onDownloadCertificate(order.id)}
 									>
 										<FileDownload fontSize="small" />
+									</IconButton>
+								</span>
+							</Tooltip>
+							<Tooltip title="Cancelar">
+								<span>
+									<IconButton
+										size="small"
+										aria-label="Cancelar"
+										onClick={() => onCancel(order.id)}
+										disabled={
+											![EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED].includes(
+												order.status
+											)
+										}
+									>
+										<Block fontSize="small" />
 									</IconButton>
 								</span>
 							</Tooltip>

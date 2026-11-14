@@ -6,7 +6,7 @@ import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersD
 import { formatOrderWhen } from '../utils';
 import FumigatorAvatar from './FumigatorAvatar';
 import OrderActions from './OrderActions';
-import StatusBadge from './StatusBadge';
+import ChipOrder from '../../components/ChipOrder/ChipOrder';
 
 interface OrderCardProps {
 	order: IOrdersDatagridResponse['orders'][number];
@@ -37,7 +37,7 @@ function OrderCard({ order, onAssign, onGenerateReport }: OrderCardProps) {
 						{formatOrderWhen(order.date)}
 					</Typography>
 				</Box>
-				<StatusBadge status={order.status} />
+				<ChipOrder status={order.status} />
 			</Box>
 
 			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1.5 }}>

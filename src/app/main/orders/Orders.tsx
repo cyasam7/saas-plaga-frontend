@@ -3,12 +3,13 @@ import { Box, Button, Paper, Stack, Typography, IconButton, Drawer, useTheme, us
 import { useState } from 'react';
 import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import { Delete, FileDownload, FilterList, Add, ReceiptLong, EventRepeat } from '@mui/icons-material';
+import { Block, Delete, FileDownload, FilterList, Add, ReceiptLong, EventRepeat } from '@mui/icons-material';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsOrders } from './columns';
 import { IOrdersDatagridResponse, useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { useMutationDeleteOrder } from 'src/app/requests/orders/useMutationDeleteOrder';
+import { useMutationCancelOrder } from 'src/app/requests/orders/useMutationCancelOrder';
 import { useMutationDownloadOrderCertificate } from 'src/app/requests/orders/useMutationDownloadOrderCertificate';
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import { downloadPdfFile } from './utils';
@@ -44,6 +45,27 @@ function Order() {
 		refetch
 	} = useQueryOrdersDatagrid(query);
 	const { mutateAsync: deleteOrder } = useMutationDeleteOrder();
+	const { mutateAsync: cancelOrder } = useMutationCancelOrder();
+
+	const handleCancelOrder = (orderIdToCancel: string) => {
+		openDialog({
+			title: 'Cancelar orden',
+			text: '¿Estas seguro que deseas cancelar la orden de servicio? Pasará al historial como cancelada.',
+			onAccept: async () => {
+				await cancelOrder({ orderId: orderIdToCancel });
+				await refetch();
+				displayToast({
+					message: 'Se ha cancelado la orden',
+					variant: 'success',
+					autoHideDuration: 1000,
+					anchorOrigin: {
+						horizontal: 'right',
+						vertical: 'top'
+					}
+				});
+			}
+		});
+	};
 	const { mutateAsync: downloadOrderCertificate } = useMutationDownloadOrderCertificate();
 
 	const orders = data.orders;
@@ -97,6 +119,16 @@ function Order() {
 							setOpenDownloadReport(true)
 						}}
 						className="action-button download"
+					/>,
+					<GridActionsCellItem
+						key="cancel"
+						label="Cancelar"
+						icon={<Block />}
+						showInMenu
+						onClick={() => handleCancelOrder(params.row.id)}
+						// Mismos estatus que acepta el API (CancelOrder).
+						disabled={![EStatusOrder.CREATED, EStatusOrder.ASSIGNED, EStatusOrder.PASSED].includes(status)}
+						className="action-button delete"
 					/>,
 					<GridActionsCellItem
 						key="delete"
@@ -311,6 +343,7 @@ function Order() {
 												const certificatePdf = await downloadOrderCertificate({ orderId: id, daysValid: 30 });
 												downloadPdfFile(certificatePdf, `${id}.pdf`);
 											}}
+											onCancel={handleCancelOrder}
 											onDelete={async (id) => {
 												await deleteOrder({ orderId: id });
 												await refetch();

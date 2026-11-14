@@ -46,21 +46,6 @@
 	--accent-soft-bg: var(--green-50);
 	--accent-soft-fg: var(--green-800);
 
-	--status-success-bg: var(--green-100);
-	--status-success-fg: var(--green-800);
-	--status-success-dot: var(--green-500);
-	--status-warning-bg: var(--amber-100);
-	--status-warning-fg: var(--amber-600);
-	--status-warning-dot: var(--amber-400);
-	--status-danger-bg: var(--red-100);
-	--status-danger-fg: var(--red-600);
-	--status-danger-dot: var(--red-400);
-	--status-info-bg: var(--blue-100);
-	--status-info-fg: var(--blue-600);
-	--status-info-dot: var(--blue-400);
-	--status-neutral-bg: var(--gray-100);
-	--status-neutral-fg: var(--gray-600);
-	--status-neutral-dot: var(--gray-400);
 
 	--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 	--font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
