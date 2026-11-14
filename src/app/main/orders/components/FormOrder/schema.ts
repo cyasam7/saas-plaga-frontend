@@ -11,7 +11,8 @@ export const createOrderSchema = yup.object().shape({
 	price: yup
 		.string()
 		.required(FIELD_REQUIRED)
-		.test('min-price', 'Valor mínimo de 1 peso', (value) => Number(value) >= 1),
+		.test('min-price', 'Valor mínimo de 1 peso', (value) => Number(value) >= 1)
+		.test('whole-pesos', 'El precio debe ser en pesos enteros, sin centavos', (value) => /^\d+$/.test(value ?? '')),
 	clientType: yup.string().required(FIELD_REQUIRED),
 	businessMode: yup.string(),
 	// For an existing business client the id is required (the client + location are selected).
