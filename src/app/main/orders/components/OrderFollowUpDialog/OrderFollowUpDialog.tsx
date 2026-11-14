@@ -23,7 +23,7 @@ function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 		resolver: yupResolver(followUppSchema),
 		defaultValues: {
 			date: null,
-			description: ''
+			notes: ''
 		}
 	});
 
@@ -44,7 +44,7 @@ function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 			await createFollowUpOrder({
 				id,
 				date: formValues.date.utc().toISOString(),
-				description: formValues.description
+				notes: formValues.notes
 			});
 			displayToast({
 				anchorOrigin: { horizontal: 'right', vertical: 'top' },
@@ -66,7 +66,7 @@ function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 
 	function handleOnClose(): void {
 		onClose();
-		formHandler.reset({ date: null, description: '' });
+		formHandler.reset({ date: null, notes: '' });
 	}
 
 	return (
@@ -118,7 +118,7 @@ function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 					/>
 					<TextFieldForm
 						control={formHandler.control}
-						name="description"
+						name="notes"
 						label="Descripción"
 						placeholder="Escribe una breve descripción de la orden"
 						disabled={formHandler.formState.isSubmitting}

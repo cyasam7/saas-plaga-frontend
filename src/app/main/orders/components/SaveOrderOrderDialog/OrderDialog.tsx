@@ -42,7 +42,7 @@ function OrderDialog(props: OrderDialogProps) {
 				clientName: formValues.clientName,
 				clientPhone: formValues.clientPhone,
 				clientAddress: formValues.clientAddress,
-				description: formValues.description,
+				notes: formValues.notes,
 				date: formValues.date.utc().toISOString(),
 				price: formValues.price
 			};

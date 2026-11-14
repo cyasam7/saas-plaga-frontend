@@ -343,9 +343,9 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 				xs={12}
 			>
 				<TextFieldForm
-					name="description"
+					name="notes"
 					control={formHandler.control}
-					label="Descripción"
+					label="Notas"
 					disabled={disabled}
 					fullWidth
 					multiline

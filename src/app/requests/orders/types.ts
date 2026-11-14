@@ -24,7 +24,7 @@ export interface ICreateOrderPayload {
   clientName: string;
   clientPhone: string;
   clientAddress: string;
-  description?: string;
+  notes?: string;
   /** ISO. */
   date: string;
   /** El DTO lo valida con `@IsNumberString`: viaja como texto (p. ej. `'700'`). */

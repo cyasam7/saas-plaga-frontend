@@ -24,5 +24,5 @@ export interface IFormCreatePest {
 	clientType: EClientType;
 	/** Only relevant when clientType === BUSINESS: pick an existing client or create a new one. */
 	businessMode: EBusinessMode;
-	description: string;
+	notes: string;
 }

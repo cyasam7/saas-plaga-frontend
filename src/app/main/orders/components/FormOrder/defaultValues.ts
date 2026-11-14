@@ -9,5 +9,5 @@ export const defaultValuesOrder = {
   businessMode: EBusinessMode.EXISTING,
   price: '',
   date: null,
-  description: ''
+  notes: ''
 };

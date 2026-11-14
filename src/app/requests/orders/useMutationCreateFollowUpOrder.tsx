@@ -6,7 +6,7 @@ import { AxiosFetcher } from 'src/app/shared/fetcher';
 export interface ICreateFollowUpOrderPayload {
   /** Orden original. */
   id: string;
-  description: string;
+  notes: string;
   /** ISO. */
   date: string;
 }

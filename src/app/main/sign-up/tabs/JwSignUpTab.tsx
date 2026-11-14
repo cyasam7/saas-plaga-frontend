@@ -18,6 +18,7 @@ import { AxiosError } from 'axios';
 import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { ISignUpPayload } from 'src/app/requests/auth/types';
 import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
+import PhoneInputForm from 'app/shared/components/Form/PhoneInputForm/PhoneInputForm';
 
 /**
  * Form Validation Schema
@@ -146,22 +147,14 @@ function JwtSignUpTab() {
 				fullWidth
 			/>
 
-			<Controller
+			<PhoneInputForm
 				name="phone"
 				control={control}
-				render={({ field }) => (
-					<TextField
-						{...field}
-						className="mb-24"
-						label="Teléfono"
-						type="text"
-						error={!!errors.phone}
-						helperText={errors?.phone?.message}
-						variant="standard"
-						required
-						fullWidth
-					/>
-				)}
+				className="mb-24"
+				label="Teléfono"
+				variant="standard"
+				required
+				fullWidth
 			/>
 			
 			<Controller
