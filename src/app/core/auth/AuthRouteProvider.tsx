@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import SplashScreen from 'app/core/feedback/SplashScreen';
@@ -7,7 +7,6 @@ import { TIMEZONE } from 'src/app/shared/constants/dateFormat';
 import {
 	IApiErrorResponse,
 	IGetCurrentUserResponse,
-	IRefreshTokenResponse,
 	ISignInPayload,
 	ISignInResponse,
 	ISignUpPayload
@@ -15,9 +14,8 @@ import {
 
 /** Donde versiones anteriores guardaban los tokens; se borran al cargar para no dejarlos expuestos. */
 const LEGACY_TOKEN_STORAGE_KEYS = ['jwt_access_token', 'jwt_refresh_token'];
-// Endpoints `auth/web/*`: el API guarda los tokens en cookies httpOnly, que JavaScript no puede leer.
+// Endpoints `auth/web/*`: el API guarda el token de sesión en una cookie httpOnly, que JavaScript no puede leer.
 const SIGN_IN_URL = '/auth/web/sign-in';
-const TOKEN_REFRESH_URL = '/auth/web/refresh';
 const SIGN_OUT_URL = '/auth/web/sign-out';
 const SIGN_UP_URL = '/auth/sign-up';
 const CURRENT_USER_URL = '/auth/user';
@@ -36,10 +34,6 @@ type User = {
 		isTenantConfigured?: boolean;
 	};
 };
-
-interface AxiosConfigRetry extends InternalAxiosRequestConfig {
-	_retry?: boolean;
-}
 
 /** The user held while nobody is signed in. */
 function createGuestUser(): User {
@@ -79,7 +73,7 @@ function formatUserResponse(response: ISignInResponse | IGetCurrentUserResponse)
 	} as User;
 }
 
-/** Los tokens viajan solos en sus cookies; aquí solo quedan los headers que el API pide aparte. */
+/** El token de sesión viaja solo en su cookie; aquí solo quedan los headers que el API pide aparte. */
 function setSession(tenant?: string) {
 	axios.defaults.headers.common['x-tenant'] = tenant;
 	axios.defaults.headers.common['x-timezone'] = TIMEZONE;
@@ -104,8 +98,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 type AuthRouteProviderProps = { children: React.ReactNode };
 
 /**
- * Owns the session: the API keeps the JWTs in httpOnly cookies, so this sets the tenant headers,
- * refreshes the session on a 401, restores it on load and exposes the signed-in user.
+ * Owns the session: the API keeps the session token in an httpOnly cookie, so this sets the tenant headers,
+ * signs out on a 401, restores the session on load and exposes the signed-in user.
  */
 function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 	const queryClient = useQueryClient();
@@ -149,7 +143,7 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 	);
 
 	const signOut = useCallback(() => {
-		// Las cookies son httpOnly: solo el API puede borrarlas. Si falla, la sesión local se cierra igual.
+		// El API cierra la sesión y borra la cookie httpOnly. Si falla, la sesión local se cierra igual.
 		axios.post<void>(SIGN_OUT_URL).catch(() => undefined);
 		resetSession();
 		setIsAuthenticated(false);
@@ -157,44 +151,24 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 		setUser(createGuestUser());
 	}, [queryClient]);
 
-	/** Renueva las cookies de sesión con la cookie del refresh token. */
-	const refreshSession = useCallback(async (): Promise<boolean> => {
-		try {
-			const { data: refreshTokenResponse } = await axios.post<IRefreshTokenResponse>(TOKEN_REFRESH_URL);
-
-			setSession(refreshTokenResponse.tenant);
-			return true;
-		} catch {
-			signOut();
-			return false;
-		}
-	}, [signOut]);
-
 	/**
-	 * On a 401, refreshes the session once and retries the request (the browser sends the new cookies).
-	 * Registered once; the cleanup ejects it so it never stacks up.
+	 * The server validates the session on every request, so a 401 means it ended (expired, signed out
+	 * elsewhere, password changed): sign out locally. Registered once; the cleanup ejects it.
 	 */
 	useEffect(() => {
 		const responseInterceptorId = axios.interceptors.response.use(
 			(response) => response,
-			async (error) => {
+			(error) => {
 				const axiosError = error as AxiosError<IApiErrorResponse>;
 				// No `response` on network errors or timeouts: pass those through untouched.
 				const statusError = axiosError.response?.status;
-				const originalRequest = axiosError.config as AxiosConfigRetry;
-				const isAuthRequest = [TOKEN_REFRESH_URL, SIGN_IN_URL, SIGN_OUT_URL].some((authUrl) =>
-					originalRequest?.url?.includes(authUrl)
+				// Sign-in reports bad credentials itself; GET /auth/user on load just means "not signed in".
+				const isAuthRequest = [SIGN_IN_URL, SIGN_OUT_URL, CURRENT_USER_URL].some((authUrl) =>
+					axiosError.config?.url?.includes(authUrl)
 				);
 
-				if (statusError === 401 && !isAuthRequest && !originalRequest._retry) {
-					originalRequest._retry = true;
-					const isSessionRefreshed = await refreshSession();
-					if (!isSessionRefreshed) {
-						return Promise.reject(axiosError);
-					}
-
-					// Se reenvía la config original: conserva params, body y headers como x-timezone.
-					return axios(originalRequest);
+				if (statusError === 401 && !isAuthRequest) {
+					signOut();
 				}
 
 				return Promise.reject(axiosError);
@@ -204,7 +178,7 @@ function AuthRouteProvider({ children }: AuthRouteProviderProps) {
 		return () => {
 			axios.interceptors.response.eject(responseInterceptorId);
 		};
-	}, [refreshSession]);
+	}, [signOut]);
 
 	/**
 	 * On page load, restores the session from the cookies: if `GET /auth/user` succeeds the

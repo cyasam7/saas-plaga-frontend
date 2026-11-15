@@ -3,8 +3,8 @@ import { ERoleCode } from 'src/app/requests/users/types';
 /**
  * Endpoints de sesión. Los llama `core/auth/AuthRouteProvider.tsx` y su
  * interceptor fuera de React Query, así que solo sus tipos viven aquí.
- * El web usa los endpoints `auth/web/*`: los tokens viajan en cookies httpOnly
- * que pone el API, nunca en el body ni en JavaScript.
+ * El web usa los endpoints `auth/web/*`: el token de sesión viaja en una cookie
+ * httpOnly que pone el API, nunca en el body ni en JavaScript.
  */
 
 /** Cuerpo de `POST /auth/web/sign-in` (`LoginAuthDTO`). */
@@ -36,19 +36,6 @@ export interface ISignUpPayload {
   password: string;
   workspaceName: string;
   companyName: string;
-}
-
-/** Espejo de `IWebRefreshResponse` (api/.../_shared/auth/infrastructure/AuthController.ts). Sin cuerpo: el refresh token va en su cookie. */
-export interface IRefreshTokenResponse {
-  id: string;
-  name: string;
-  email: string;
-  role: {
-    id: string;
-    name: string;
-    code: ERoleCode;
-  };
-  tenant: string;
 }
 
 /** Espejo de `IGetCurrentUserResponse` (api/.../_shared/auth/application/GetCurrentUserAuth.ts). */
