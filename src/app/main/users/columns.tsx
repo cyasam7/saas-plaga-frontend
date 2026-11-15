@@ -40,7 +40,6 @@ export const columnsUsers: GridColDef<IUsersDatagridResponse[number]>[] = [
     renderCell: (params) => (
       <Chip
         label={params.value}
-        color="primary"
         variant="outlined"
         size="small"
         sx={{
@@ -63,7 +62,7 @@ export const columnsUsers: GridColDef<IUsersDatagridResponse[number]>[] = [
   }, */
   {
     field: 'isActive',
-    headerName: 'ACTIVADO',
+    headerName: 'ESTADO',
     flex: 1,
     disableColumnMenu: true,
     renderCell: (params) => (

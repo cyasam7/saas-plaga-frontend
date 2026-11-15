@@ -1,4 +1,4 @@
-import { Grid, MenuItem } from '@mui/material';
+import { CircularProgress, Grid, MenuItem, Stack } from '@mui/material';
 import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import React, { useEffect } from 'react';
 import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
@@ -10,7 +10,7 @@ import { ROLE_CATALOG } from './constant';
 import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 
 function FormUser(props: IFormUserProps) {
-	const { hook, isEditing, } = props;
+	const { hook, isEditing, loading } = props;
 
 	const { user } = useAuth();
 	const role = user.role;
@@ -22,6 +22,18 @@ function FormUser(props: IFormUserProps) {
 			hook.setValue('tenantId', tenants[0].id);
 		}
 	}, [tenants, role]);
+
+	if (loading) {
+		return (
+			<Stack
+				alignItems="center"
+				justifyContent="center"
+				minHeight={200}
+			>
+				<CircularProgress aria-label="Cargando usuario" />
+			</Stack>
+		);
+	}
 
 	return (
 		<Grid

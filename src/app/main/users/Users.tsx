@@ -1,13 +1,13 @@
 import PageLayout from 'app/core/page/PageLayout';
 import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
-import { Paper, Stack, Typography } from '@mui/material';
-import { DataGrid, GridActionsCellItem, GridActionsCellItemProps, GridColDef } from '@mui/x-data-grid';
+import { Button, Paper, Stack, Typography } from '@mui/material';
+import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
 import { useMutationDeleteUser } from 'src/app/requests/users/useMutationDeleteUser';
 import { useMutationSaveUserSign } from 'src/app/requests/users/useMutationSaveUserSign';
 import { userKeys } from 'src/app/requests/users/keys';
-import { Visibility, NotInterested, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
-import { ReactElement, useMemo, useState } from 'react';
+import { Visibility, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
+import { useMemo, useState } from 'react';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
@@ -19,6 +19,18 @@ import SignViewer from './components/SignViewer/SignViewer';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
+
+function NoUsersOverlay() {
+	return (
+		<Stack
+			height="100%"
+			alignItems="center"
+			justifyContent="center"
+		>
+			<Typography color="text.secondary">No hay usuarios que coincidan con la búsqueda</Typography>
+		</Stack>
+	);
+}
 
 function Users() {
 	const { openDialog } = useGlobalDialog();
@@ -33,54 +45,59 @@ function Users() {
 	const [openChangePassword, setOpenChangePassword] = useState(false);
 	const { user: userLogged } = useAuth();
 
-	const { data, isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
+	const { data: users, isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
 	const { mutateAsync: deleteUser } = useMutationDeleteUser();
 	const { mutateAsync: saveUserSign } = useMutationSaveUserSign();
+
+	function handleOpenSigner(selectedUserId: string) {
+		setUserId(selectedUserId);
+		setOpenSigner(true);
+	}
 
 	const columns: GridColDef<IUsersDatagridResponse[number]>[] = [
 		...columnsUsers,
 		{
 			field: 'sign',
 			headerName: 'FIRMA',
-			flex: 1,
+			width: 140,
+			sortable: false,
 			disableColumnMenu: true,
-			type: 'actions',
-			getActions: (params) => {
-				const { sign } = params.row;
-				const result: ReactElement<GridActionsCellItemProps>[] = [];
+			renderCell: (params) => {
+				const { sign, userId: rowUserId } = params.row;
 				if (sign) {
-					result.push(
-						<GridActionsCellItem
-							icon={<Visibility />}
-							key={0}
-							label="Visualizar"
+					return (
+						<Button
+							size="small"
+							startIcon={<Visibility />}
 							onClick={() => {
 								setPreviewURL(sign);
 								setOpenPreviewSign(true);
 							}}
-						/>
-					);
-				} else {
-					result.push(
-						<GridActionsCellItem
-							icon={<NotInterested />}
-							key={1}
-							label="No existe"
-							onClick={() => {
-								displayToast({
-									anchorOrigin: {
-										horizontal: 'right',
-										vertical: 'top'
-									},
-									message: 'Aun no tiene firma registrada',
-									variant: 'warning'
-								});
-							}}
-						/>
+						>
+							Ver
+						</Button>
 					);
 				}
-
-				return result;
+				return (
+					<Stack
+						direction="row"
+						alignItems="center"
+						spacing={1}
+					>
+						<Typography
+							variant="body2"
+							color="text.secondary"
+						>
+							Sin firma
+						</Typography>
+						<Button
+							size="small"
+							onClick={() => handleOpenSigner(rowUserId)}
+						>
+							Agregar
+						</Button>
+					</Stack>
+				);
 			}
 		},
 		{
@@ -92,8 +109,8 @@ function Users() {
 			getActions: (params) => {
 				return [
 					<GridActionsCellItem
-						key={0}
-						label="MODIFICAR"
+						key="edit"
+						label="Editar"
 						icon={<NoteAlt />}
 						showInMenu
 						onClick={() => {
@@ -102,14 +119,32 @@ function Users() {
 						}}
 					/>,
 					<GridActionsCellItem
-						key={0}
-						label="ELIMINAR"
-						icon={<RemoveCircleOutline />}
+						key="change-password"
+						label="Cambiar contraseña"
+						icon={<SyncLockIcon />}
+						showInMenu
+						onClick={() => {
+							setUserId(params.row.userId);
+							setOpenChangePassword(true);
+						}}
+					/>,
+					<GridActionsCellItem
+						key="update-sign"
+						label="Actualizar firma"
+						icon={<HistoryEdu />}
+						showInMenu
+						onClick={() => handleOpenSigner(params.row.userId)}
+					/>,
+					<GridActionsCellItem
+						key="delete"
+						label="Eliminar"
+						icon={<RemoveCircleOutline color="error" />}
+						sx={{ color: 'error.main' }}
 						showInMenu
 						onClick={() => {
 							openDialog({
-								title: 'Acción requerida',
-								text: '¿Seguro que deseas eliminar este usuario?',
+								title: 'Eliminar usuario',
+								text: `¿Seguro que deseas eliminar a ${params.row.name}? Esta acción no se puede deshacer.`,
 								onAccept: async () => {
 									await deleteUser({ userId: params.row.userId });
 									displayToast({
@@ -124,59 +159,44 @@ function Users() {
 								}
 							});
 						}}
-					/>,
-					<GridActionsCellItem
-						key={0}
-						label="ACTUALIZAR FIRMA"
-						icon={<HistoryEdu />}
-						showInMenu
-						onClick={() => {
-							setUserId(params.row.userId);
-							setOpenSigner(true);
-						}}
-					/>,
-					<GridActionsCellItem
-						key={0}
-						label="CAMBIAR CONTRASEÑA"
-						icon={<SyncLockIcon />}
-						showInMenu
-						onClick={() => {
-							setUserId(params.row.userId);
-							setOpenChangePassword(true);
-						}}
 					/>
 				];
 			}
 		}
 	];
 
-	const filteredData = useMemo(() => {
+	const filteredUsers = useMemo(() => {
 		const searchLowerCase = search.toLowerCase();
 
-		let copyData = [...(data ?? [])];
+		let matchingUsers = [...(users ?? [])];
 
 		if (search) {
-			copyData = copyData.filter((i) => {
+			matchingUsers = matchingUsers.filter((user) => {
 				return (
-					i.email.toLowerCase().includes(searchLowerCase) ||
-					i.name.toLowerCase().includes(searchLowerCase) ||
-					i.phone.toLowerCase().includes(searchLowerCase)
+					user.email.toLowerCase().includes(searchLowerCase) ||
+					user.name.toLowerCase().includes(searchLowerCase) ||
+					user.phone.toLowerCase().includes(searchLowerCase)
 				);
 			});
 		}
 
 		if (isActive !== null) {
-			copyData = copyData.filter((i) => i.isActive === isActive);
+			matchingUsers = matchingUsers.filter((user) => user.isActive === isActive);
 		}
 
-		return copyData;
-	}, [search, isActive, data]);
+		return matchingUsers;
+	}, [search, isActive, users]);
 
-	async function handleSubmitOnSign(data: Blob): Promise<void> {
+	async function handleSubmitOnSign(signImage: Blob): Promise<void> {
 		const signFormData = new FormData();
-		signFormData.append('file', data, `${userId}-sign.png`);
+		signFormData.append('file', signImage, `${userId}-sign.png`);
 		signFormData.append('userId', userId);
-		await saveUserSign({ formData: signFormData });
+		try {
+			await saveUserSign({ formData: signFormData });
+		} catch {
+			// AxiosFetcher ya muestra el error; el diálogo queda abierto para reintentar.
+			return;
+		}
 		invalidate(userKeys.lists());
 		setUserId('');
 		setOpenSigner(false);
@@ -185,7 +205,7 @@ function Users() {
 				horizontal: 'right',
 				vertical: 'top'
 			},
-			message: 'Se guardo correctamente',
+			message: 'Firma guardada correctamente',
 			variant: 'success'
 		});
 	}
@@ -206,10 +226,16 @@ function Users() {
 			content={
 				<div className="p-24 w-full">
 					<Paper className="p-24 w-full">
-						<Stack sx={{ height: 'calc(100vh - 240px)' }}>
+						<Stack
+							spacing={2}
+							sx={{ height: 'calc(100vh - 240px)' }}
+						>
 							<DialogSigner
 								open={openSigner}
-								onClose={() => setOpenSigner(false)}
+								onClose={() => {
+									setUserId('');
+									setOpenSigner(false);
+								}}
 								onSubmit={handleSubmitOnSign}
 							/>
 							<DialogUser
@@ -234,16 +260,20 @@ function Users() {
 								onClose={handleClosePreviewSigner}
 							/>
 							<HeaderGrid
+								isActive={isActive}
 								onChangeIsActive={setIsActive}
 								onChangeSearch={setSearch}
 								onClickCreate={() => setOpenUserDialog(true)}
 							/>
 							<DataGrid
-								getRowId={(i) => i.userId}
-								rows={filteredData ?? []}
+								getRowId={(user) => user.userId}
+								rows={filteredUsers}
 								loading={isLoading}
 								columns={columns}
-								hideFooter
+								initialState={{ pagination: { paginationModel: { pageSize: 25 } } }}
+								pageSizeOptions={[25, 50, 100]}
+								slots={{ noRowsOverlay: NoUsersOverlay }}
+								disableRowSelectionOnClick
 							/>
 						</Stack>
 					</Paper>

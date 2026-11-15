@@ -19,12 +19,20 @@ function DialogSigner(props: IDialogSignerProps) {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 		const dataURL = ref.current.getTrimmedCanvas().toDataURL('image/png');
 		const blob = await (await fetch(dataURL as string)).blob();
-		await onSubmit(blob);
-		setIsLoading(false);
+		try {
+			await onSubmit(blob);
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	return (
-		<Dialog open={open}>
+		<Dialog
+			open={open}
+			onClose={() => {
+				if (!isLoading) onClose();
+			}}
+		>
 			<DialogTitle>Actualiza la firma</DialogTitle>
 		<DialogContent>
 			{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
@@ -51,11 +59,11 @@ function DialogSigner(props: IDialogSignerProps) {
 						onClick={onClose}
 						disabled={isLoading}
 					>
-						Cerrar
+						Cancelar
 					</Button>
 					<Button
-						variant="contained"
-						color="secondary"
+						variant="text"
+						color="primary"
 						onClick={handleClear}
 						disabled={isLoading}
 					>

@@ -1,35 +1,34 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import React from 'react';
 import { ISignViewerProps } from './ISignViewer';
 
 function SignViewer(props: ISignViewerProps) {
 	const { onClose, open, url } = props;
 	return (
-		<Dialog open={open}>
-			<DialogTitle>
-				<Typography variant="h6">Firma</Typography>
-			</DialogTitle>
+		<Dialog
+			open={open}
+			onClose={onClose}
+			maxWidth="sm"
+			fullWidth
+		>
+			<DialogTitle>Firma</DialogTitle>
 			<DialogContent>
 				{url && (
 					<img
 						src={url}
-						alt="firma"
+						alt="Firma del usuario"
+						style={{ display: 'block', maxWidth: '100%', margin: '0 auto' }}
 					/>
 				)}
 			</DialogContent>
-			<DialogActions>
-				<Stack
-					direction="row"
-					justifyContent="flex-end"
+			<DialogActions sx={{ px: 3, pb: 2 }}>
+				<Button
+					variant="outlined"
+					color="primary"
+					onClick={onClose}
 				>
-					<Button
-						variant="outlined"
-						color="primary"
-						onClick={onClose}
-					>
-						Cerrar
-					</Button>
-				</Stack>
+					Cerrar
+				</Button>
 			</DialogActions>
 		</Dialog>
 	);

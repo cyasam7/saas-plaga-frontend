@@ -1,78 +1,110 @@
-import React from 'react'
+import React from 'react';
 import { Button, Stack } from '@mui/material';
-import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton'
-import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
+import { LoadingButton } from '@mui/lab';
 import { useForm } from 'react-hook-form';
-import { FormChangePassword, IChangePasswordDialog } from './IChangePasswordDialog';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
+import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 import { useMutationChangeUserPassword } from 'src/app/requests/users/useMutationChangeUserPassword';
 import { userKeys } from 'src/app/requests/users/keys';
 import { displayToast } from 'app/core/feedback/toast';
 import { useQueryClient } from 'react-query';
+import {
+	FIELD_PASSWORD_MUST_BE_SAME,
+	FIELD_PASSWORD_SHORT,
+	FIELD_REQUIRED
+} from 'src/app/shared/constants/yupMessages';
+import { FormChangePassword, IChangePasswordDialog } from './IChangePasswordDialog';
 
-const ChangePasswordDialog = (props: IChangePasswordDialog) => {
-  const { onClose, open, userId } = props;
-  const queryClient = useQueryClient()
-  const { mutateAsync: changeUserPassword } = useMutationChangeUserPassword()
+const changePasswordSchema = yup.object().shape({
+	password: yup.string().required(FIELD_REQUIRED).min(8, FIELD_PASSWORD_SHORT),
+	confirmPassword: yup
+		.string()
+		.required(FIELD_REQUIRED)
+		.oneOf([yup.ref('password')], FIELD_PASSWORD_MUST_BE_SAME)
+});
 
-  const formHandler = useForm<FormChangePassword>({
-    defaultValues: {
-      password: '',
-      confirmPassword: ''
-    }
-  });
+const emptyPasswordForm: FormChangePassword = { password: '', confirmPassword: '' };
 
+function ChangePasswordDialog(props: IChangePasswordDialog) {
+	const { onClose, open, userId } = props;
+	const queryClient = useQueryClient();
+	const { mutateAsync: changeUserPassword, isLoading: isChangingPassword } = useMutationChangeUserPassword();
 
-  function handleClose() {
-    formHandler.reset({ password: '', confirmPassword: '' });
-    onClose();
-  }
+	const formHandler = useForm<FormChangePassword>({
+		resolver: yupResolver(changePasswordSchema),
+		defaultValues: emptyPasswordForm
+	});
 
-  async function onSubmit(data: FormChangePassword): Promise<void> {
-    if (data.password !== data.confirmPassword) {
-      formHandler.setError('confirmPassword', {
-        message: 'Las contraseñas no coinciden'
-      });
-      return;
-    }
-    await changeUserPassword({ userId, password: data.password })
-    queryClient.invalidateQueries(userKeys.lists())
-    displayToast({
-      anchorOrigin: {
-        horizontal: 'right',
-        vertical: 'top'
-      },
-      message: 'Se actualizo correctamente la contraseña',
-      variant: 'success'
-    })
-    handleClose();
-  }
+	function handleClose() {
+		if (isChangingPassword) return;
+		formHandler.reset(emptyPasswordForm);
+		onClose();
+	}
 
-  return (
-    <DialogSkeleton
-      open={open}
-      maxWidth="xs"
-      header="Escribe la nueva contraseña"
-      content={
-        <Stack spacing={2}>
-          <TextFieldPasswordForm
-            name="password"
-            label="Contraseña"
-            control={formHandler.control}
-          />
-          <TextFieldPasswordForm
-            name="confirmPassword"
-            label="Confirmar contraseña"
-            control={formHandler.control}
-          />
-          <Stack direction="row" justifyContent="flex-end" spacing={2}>
-            <Button variant='outlined' color='secondary' onClick={() => onClose()}>Cancelar</Button>
-            <Button variant='contained' color='primary' onClick={formHandler.handleSubmit(onSubmit)}>Guardar</Button>
-          </Stack>
-        </Stack>
-      }
+	async function onSubmit(passwordForm: FormChangePassword): Promise<void> {
+		try {
+			await changeUserPassword({ userId, password: passwordForm.password });
+		} catch {
+			// AxiosFetcher ya muestra el error; el diálogo queda abierto para reintentar.
+			return;
+		}
+		queryClient.invalidateQueries(userKeys.lists());
+		displayToast({
+			anchorOrigin: {
+				horizontal: 'right',
+				vertical: 'top'
+			},
+			message: 'Contraseña actualizada correctamente',
+			variant: 'success'
+		});
+		formHandler.reset(emptyPasswordForm);
+		onClose();
+	}
 
-    />
-  )
+	return (
+		<DialogSkeleton
+			open={open}
+			onClose={handleClose}
+			maxWidth="xs"
+			header="Cambiar contraseña"
+			content={
+				<Stack spacing={2}>
+					<TextFieldPasswordForm
+						name="password"
+						label="Nueva contraseña"
+						control={formHandler.control}
+					/>
+					<TextFieldPasswordForm
+						name="confirmPassword"
+						label="Confirmar contraseña"
+						control={formHandler.control}
+					/>
+				</Stack>
+			}
+			actions={
+				<>
+					<Button
+						variant="outlined"
+						color="primary"
+						onClick={handleClose}
+						disabled={isChangingPassword}
+					>
+						Cancelar
+					</Button>
+					<LoadingButton
+						variant="contained"
+						color="primary"
+						loading={isChangingPassword}
+						onClick={formHandler.handleSubmit(onSubmit)}
+					>
+						Guardar
+					</LoadingButton>
+				</>
+			}
+		/>
+	);
 }
 
-export default ChangePasswordDialog
+export default ChangePasswordDialog;
