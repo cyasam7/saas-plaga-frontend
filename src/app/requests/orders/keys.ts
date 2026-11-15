@@ -8,6 +8,7 @@ import { IOrdersHistoryPayload } from 'src/app/requests/orders/useQueryOrdersHis
 export const orderKeys = {
   all: ['orders'] as const,
   datagrid: (payload: IOrdersDatagridPayload) => [...orderKeys.all, 'datagrid', payload] as const,
+  datagridStats: () => [...orderKeys.all, 'datagrid-stats'] as const,
   history: (payload: IOrdersHistoryPayload) => [...orderKeys.all, 'history', payload] as const,
   detail: (orderId: string) => [...orderKeys.all, 'detail', orderId] as const,
   fumigatorsToAssign: () => [...orderKeys.all, 'fumigators-to-assign'] as const,

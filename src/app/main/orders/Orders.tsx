@@ -10,6 +10,7 @@ import { columnsOrders } from './columns';
 import { IOrdersDatagridResponse, useQueryOrdersDatagrid } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { useMutationDeleteOrder } from 'src/app/requests/orders/useMutationDeleteOrder';
 import { useMutationCancelOrder } from 'src/app/requests/orders/useMutationCancelOrder';
+import { useQueryOrdersDatagridStats } from 'src/app/requests/orders/useQueryOrdersDatagridStats';
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import OrderDialog from './components/SaveOrderOrderDialog/OrderDialog';
 import OrdersFilters from './components/OrdersFilters/OrdersFilters';
@@ -35,11 +36,11 @@ function Order() {
 	// Los filtros viven en la URL y se resuelven en el backend: se mandan como query params.
 	const { filters, query, setFilter, clearFilters } = useOrdersFilters();
 
-	const {
-		data = { orders: [], stats: { total: 0, today: 0, tomorrow: 0, pending: 0, passed: 0 } },
-		isLoading,
-		refetch
-	} = useQueryOrdersDatagrid(query);
+	const { data = { orders: [] }, isLoading, refetch: refetchOrders } = useQueryOrdersDatagrid(query);
+	// El conteo de las pestañas va aparte: no depende de los filtros, así que no se recarga al filtrar.
+	const { data: stats = { total: 0, today: 0, tomorrow: 0, pending: 0, passed: 0 }, refetch: refetchStats } =
+		useQueryOrdersDatagridStats();
+	const refetch = () => Promise.all([refetchOrders(), refetchStats()]);
 	const { mutateAsync: deleteOrder } = useMutationDeleteOrder();
 	const { mutateAsync: cancelOrder } = useMutationCancelOrder();
 
@@ -163,7 +164,7 @@ function Order() {
 			scroll='content'
 			header={
 				<OrdersHeader
-					stats={data.stats}
+					stats={stats}
 					selectedDayFilter={filters.dayFilter}
 					onDayFilterChange={(dayFilter) => setFilter('dayFilter', dayFilter)}
 					onCreateOrder={() => {
@@ -384,7 +385,7 @@ function Order() {
 									variant="caption"
 									color="text.secondary"
 								>
-									Mostrando {orders.length} de {data.stats.total} órdenes
+									Mostrando {orders.length} de {stats.total} órdenes
 								</Typography>
 							</Box>
 						)}

@@ -36,17 +36,9 @@ export interface IOrdersDatagridResponse {
     assignedName?: string;
     timezone: string;
   }[];
-  /** Resumen del tenant; no depende de los filtros. */
-  stats: {
-    total: number;
-    today: number;
-    tomorrow: number;
-    pending: number;
-    passed: number;
-  };
 }
 
-/** `GET /order/datagrid`: órdenes operativas (creadas, asignadas, no visitadas) y su resumen. */
+/** `GET /order/datagrid`: órdenes operativas (creadas, asignadas, no visitadas). El resumen es `useQueryOrdersDatagridStats`. */
 export const useQueryOrdersDatagrid = (payload: IOrdersDatagridPayload, enabled?: boolean) => {
   return useQuery<IOrdersDatagridResponse>({
     queryKey: orderKeys.datagrid(payload),

@@ -1,6 +1,5 @@
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PersonPinTwoToneIcon from '@mui/icons-material/PersonPinTwoTone';
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
@@ -50,20 +49,12 @@ const navigationConfig: INavItem[] = [
 		children: [
 			{
 				id: 'orders-created',
-				title: 'Registradas',
-				type: 'item',
-				auth: ['staff'],
-				icon: AssignmentOutlinedIcon,
-				url: '/orders',
-				end: true
-			},
-			{
-				id: 'orders-admin',
 				title: 'Panel de órdenes',
 				type: 'item',
 				auth: ['staff'],
 				icon: DashboardOutlinedIcon,
-				url: '/orders/admin'
+				url: '/orders',
+				end: true
 			},
 			{
 				id: 'orders-history',

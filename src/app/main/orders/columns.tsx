@@ -1,11 +1,22 @@
 import { Avatar, Stack, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 import { GridColDef } from '@mui/x-data-grid';
 
 import { formatCurrency } from 'src/app/shared/constants/formatCurrency';
 import ChipOrder from 'src/app/main/orders/components/ChipOrder/ChipOrder';
 import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 import { statusLabel } from './utils';
-import { formatOrderWhen } from './Admin/utils';
+
+/** "Hoy · 10:00 AM", "Mañana · 8:30 AM", "12 nov · 2:00 PM". */
+export function formatOrderWhen(date: string, today = dayjs()): string {
+	const orderDate = dayjs(date);
+	const time = orderDate.format('h:mm A');
+	const daysFromToday = orderDate.startOf('day').diff(today.startOf('day'), 'day');
+	const relativeDayLabels: Record<number, string> = { [-1]: 'Ayer', 0: 'Hoy', 1: 'Mañana' };
+	const dayLabel = relativeDayLabels[daysFromToday] ?? orderDate.format('D MMM');
+
+	return `${dayLabel} · ${time}`;
+}
 
 export const columnsOrders: GridColDef<IOrdersDatagridResponse['orders'][number]>[] = [
 	{

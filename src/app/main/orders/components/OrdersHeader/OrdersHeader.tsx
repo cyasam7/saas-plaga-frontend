@@ -4,9 +4,9 @@ import { Add } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
 import { EOrdersDayFilter } from 'src/app/requests/orders/types';
-import { IOrdersDatagridResponse } from 'src/app/requests/orders/useQueryOrdersDatagrid';
+import { IOrdersDatagridStatsResponse } from 'src/app/requests/orders/useQueryOrdersDatagridStats';
 
-const DAY_TABS: { dayFilter: EOrdersDayFilter; label: string; statKey: keyof IOrdersDatagridResponse['stats'] }[] = [
+const DAY_TABS: { dayFilter: EOrdersDayFilter; label: string; statKey: keyof IOrdersDatagridStatsResponse }[] = [
 	{ dayFilter: EOrdersDayFilter.ALL, label: 'Todas', statKey: 'total' },
 	{ dayFilter: EOrdersDayFilter.TODAY, label: 'Hoy', statKey: 'today' },
 	{ dayFilter: EOrdersDayFilter.TOMORROW, label: 'Mañana', statKey: 'tomorrow' },
@@ -15,7 +15,7 @@ const DAY_TABS: { dayFilter: EOrdersDayFilter; label: string; statKey: keyof IOr
 ];
 
 interface OrdersHeaderProps {
-	stats: IOrdersDatagridResponse['stats'];
+	stats: IOrdersDatagridStatsResponse;
 	selectedDayFilter: EOrdersDayFilter;
 	onDayFilterChange: (dayFilter: EOrdersDayFilter) => void;
 	onCreateOrder: () => void;

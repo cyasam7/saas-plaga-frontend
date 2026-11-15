@@ -4,7 +4,6 @@ import ViewReportOrder from './ViewReportOrder';
 
 const Orders = lazy(() => import('./Orders'));
 const OrdersHistory = lazy(() => import('./History/OrdersHistory'));
-const OrdersAdmin = lazy(() => import('./Admin/OrdersAdmin'));
 
 const OrdersConfig: IRouteConfig = {
 	routes: [
@@ -12,11 +11,6 @@ const OrdersConfig: IRouteConfig = {
 			path: 'orders',
 			auth: ['staff', 'admin'],
 			element: <Orders />
-		},
-		{
-			path: 'orders/admin',
-			auth: ['staff', 'admin'],
-			element: <OrdersAdmin />
 		},
 		{
 			path: 'orders/history',
