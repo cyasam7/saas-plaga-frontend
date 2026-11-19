@@ -2,7 +2,8 @@
 export enum ERoleCode {
   SUPER_ADMIN = 'RL000',
   ADMIN_TENANT = 'RL001',
-  FUMIGATOR_TENANT = 'RL002'
+  FUMIGATOR_TENANT = 'RL002',
+  COORDINATOR_TENANT = 'RL003'
 }
 
 /** Usuario del tenant. Espejo de `IGetUsersDatagridResponse` e `IGetUserByIdResponse`. */

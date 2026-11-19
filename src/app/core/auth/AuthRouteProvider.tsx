@@ -52,7 +52,8 @@ function toTemplateRole(roleCode: string): string {
 	const templateRoleByCode = {
 		RL000: 'admin',
 		RL001: 'staff',
-		RL002: 'fumigador'
+		RL002: 'fumigador',
+		RL003: 'coordinator'
 	};
 
 	return templateRoleByCode[roleCode] as string;

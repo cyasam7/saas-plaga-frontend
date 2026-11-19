@@ -12,6 +12,10 @@ const RedirectionPage = () => {
     return <Navigate to="/users" />
   }
 
+  if (role === 'coordinator') {
+    return <Navigate to="/orders" />
+  }
+
   return <Navigate to="/404" />
 }
 

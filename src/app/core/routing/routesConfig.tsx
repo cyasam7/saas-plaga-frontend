@@ -19,7 +19,7 @@ import RedirectionConfig from 'src/app/main/_redirect/RedirectionConfig';
 /**
  * Routes without their own `auth` (and whose config has none) require a signed-in user.
  */
-const DEFAULT_ROUTE_AUTH: RouteAuth = ['admin', 'staff', 'user'];
+const DEFAULT_ROUTE_AUTH: RouteAuth = ['admin', 'staff', 'coordinator', 'user'];
 
 const routeConfigs: IRouteConfig[] = [
 	SignOutConfig,

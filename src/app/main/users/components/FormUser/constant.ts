@@ -12,5 +12,9 @@ export const ROLE_CATALOG = [
 	{
 		name: 'Fumigador',
 		value: ERoleCode.FUMIGATOR_TENANT
+	},
+	{
+		name: 'Coordinador',
+		value: ERoleCode.COORDINATOR_TENANT
 	}
 ];

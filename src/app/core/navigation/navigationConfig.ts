@@ -35,7 +35,7 @@ const navigationConfig: INavItem[] = [
 				id: 'clients',
 				title: 'Clientes',
 				type: 'item',
-				auth: ['staff'],
+				auth: ['staff', 'coordinator'],
 				icon: PersonPinTwoToneIcon,
 				url: '/clients'
 			}
@@ -45,13 +45,13 @@ const navigationConfig: INavItem[] = [
 		id: 'orders-app',
 		title: 'Ordenes',
 		type: 'group',
-		auth: ['staff'],
+		auth: ['staff', 'coordinator'],
 		children: [
 			{
 				id: 'orders-created',
 				title: 'Panel de órdenes',
 				type: 'item',
-				auth: ['staff'],
+				auth: ['staff', 'coordinator'],
 				icon: DashboardOutlinedIcon,
 				url: '/orders',
 				end: true
@@ -60,7 +60,7 @@ const navigationConfig: INavItem[] = [
 				id: 'orders-history',
 				title: 'Historial',
 				type: 'item',
-				auth: ['staff'],
+				auth: ['staff', 'coordinator'],
 				icon: HistoryOutlinedIcon,
 				url: '/orders/history'
 			}

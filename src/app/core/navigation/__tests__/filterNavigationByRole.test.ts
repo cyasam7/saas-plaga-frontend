@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { filterNavigationByRole } from '../Navigation';
 import { INavItem } from '../types';
+import navigationConfig from '../navigationConfig';
 
 const navItems: INavItem[] = [
 	{
@@ -32,6 +33,16 @@ describe('filterNavigationByRole', () => {
 			'clients',
 			'orders-group',
 			'orders'
+		]);
+	});
+
+	it('shows the coordinator the clients and orders of the real sidebar, not users or settings', () => {
+		expect(getVisibleIds(filterNavigationByRole(navigationConfig, ['coordinator']))).toEqual([
+			'modules-app',
+			'clients',
+			'orders-app',
+			'orders-created',
+			'orders-history'
 		]);
 	});
 

@@ -9,12 +9,12 @@ const OrdersConfig: IRouteConfig = {
 	routes: [
 		{
 			path: 'orders',
-			auth: ['staff', 'admin'],
+			auth: ['staff', 'admin', 'coordinator'],
 			element: <Orders />
 		},
 		{
 			path: 'orders/history',
-			auth: ['staff', 'admin'],
+			auth: ['staff', 'admin', 'coordinator'],
 			element: <OrdersHistory />
 		},
 		{
