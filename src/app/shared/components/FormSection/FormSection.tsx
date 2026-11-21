@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 
-interface IFormSectionProps {
+interface FormSectionProps {
 	/** Domain icon shown in the tinted leading tile. */
 	icon: ReactNode;
 	title: string;
@@ -11,11 +11,11 @@ interface IFormSectionProps {
 }
 
 /**
- * Grouped section used across the order form: a branded teal icon tile plus a
+ * Grouped form section (orders, users): a branded teal icon tile plus a
  * title/description header over an outlined card. Keeps every section on the same
  * visual rhythm.
  */
-function FormSection(props: IFormSectionProps) {
+function FormSection(props: FormSectionProps) {
 	const { icon, title, description, children } = props;
 
 	return (

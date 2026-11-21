@@ -32,6 +32,7 @@ export function TextFieldPasswordForm<T>({ name, control, label, ...props }: ITe
           InputProps={{
             endAdornment: <InputAdornment position="end">
               <IconButton
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 onClick={handleClickShowPassword}
                 onMouseDown={handleMouseDownPassword}
                 onMouseUp={handleMouseUpPassword}

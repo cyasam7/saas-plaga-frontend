@@ -1,4 +1,5 @@
-import { Avatar, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
+import InitialsAvatar from 'app/shared/components/InitialsAvatar/InitialsAvatar';
 import dayjs from 'dayjs';
 import { GridColDef } from '@mui/x-data-grid';
 
@@ -128,16 +129,9 @@ export const columnsOrders: GridColDef<IOrdersDatagridResponse['orders'][number]
 				);
 			}
 
-			const fumigatorInitials = row.assignedName
-				.split(' ')
-				.map((word) => word[0])
-				.slice(0, 2)
-				.join('')
-				.toUpperCase();
-
 			return (
 				<Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0 }}>
-					<Avatar sx={{ width: 28, height: 28, fontSize: 11, fontWeight: 600 }}>{fumigatorInitials}</Avatar>
+					<InitialsAvatar name={row.assignedName} />
 					<Typography variant="body2" noWrap>
 						{row.assignedName}
 					</Typography>

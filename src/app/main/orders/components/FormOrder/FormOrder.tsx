@@ -13,7 +13,7 @@ import { EClientType, IFormOrderProps } from './FormOrderProps';
 import FormOrderIndividual from './FormOrderIndividual';
 import FormOrderBusiness from './FormOrderBusiness';
 import SelectableCard from './SelectableCard';
-import FormSection from './FormSection';
+import FormSection from 'app/shared/components/FormSection/FormSection';
 import { defaultValuesOrder } from './defaultValues';
 
 const clientTypeOptions = [

@@ -1,5 +1,8 @@
 import { DataGrid, GridActionsCellItem, gridClasses, GridColDef } from '@mui/x-data-grid';
-import { Box, Paper, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Stack, Typography, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material';
+import PageContentCard from 'app/shared/components/PageContentCard/PageContentCard';
+import EmptyState from 'app/shared/components/EmptyState/EmptyState';
+import { LIST_DATA_GRID_SX } from 'src/app/shared/constants/dataGrid';
 import { useState } from 'react';
 import PageLayout from 'app/core/page/PageLayout';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
@@ -208,32 +211,20 @@ function Order() {
 							setOrderId('');
 						}}
 					/>
-					<Paper
-						elevation={0}
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							flex: 1,
-							minHeight: 0,
-							p: { xs: 2, sm: 3 },
-							borderRadius: 2,
-							border: 1,
-							borderColor: 'divider'
-						}}
+					<PageContentCard
+						filters={isMobile ? undefined : renderFilters()}
+						footer={
+							orders.length > 0 && (
+								<Typography
+									variant="caption"
+									color="text.secondary"
+								>
+									Mostrando {orders.length} de {stats.total} órdenes
+								</Typography>
+							)
+						}
+						sx={{ flex: 1, minHeight: 0 }}
 					>
-						{!isMobile && (
-							<Box
-								sx={{
-									pb: 2,
-									mb: 1,
-									borderBottom: 1,
-									borderColor: 'divider'
-								}}
-							>
-								{renderFilters()}
-							</Box>
-						)}
-
 						{isMobile && (
 							<Box
 								sx={{
@@ -244,6 +235,7 @@ function Order() {
 							>
 								<IconButton
 									color="primary"
+									aria-label="Filtros"
 									onClick={() => setOpenFilterDrawer(true)}
 								>
 									<FilterList />
@@ -251,145 +243,66 @@ function Order() {
 							</Box>
 						)}
 
-						{isMobile ? (
-							orders.length === 0 ? (
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										justifyContent: 'center',
-										py: 8,
-										gap: 1
-									}}
-								>
-									<ReceiptLong
-										sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }}
-									/>
-									<Typography
-										variant="subtitle1"
-										color="text.secondary"
-									>
-										Sin órdenes
-									</Typography>
-									<Typography
-										variant="body2"
-										color="text.disabled"
-									>
-										No hay órdenes que coincidan con los filtros seleccionados.
-									</Typography>
-								</Box>
-							) : (
-								<Stack
-									spacing={2}
-									sx={{
-										flex: 1,
-										overflowY: 'auto',
-										pb: 2,
-										'&::-webkit-scrollbar': {
-											width: '8px',
-											backgroundColor: 'transparent'
-										},
-										'&::-webkit-scrollbar-thumb': {
-											backgroundColor: (theme) => theme.palette.divider,
-											borderRadius: '4px'
-										},
-										scrollbarWidth: 'thin',
-										scrollbarColor: (theme) => `${theme.palette.divider} transparent`
-									}}
-								>
-									{orders.map((order) => (
-										<MobileCard
-											key={order.id}
-											order={order}
-											onAssign={(id) => {
-												setOrderId(id);
-												setOpenAssign(true);
-											}}
-											onReschedule={(id) => {
-												setOrderId(id);
-												setOpenReschedule(true);
-											}}
-											onCancel={handleCancelOrder}
-											onDelete={async (id) => {
-												await deleteOrder({ orderId: id });
-												await refetch();
-											}}
-										/>
-									))}
-								</Stack>
-							)
-						) : (
-							orders.length === 0 ? (
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										justifyContent: 'center',
-										py: 10,
-										gap: 1
-									}}
-								>
-									<ReceiptLong
-										sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }}
-									/>
-									<Typography
-										variant="subtitle1"
-										color="text.secondary"
-									>
-										Sin órdenes
-									</Typography>
-									<Typography
-										variant="body2"
-										color="text.disabled"
-									>
-										No hay órdenes que coincidan con los filtros seleccionados.
-									</Typography>
-								</Box>
-							) : (
-								<DataGrid
-									autoHeight
-									hideFooterPagination
-									hideFooter
-									loading={isLoading}
-									rows={orders}
-									columns={columns}
-									rowSelection={false}
-									density="comfortable"
-									getRowHeight={() => 'auto'}
-									sx={{
-										'& .MuiDataGrid-cell': {
-											py: 1,
-											px: 1,
-											wordBreak: 'break-word'
-										}
-									}}
-								/>
-							)
-						)}
-
-						{orders.length > 0 && (
-							<Box
+						{orders.length === 0 && !isLoading ? (
+							<EmptyState
+								icon={ReceiptLong}
+								title="Sin órdenes"
+								description="No hay órdenes que coincidan con los filtros seleccionados."
+							/>
+						) : isMobile ? (
+							<Stack
+								spacing={2}
 								sx={{
-									pt: 1.5,
-									mt: 1,
-									borderTop: 1,
-									borderColor: 'divider',
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center'
+									flex: 1,
+									overflowY: 'auto',
+									pb: 2,
+									'&::-webkit-scrollbar': {
+										width: '8px',
+										backgroundColor: 'transparent'
+									},
+									'&::-webkit-scrollbar-thumb': {
+										backgroundColor: (theme) => theme.palette.divider,
+										borderRadius: '4px'
+									},
+									scrollbarWidth: 'thin',
+									scrollbarColor: (theme) => `${theme.palette.divider} transparent`
 								}}
 							>
-								<Typography
-									variant="caption"
-									color="text.secondary"
-								>
-									Mostrando {orders.length} de {stats.total} órdenes
-								</Typography>
-							</Box>
+								{orders.map((order) => (
+									<MobileCard
+										key={order.id}
+										order={order}
+										onAssign={(id) => {
+											setOrderId(id);
+											setOpenAssign(true);
+										}}
+										onReschedule={(id) => {
+											setOrderId(id);
+											setOpenReschedule(true);
+										}}
+										onCancel={handleCancelOrder}
+										onDelete={async (id) => {
+											await deleteOrder({ orderId: id });
+											await refetch();
+										}}
+									/>
+								))}
+							</Stack>
+						) : (
+							<DataGrid
+								autoHeight
+								hideFooterPagination
+								hideFooter
+								loading={isLoading}
+								rows={orders}
+								columns={columns}
+								rowSelection={false}
+								density="comfortable"
+								getRowHeight={() => 'auto'}
+								sx={LIST_DATA_GRID_SX}
+							/>
 						)}
-					</Paper>
+					</PageContentCard>
 
 					<Drawer
 						anchor="right"

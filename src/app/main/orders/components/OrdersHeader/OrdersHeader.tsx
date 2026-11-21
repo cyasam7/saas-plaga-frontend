@@ -1,4 +1,5 @@
-import { Box, Button, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Button, Stack, Tab, Tabs } from '@mui/material';
+import SimpleHeader from 'app/shared/components/SimpleHeader';
 import { alpha } from '@mui/material/styles';
 import { Add } from '@mui/icons-material';
 import dayjs from 'dayjs';
@@ -25,32 +26,22 @@ function OrdersHeader({ stats, selectedDayFilter, onDayFilterChange, onCreateOrd
 	const todayLabel = dayjs().format('dddd, D [de] MMMM YYYY');
 
 	return (
-		<Stack spacing={2.5} sx={{ px: { xs: 2, sm: 3 }, pt: { xs: 2, sm: 3 }, pb: 1 }}>
-			<Stack direction="row" justifyContent="space-between" alignItems="flex-end" spacing={2}>
-				<Box sx={{ minWidth: 0 }}>
-					<Typography variant="h4" component="h1" fontWeight={700}>
-						Órdenes
-					</Typography>
-					<Typography
-						variant="body2"
-						color="text.secondary"
-						sx={{ '&::first-letter': { textTransform: 'uppercase' } }}
-					>
-						{todayLabel} · {stats.total} órdenes en el sistema
-					</Typography>
-				</Box>
+		<SimpleHeader
+			title="Órdenes"
+			subtitle={`${todayLabel.charAt(0).toUpperCase()}${todayLabel.slice(1)} · ${stats.total} órdenes en el sistema`}
+			actions={
 				<Button
 					variant="contained"
 					color="primary"
 					size="large"
 					startIcon={<Add />}
 					onClick={onCreateOrder}
-					sx={{ flexShrink: 0, fontWeight: 600 }}
+					sx={{ fontWeight: 600 }}
 				>
 					Nueva orden
 				</Button>
-			</Stack>
-
+			}
+		>
 			{/* Control segmentado: Tabs de MUI sin indicador, la pestaña activa se "levanta" sobre el fondo. */}
 			<Tabs
 				value={selectedDayFilter}
@@ -116,7 +107,7 @@ function OrdersHeader({ stats, selectedDayFilter, onDayFilterChange, onCreateOrd
 					);
 				})}
 			</Tabs>
-		</Stack>
+		</SimpleHeader>
 	);
 }
 

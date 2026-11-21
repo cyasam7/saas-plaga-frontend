@@ -1,32 +1,50 @@
-import { Box, Typography, Button, Stack } from '@mui/material'
-import React from 'react'
+import { ReactNode } from 'react';
+import { Box, Stack, Typography } from '@mui/material';
 
 interface SimpleHeaderProps {
-	title: string
-	subtitle: string
-	actions?: React.ReactNode
+	title: string;
+	subtitle?: ReactNode;
+	/** Main page action (e.g. "Nueva orden"), aligned to the right of the title. */
+	actions?: ReactNode;
+	/** Extra content below the title row, e.g. the day tabs in Orders. */
+	children?: ReactNode;
 }
 
-const SimpleHeader = ({ title, subtitle, actions }: SimpleHeaderProps) => {
+/** Header for every page in `main/`: bold title, secondary subtitle and the page action. */
+function SimpleHeader({ title, subtitle, actions, children }: SimpleHeaderProps) {
 	return (
-		<Box sx={{ px: 3, pt: 2, pb: 2 }}>
-			<Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-				<Box>
-					<Typography variant="h6" component="h5">
+		<Stack
+			spacing={2.5}
+			sx={{ px: { xs: 2, sm: 3 }, pt: { xs: 2, sm: 3 }, pb: children ? 1 : 2 }}
+		>
+			<Stack
+				direction="row"
+				justifyContent="space-between"
+				alignItems="flex-end"
+				spacing={2}
+			>
+				<Box sx={{ minWidth: 0 }}>
+					<Typography
+						variant="h4"
+						component="h1"
+						fontWeight={700}
+					>
 						{title}
 					</Typography>
-					<Typography variant="caption" color="text.secondary">
-						{subtitle}
-					</Typography>
+					{subtitle && (
+						<Typography
+							variant="body2"
+							color="text.secondary"
+						>
+							{subtitle}
+						</Typography>
+					)}
 				</Box>
-				{actions && (
-					<Box>
-						{actions}
-					</Box>
-				)}
+				{actions && <Box sx={{ flexShrink: 0 }}>{actions}</Box>}
 			</Stack>
-		</Box>
-	)
+			{children}
+		</Stack>
+	);
 }
 
-export default SimpleHeader
+export default SimpleHeader;

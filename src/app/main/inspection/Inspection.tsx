@@ -1,5 +1,5 @@
 import PageLayout from 'app/core/page/PageLayout';
-import { Container, Grid, Card, CardContent, Typography } from '@mui/material';
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
 
 function Inspection() {
@@ -14,7 +14,7 @@ function Inspection() {
 				/>
 			}
 			content={
-				<Container maxWidth="xl" sx={{ py: 4 }}>
+				<div className="p-16 sm:p-24 w-full">
 					<Grid container spacing={4}>
 						<Grid item xs={12} md={6}>
 							<Card>
@@ -24,7 +24,7 @@ function Inspection() {
 							</Card>
 						</Grid>
 					</Grid>
-				</Container>
+				</div>
 			}
 		/>
 	);

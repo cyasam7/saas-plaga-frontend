@@ -1,4 +1,5 @@
 import { Autocomplete, Button, MenuItem, Stack, TextField } from '@mui/material';
+import SearchField from 'app/shared/components/SearchField/SearchField';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -17,7 +18,7 @@ const clientTypeOptions = [
 export interface HistoryFiltersProps {
 	filters: OrdersHistoryFilters;
 	searchInput: string;
-	showClearButton: boolean;
+	hasActiveFilters: boolean;
 	onSearchInputChange: (value: string) => void;
 	onFilterChange: <K extends keyof OrdersHistoryFilters>(key: K, value: OrdersHistoryFilters[K]) => void;
 	onClear: () => void;
@@ -26,7 +27,7 @@ export interface HistoryFiltersProps {
 function HistoryFilters({
 	filters,
 	searchInput,
-	showClearButton,
+	hasActiveFilters,
 	onSearchInputChange,
 	onFilterChange,
 	onClear
@@ -38,18 +39,17 @@ function HistoryFilters({
 	return (
 		<Stack
 			direction={{ xs: 'column', md: 'row' }}
-			spacing={2}
+			spacing={1.5}
 			alignItems={{ xs: 'stretch', md: 'center' }}
 			flexWrap="wrap"
 			useFlexGap
 		>
-			<TextField
-				label="Buscar"
-				placeholder="Folio, cliente, teléfono, dirección o fumigador"
-				size="small"
+			<SearchField
+				placeholder="Buscar folio, cliente, teléfono, dirección o fumigador"
+				ariaLabel="Buscar en el historial de órdenes"
 				value={searchInput}
-				onChange={(e) => onSearchInputChange(e.target.value)}
-				sx={{ minWidth: 260, flex: 1 }}
+				onChange={onSearchInputChange}
+				sx={{ flex: { md: '1 1 260px' }, minWidth: { md: 240 } }}
 			/>
 
 			<DatePicker
@@ -107,15 +107,15 @@ function HistoryFilters({
 				onChange={(fumigatorId) => onFilterChange('fumigatorId', fumigatorId)}
 			/>
 
-			{showClearButton && (
-				<Button
-					size="small"
-					color="inherit"
-					onClick={onClear}
-				>
-					Limpiar filtros
-				</Button>
-			)}
+			<Button
+				variant="text"
+				color="inherit"
+				disabled={!hasActiveFilters}
+				onClick={onClear}
+				sx={{ flexShrink: 0 }}
+			>
+				Limpiar filtros
+			</Button>
 		</Stack>
 	);
 }

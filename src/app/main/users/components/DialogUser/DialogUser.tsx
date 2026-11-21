@@ -88,8 +88,9 @@ function DialogUser(props: IDialogUserProps) {
 		<DialogSkeleton
 			open={open}
 			onClose={handleClose}
-			maxWidth="md"
+			maxWidth="sm"
 			header={isEditing ? 'Editar usuario' : 'Nuevo usuario'}
+			subtitle={isEditing ? 'Actualiza los datos y el rol del usuario.' : 'Registra a un nuevo miembro de tu organización.'}
 			content={
 				<FormUser
 					loading={isEditing && isLoadingUser}
@@ -114,7 +115,7 @@ function DialogUser(props: IDialogUserProps) {
 						disabled={isEditing && isLoadingUser}
 						onClick={formHandler.handleSubmit(handleSubmit)}
 					>
-						Guardar
+						{isEditing ? 'Guardar cambios' : 'Crear usuario'}
 					</LoadingButton>
 				</>
 			}

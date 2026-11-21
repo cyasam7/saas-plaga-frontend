@@ -1,5 +1,4 @@
 import PageLayout from 'app/core/page/PageLayout';
-import { Container } from '@mui/material';
 import { useQueryClient } from 'react-query';
 import { useQueryClients } from 'src/app/requests/clients/useQueryClients';
 import { useMutationSaveClient } from 'src/app/requests/clients/useMutationSaveClient';
@@ -38,13 +37,13 @@ export function ClientsApp() {
 				/>
 			}
 			content={
-				<Container maxWidth="xl" sx={{ pb: 4 }}>
+				<div className="p-16 sm:p-24 w-full">
 					<ClientList
 						clients={clients}
 						onSaveClient={handleSaveClient}
 						onDeleteClient={handleDeleteClient}
 					/>
-				</Container>
+				</div>
 			}
 		/>
 	);

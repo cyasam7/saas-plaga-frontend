@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 import { FileDownload, ReceiptLong, Visibility } from '@mui/icons-material';
 import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from '@mui/x-data-grid';
 
 import PageLayout from 'app/core/page/PageLayout';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
+import PageContentCard from 'app/shared/components/PageContentCard/PageContentCard';
+import EmptyState from 'app/shared/components/EmptyState/EmptyState';
+import { LIST_DATA_GRID_SX } from 'src/app/shared/constants/dataGrid';
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import { IOrdersHistoryResponse } from 'src/app/requests/orders/useQueryOrdersHistory';
 
@@ -17,35 +20,6 @@ import useOrdersHistory from './hooks/useOrdersHistory';
 import useOrdersHistoryFilters from './hooks/useOrdersHistoryFilters';
 
 const CAN_GENERATE_REPORT_STATUSES = [EStatusOrder.DONE, EStatusOrder.FINISHED];
-
-function EmptyState() {
-	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-				py: 10,
-				gap: 1
-			}}
-		>
-			<ReceiptLong sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }} />
-			<Typography
-				variant="subtitle1"
-				color="text.secondary"
-			>
-				Sin órdenes
-			</Typography>
-			<Typography
-				variant="body2"
-				color="text.disabled"
-			>
-				No hay órdenes en el historial que coincidan con los filtros seleccionados.
-			</Typography>
-		</Box>
-	);
-}
 
 function OrdersHistory() {
 	const { filters, searchInput, setSearchInput, setFilter, clearFilters } = useOrdersHistoryFilters();
@@ -97,11 +71,13 @@ function OrdersHistory() {
 			header={
 				<SimpleHeader
 					title="Historial de órdenes"
-					subtitle="Consulta las órdenes que ya salieron del flujo inicial"
+					subtitle={`Órdenes que ya salieron del flujo inicial${
+						isLoading ? '' : ` · ${totalCount} ${totalCount === 1 ? 'orden' : 'órdenes'} en el historial`
+					}`}
 				/>
 			}
 			content={
-				<Box sx={{ p: 3, width: '100%' }}>
+				<div className="p-16 sm:p-24 w-full flex flex-col flex-1 min-h-0">
 					<GenerateReportDialog
 						id={orderId}
 						open={openDownloadReport}
@@ -118,56 +94,63 @@ function OrdersHistory() {
 							setOpenDetail(false);
 						}}
 					/>
-					<Paper sx={{ p: 2 }}>
-						<Stack spacing={2}>
+					<PageContentCard
+						filters={
 							<HistoryFilters
 								filters={filters}
 								searchInput={searchInput}
-								showClearButton={hasActiveFilters(filters)}
+								hasActiveFilters={hasActiveFilters(filters)}
 								onSearchInputChange={setSearchInput}
 								onFilterChange={setFilter}
 								onClear={clearFilters}
 							/>
-
-							{isEmpty ? (
-								<EmptyState />
-							) : (
-								<DataGrid
-									autoHeight
-									hideFooter
-									disableRowSelectionOnClick
-									loading={isLoading}
-									rows={rows}
-									columns={columns}
-									getRowHeight={() => 'auto'}
-									sx={{
-										[`& .${gridClasses.cell}`]: { py: 1.5, display: 'flex', alignItems: 'center' }
-									}}
-								/>
-							)}
-
-							{/* Sentinel: al entrar al viewport se carga la siguiente página. */}
-							<Box
-								ref={sentinelRef}
-								sx={{ display: 'flex', justifyContent: 'center', py: 2, minHeight: 8 }}
-							>
-								{isFetchingNextPage && <CircularProgress size={24} />}
-							</Box>
-
-							{!isLoading && rows.length > 0 && (
+						}
+						footer={
+							!isLoading &&
+							rows.length > 0 && (
 								<Typography
 									variant="caption"
 									color="text.secondary"
-									textAlign="center"
 								>
 									{hasNextPage
 										? `Mostrando ${rows.length} de ${totalCount} órdenes`
 										: `${totalCount} ${totalCount === 1 ? 'orden' : 'órdenes'} en total`}
 								</Typography>
-							)}
-						</Stack>
-					</Paper>
-				</Box>
+							)
+						}
+					>
+						{isEmpty ? (
+							<EmptyState
+								icon={ReceiptLong}
+								title="Sin órdenes"
+								description="No hay órdenes en el historial que coincidan con los filtros seleccionados."
+							/>
+						) : (
+							<DataGrid
+								autoHeight
+								hideFooter
+								disableRowSelectionOnClick
+								loading={isLoading}
+								rows={rows}
+								columns={columns}
+								density="comfortable"
+								getRowHeight={() => 'auto'}
+								sx={{
+									...LIST_DATA_GRID_SX,
+									[`& .${gridClasses.cell}`]: { py: 1, px: 1, display: 'flex', alignItems: 'center' }
+								}}
+							/>
+						)}
+
+						{/* Sentinel: al entrar al viewport se carga la siguiente página. */}
+						<Box
+							ref={sentinelRef}
+							sx={{ display: 'flex', justifyContent: 'center', py: isFetchingNextPage ? 2 : 0, minHeight: 8 }}
+						>
+							{isFetchingNextPage && <CircularProgress size={24} />}
+						</Box>
+					</PageContentCard>
+				</div>
 			}
 		/>
 	);

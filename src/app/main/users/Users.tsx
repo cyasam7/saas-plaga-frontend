@@ -1,36 +1,27 @@
 import PageLayout from 'app/core/page/PageLayout';
 import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
-import { Button, Paper, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
+import PageContentCard from 'app/shared/components/PageContentCard/PageContentCard';
+import EmptyState from 'app/shared/components/EmptyState/EmptyState';
+import { LIST_DATA_GRID_SX } from 'src/app/shared/constants/dataGrid';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
 import { useMutationDeleteUser } from 'src/app/requests/users/useMutationDeleteUser';
 import { useMutationSaveUserSign } from 'src/app/requests/users/useMutationSaveUserSign';
 import { userKeys } from 'src/app/requests/users/keys';
-import { Visibility, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
+import { Add, Group, Visibility, HistoryEdu, NoteAlt, RemoveCircleOutline } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsUsers } from './columns';
-import HeaderGrid from './components/HeaderGrid/HeaderGrid';
+import UsersFilters from './components/UsersFilters/UsersFilters';
 import DialogUser from './components/DialogUser/DialogUser';
 import DialogSigner from '../../shared/components/DialogSigner/DialogSigner';
 import SignViewer from './components/SignViewer/SignViewer';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
-
-function NoUsersOverlay() {
-	return (
-		<Stack
-			height="100%"
-			alignItems="center"
-			justifyContent="center"
-		>
-			<Typography color="text.secondary">No hay usuarios que coincidan con la búsqueda</Typography>
-		</Stack>
-	);
-}
 
 function Users() {
 	const { openDialog } = useGlobalDialog();
@@ -40,12 +31,13 @@ function Users() {
 	const [previewURL, setPreviewURL] = useState('');
 	const [search, setSearch] = useState('');
 	const [isActive, setIsActive] = useState<boolean | null>(null);
+	const [roleCode, setRoleCode] = useState('');
 	const { invalidate } = useQueryInvalidator();
 	const [openUserDialog, setOpenUserDialog] = useState(false);
 	const [openChangePassword, setOpenChangePassword] = useState(false);
 	const { user: userLogged } = useAuth();
 
-	const { data: users, isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
+	const { data: users = [], isLoading } = useQueryUsersDatagrid({ userId: userLogged.uid }, !!userLogged.uid);
 	const { mutateAsync: deleteUser } = useMutationDeleteUser();
 	const { mutateAsync: saveUserSign } = useMutationSaveUserSign();
 
@@ -58,8 +50,8 @@ function Users() {
 		...columnsUsers,
 		{
 			field: 'sign',
-			headerName: 'FIRMA',
-			width: 140,
+			headerName: 'Firma',
+			width: 170,
 			sortable: false,
 			disableColumnMenu: true,
 			renderCell: (params) => {
@@ -92,6 +84,7 @@ function Users() {
 						</Typography>
 						<Button
 							size="small"
+							startIcon={<Add />}
 							onClick={() => handleOpenSigner(rowUserId)}
 						>
 							Agregar
@@ -102,7 +95,7 @@ function Users() {
 		},
 		{
 			field: 'actions',
-			headerName: 'ACCIONES',
+			headerName: 'Acciones',
 			width: 100,
 			disableColumnMenu: true,
 			type: 'actions',
@@ -168,7 +161,7 @@ function Users() {
 	const filteredUsers = useMemo(() => {
 		const searchLowerCase = search.toLowerCase();
 
-		let matchingUsers = [...(users ?? [])];
+		let matchingUsers = [...users];
 
 		if (search) {
 			matchingUsers = matchingUsers.filter((user) => {
@@ -184,8 +177,18 @@ function Users() {
 			matchingUsers = matchingUsers.filter((user) => user.isActive === isActive);
 		}
 
+		if (roleCode) {
+			matchingUsers = matchingUsers.filter((user) => user.roleCode === roleCode);
+		}
+
 		return matchingUsers;
-	}, [search, isActive, users]);
+	}, [search, isActive, roleCode, users]);
+
+	function handleClearFilters() {
+		setSearch('');
+		setIsActive(null);
+		setRoleCode('');
+	}
 
 	async function handleSubmitOnSign(signImage: Blob): Promise<void> {
 		const signFormData = new FormData();
@@ -217,66 +220,109 @@ function Users() {
 
 	return (
 		<PageLayout
+			scroll="content"
 			header={
 				<SimpleHeader
 					title="Usuarios"
-					subtitle="Gestiona los usuarios dentro de tu organización"
+					subtitle={
+						isLoading
+							? 'Gestiona los usuarios dentro de tu organización'
+							: `${users.length} ${users.length === 1 ? 'usuario' : 'usuarios'} en tu organización`
+					}
+					actions={
+						<Button
+							variant="contained"
+							color="primary"
+							size="large"
+							startIcon={<Add />}
+							onClick={() => setOpenUserDialog(true)}
+							sx={{ fontWeight: 600 }}
+						>
+							Nuevo usuario
+						</Button>
+					}
 				/>
 			}
 			content={
-				<div className="p-24 w-full">
-					<Paper className="p-24 w-full">
-						<Stack
-							spacing={2}
-							sx={{ height: 'calc(100vh - 240px)' }}
-						>
-							<DialogSigner
-								open={openSigner}
-								onClose={() => {
-									setUserId('');
-									setOpenSigner(false);
-								}}
-								onSubmit={handleSubmitOnSign}
-							/>
-							<DialogUser
-								userId={userId}
-								open={openUserDialog}
-								onClose={() => {
-									setUserId('');
-									setOpenUserDialog(false);
-								}}
-							/>
-							<ChangePasswordDialog
-								open={openChangePassword}
-								onClose={() => {
-									setUserId('');
-									setOpenChangePassword(false);
-								}}
-								userId={userId}
-							/>
-							<SignViewer
-								open={openPreviewSign}
-								url={previewURL}
-								onClose={handleClosePreviewSigner}
-							/>
-							<HeaderGrid
+				<div className="p-16 sm:p-24 w-full flex flex-col flex-1 min-h-0">
+					<DialogSigner
+						open={openSigner}
+						onClose={() => {
+							setUserId('');
+							setOpenSigner(false);
+						}}
+						onSubmit={handleSubmitOnSign}
+					/>
+					<DialogUser
+						userId={userId}
+						open={openUserDialog}
+						onClose={() => {
+							setUserId('');
+							setOpenUserDialog(false);
+						}}
+					/>
+					<ChangePasswordDialog
+						open={openChangePassword}
+						onClose={() => {
+							setUserId('');
+							setOpenChangePassword(false);
+						}}
+						userId={userId}
+					/>
+					<SignViewer
+						open={openPreviewSign}
+						url={previewURL}
+						onClose={handleClosePreviewSigner}
+					/>
+					<PageContentCard
+						filters={
+							<UsersFilters
+								search={search}
 								isActive={isActive}
-								onChangeIsActive={setIsActive}
+								roleCode={roleCode}
 								onChangeSearch={setSearch}
-								onClickCreate={() => setOpenUserDialog(true)}
+								onChangeIsActive={setIsActive}
+								onChangeRoleCode={setRoleCode}
+								onClearFilters={handleClearFilters}
 							/>
+						}
+						footer={
+							users.length > 0 && (
+								<Typography
+									variant="caption"
+									color="text.secondary"
+								>
+									Mostrando {filteredUsers.length} de {users.length} usuarios
+								</Typography>
+							)
+						}
+						sx={{ flex: 1, minHeight: 0 }}
+					>
+						{filteredUsers.length === 0 && !isLoading ? (
+							<EmptyState
+								icon={Group}
+								title="Sin usuarios"
+								description={
+									users.length === 0
+										? 'Aún no hay usuarios en tu organización. Crea el primero con "Nuevo usuario".'
+										: 'No hay usuarios que coincidan con la búsqueda o los filtros seleccionados.'
+								}
+							/>
+						) : (
 							<DataGrid
+								autoHeight
+								hideFooter
 								getRowId={(user) => user.userId}
 								rows={filteredUsers}
 								loading={isLoading}
 								columns={columns}
-								initialState={{ pagination: { paginationModel: { pageSize: 25 } } }}
-								pageSizeOptions={[25, 50, 100]}
-								slots={{ noRowsOverlay: NoUsersOverlay }}
+								density="comfortable"
+								getRowHeight={() => 'auto'}
 								disableRowSelectionOnClick
+								sx={LIST_DATA_GRID_SX}
 							/>
-						</Stack>
-					</Paper>
+						)}
+					</PageContentCard>
 				</div>
 			}
 		/>

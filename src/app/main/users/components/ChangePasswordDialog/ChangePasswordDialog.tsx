@@ -69,17 +69,24 @@ function ChangePasswordDialog(props: IChangePasswordDialog) {
 			onClose={handleClose}
 			maxWidth="xs"
 			header="Cambiar contraseña"
+			subtitle="Mínimo 8 caracteres."
 			content={
 				<Stack spacing={2}>
 					<TextFieldPasswordForm
 						name="password"
 						label="Nueva contraseña"
 						control={formHandler.control}
+						size="small"
+						autoComplete="new-password"
+						fullWidth
 					/>
 					<TextFieldPasswordForm
 						name="confirmPassword"
 						label="Confirmar contraseña"
 						control={formHandler.control}
+						size="small"
+						autoComplete="new-password"
+						fullWidth
 					/>
 				</Stack>
 			}

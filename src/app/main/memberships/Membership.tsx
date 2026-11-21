@@ -1,5 +1,7 @@
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
-import { Button, Paper, Stack, useTheme } from '@mui/material';
+import { Button } from '@mui/material';
+import PageContentCard from 'app/shared/components/PageContentCard/PageContentCard';
+import { LIST_DATA_GRID_SX } from 'src/app/shared/constants/dataGrid';
 import PageLayout from 'app/core/page/PageLayout';
 import { Add } from '@mui/icons-material';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
@@ -30,7 +32,7 @@ function Order() {
 		{ field: 'dueDate', headerName: 'Fecha de vencimiento', flex: 1, valueFormatter: (params) => dayjs(params.value).format(DATE_FORMAT) },
 		{ field: 'isActive', headerName: 'Activo', type: 'boolean', flex: 1 },
 		{
-			headerName: 'ACCIONES',
+			headerName: 'Acciones',
 			field: 'actions',
 			sortable: false,
 			minWidth: 50,
@@ -76,10 +78,12 @@ function Order() {
 						<Button
 							color="primary"
 							variant="contained"
+							size="large"
 							startIcon={<Add />}
 							onClick={() => setOpenCreateMembershipDialog(true)}
+							sx={{ fontWeight: 600 }}
 						>
-							Nuevo
+							Nueva membresía
 						</Button>
 					}
 				/>
@@ -91,44 +95,22 @@ function Order() {
 						open={openCreateMembershipDialog}
 						onClose={() => setOpenCreateMembershipDialog(false)}
 					/>
-					<Paper
-						className="p-8 sm:p-24 w-full"
-						sx={{
-							height: '100%',
-							maxHeight: 'calc(100vh - 240px)',
-							display: 'flex',
-							flexDirection: 'column'
-						}}
-					>
-
-						<Stack sx={{ height: 'calc(100vh - 240px)' }}>
-							<DataGrid
-								hideFooterPagination
-								loading={isLoading}
-								rows={data}
-								columns={columns}
-								initialState={{
-									pagination: {
-										paginationModel: { pageSize: 10 }
-									}
-								}}
-								pageSizeOptions={[5, 10, 25]}
-								density="compact"
-								getRowHeight={() => 'auto'}
-								sx={{
-									'& .MuiDataGrid-cell': {
-										py: 1,
-										px: 1,
-										wordBreak: 'break-word'
-									},
-									'& .MuiDataGrid-columnHeader': {
-										py: 1,
-										px: 1
-									}
-								}}
-							/>
-						</Stack>
-					</Paper>
+					<PageContentCard sx={{ height: 'calc(100vh - 240px)' }}>
+						<DataGrid
+							hideFooterPagination
+							loading={isLoading}
+							rows={data}
+							columns={columns}
+							initialState={{
+								pagination: {
+									paginationModel: { pageSize: 10 }
+								}
+							}}
+							pageSizeOptions={[5, 10, 25]}
+							getRowHeight={() => 'auto'}
+							sx={{ ...LIST_DATA_GRID_SX, flex: 1, minHeight: 0 }}
+						/>
+					</PageContentCard>
 				</div>
 			}
 		/>

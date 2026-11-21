@@ -1,5 +1,5 @@
-import { Autocomplete, Button, InputAdornment, MenuItem, Stack, TextField } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Autocomplete, Button, MenuItem, Stack, TextField } from '@mui/material';
+import SearchField from 'app/shared/components/SearchField/SearchField';
 
 import { EStatusOrder } from 'src/app/requests/orders/types';
 import { IClientsResponse } from 'src/app/requests/clients/useQueryClients';
@@ -27,19 +27,11 @@ function OrdersFilters({ filters, onFilterChange, onClearFilters, clients, isSta
 			flexWrap="wrap"
 			useFlexGap
 		>
-			<TextField
-				size="small"
+			<SearchField
 				placeholder="Buscar folio, cliente, dirección, teléfono"
+				ariaLabel="Buscar órdenes"
 				value={filters.search}
-				onChange={(event) => onFilterChange('search', event.target.value)}
-				inputProps={{ 'aria-label': 'Buscar órdenes' }}
-				InputProps={{
-					startAdornment: (
-						<InputAdornment position="start">
-							<Search fontSize="small" />
-						</InputAdornment>
-					)
-				}}
+				onChange={(search) => onFilterChange('search', search)}
 				sx={{ flex: isStacked ? undefined : '1 1 260px', minWidth: isStacked ? 0 : 240 }}
 			/>
 			<TextField
