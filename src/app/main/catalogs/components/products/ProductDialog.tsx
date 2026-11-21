@@ -1,13 +1,10 @@
 import React from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { useForm, useFieldArray } from 'react-hook-form';
 import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
-import { Box, useTheme, IconButton, Typography, Grid, Paper, MenuItem } from '@mui/material';
+import { IconButton, Grid, MenuItem, Stack } from '@mui/material';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
+import FormSection from 'app/shared/components/FormSection/FormSection';
 import ScienceIcon from '@mui/icons-material/Science';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -20,7 +17,7 @@ interface ProductDialogProps {
     isEditing: boolean;
     selectedProduct: IInsecticideTypesResponse[number] | null;
     onClose: () => void;
-    onSubmit: (data: ISaveInsecticideTypePayload) => void;
+    onSubmit: (data: ISaveInsecticideTypePayload) => Promise<void> | void;
 }
 
 const units = [
@@ -37,8 +34,12 @@ export default function ProductDialog({
     onClose,
     onSubmit
 }: ProductDialogProps) {
-    const theme = useTheme();
-    const { control, handleSubmit, reset } = useForm<ISaveInsecticideTypePayload>({
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { isSubmitting }
+    } = useForm<ISaveInsecticideTypePayload>({
         defaultValues: {
             id: '',
             commercialName: '',
@@ -97,151 +98,112 @@ export default function ProductDialog({
     };
 
     return (
-        <Dialog
+        <FormDialog
             open={open}
             onClose={handleClose}
-            PaperProps={{
-                sx: {
-                    minWidth: '600px'
-                }
-            }}
+            title={isEditing ? 'Editar producto' : 'Nuevo producto'}
+            subtitle={isEditing ? 'Modifica los datos del producto.' : 'Agrega un nuevo producto al catálogo.'}
+            onSubmit={handleSubmit(onSubmit)}
+            submitLabel={isEditing ? 'Guardar cambios' : 'Crear producto'}
+            isSubmitting={isSubmitting}
         >
-            <Box sx={{
-                backgroundColor: theme.palette.success.main,
-                color: theme.palette.success.contrastText,
-                p: 2,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1
-            }}>
-                <ScienceIcon />
-                <DialogTitle sx={{ p: 0, color: 'inherit' }}>
-                    {isEditing ? 'Editar Producto' : 'Nuevo Producto'}
-                </DialogTitle>
-            </Box>
-            <DialogContent>
-                <DialogContentText sx={{ mt: 2 }}>
-                    {isEditing
-                        ? 'Modifica los datos del producto.'
-                        : 'Agrega un nuevo producto al catálogo.'}
-                </DialogContentText>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Box sx={{ mb: 4 }}>
+            <Stack spacing={2}>
+                <FormSection
+                    icon={<ScienceIcon fontSize="small" />}
+                    title="Producto"
+                    description="Nombre con el que aparece en las órdenes y en los reportes."
+                >
+                    <Stack spacing={2}>
                         <TextFieldForm<ISaveInsecticideTypePayload>
                             control={control}
                             name="commercialName"
-                            label="Nombre Comercial"
+                            label="Nombre comercial"
+                            size="small"
                             fullWidth
                             autoFocus
-                            margin="dense"
-                            sx={{ mt: 2 }}
                         />
                         <TextFieldForm<ISaveInsecticideTypePayload>
                             control={control}
                             name="chemicalName"
-                            label="Nombre Químico"
+                            label="Nombre químico"
+                            size="small"
                             fullWidth
-                            margin="dense"
-                            sx={{ mt: 2 }}
                         />
                         <TextFieldForm<ISaveInsecticideTypePayload>
                             control={control}
                             name="description"
-                            label="Descripción del Producto"
+                            label="Descripción"
+                            size="small"
                             fullWidth
                             multiline
                             rows={3}
-                            margin="dense"
-                            sx={{ mt: 2 }}
                         />
-                    </Box>
+                    </Stack>
+                </FormSection>
 
-                    <Paper variant="outlined" sx={{ p: 2, bgcolor: 'background.default' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                            <LocalHospitalIcon color="success" />
-                            <Typography variant="subtitle1" color="text.primary">
-                                Dosis Disponibles
-                            </Typography>
-                        </Box>
-
+                <FormSection
+                    icon={<LocalHospitalIcon fontSize="small" />}
+                    title="Dosis disponibles"
+                    description="Cantidades que el fumigador podrá elegir al registrar el servicio."
+                >
+                    <Stack spacing={1.5}>
                         {fields.map((field, index) => (
-                            <Box
+                            <Grid
                                 key={field.id}
-                                sx={{
-                                    mt: 2,
-                                    p: 2,
-                                    bgcolor: 'background.paper',
-                                    borderRadius: 1,
-                                    boxShadow: 1
-                                }}
+                                container
+                                spacing={1.5}
+                                alignItems="center"
                             >
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item xs={5}>
-                                        <TextFieldForm<ISaveInsecticideTypePayload>
-                                            control={control}
-                                            name={`doses.${index}.amount`}
-                                            label="Cantidad"
-                                            fullWidth
-                                            margin="dense"
-                                            type="number"
-                                        />
-                                    </Grid>
-                                    <Grid item xs={5}>
-                                        <TextFieldForm<ISaveInsecticideTypePayload>
-                                            control={control}
-                                            name={`doses.${index}.unit`}
-                                            label="Unidad"
-                                            fullWidth
-                                            select
-                                            margin="dense"
-                                            defaultValue="ml"
-                                        >
-                                            {units.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))}
-                                        </TextFieldForm>
-                                    </Grid>
-                                    <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <IconButton
-                                            onClick={() => remove(index)}
-                                            color="error"
-                                            size="small"
-                                        >
-                                            <DeleteOutlineIcon />
-                                        </IconButton>
-                                    </Grid>
+                                <Grid item xs={5}>
+                                    <TextFieldForm<ISaveInsecticideTypePayload>
+                                        control={control}
+                                        name={`doses.${index}.amount`}
+                                        label="Cantidad"
+                                        size="small"
+                                        fullWidth
+                                        type="number"
+                                    />
                                 </Grid>
-                            </Box>
+                                <Grid item xs={5}>
+                                    <TextFieldForm<ISaveInsecticideTypePayload>
+                                        control={control}
+                                        name={`doses.${index}.unit`}
+                                        label="Unidad"
+                                        size="small"
+                                        fullWidth
+                                        select
+                                        defaultValue="ml"
+                                    >
+                                        {units.map((option) => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </TextFieldForm>
+                                </Grid>
+                                <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <IconButton
+                                        aria-label="Quitar dosis"
+                                        onClick={() => remove(index)}
+                                        color="error"
+                                        size="small"
+                                    >
+                                        <DeleteOutlineIcon />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
                         ))}
-
-                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-                            <Button
-                                startIcon={<AddCircleOutlineIcon />}
-                                onClick={handleAddDose}
-                                color="success"
-                                variant="outlined"
-                                sx={{ mt: fields.length > 0 ? 2 : 0 }}
-                            >
-                                Agregar Nueva Dosis
-                            </Button>
-                        </Box>
-                    </Paper>
-
-                    <DialogActions sx={{ mt: 3 }}>
-                        <Button onClick={handleClose} color="inherit">Cancelar</Button>
                         <Button
-                            type="submit"
-                            variant="contained"
-                            color="success"
-                            sx={{ color: theme.palette.success.contrastText }}
+                            startIcon={<AddCircleOutlineIcon />}
+                            onClick={handleAddDose}
+                            variant="text"
+                            sx={{ alignSelf: 'flex-start' }}
                         >
-                            {isEditing ? 'Actualizar' : 'Guardar'}
+                            Agregar dosis
                         </Button>
-                    </DialogActions>
-                </form>
-            </DialogContent>
-        </Dialog>
+                    </Stack>
+                </FormSection>
+            </Stack>
+        </FormDialog>
     );
 } 

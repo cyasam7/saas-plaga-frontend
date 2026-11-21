@@ -3,10 +3,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Grid,
   IconButton,
   Stack,
@@ -14,6 +10,7 @@ import {
   Typography,
 } from "@mui/material"
 import { AddCircleOutline, DeleteOutline } from "@mui/icons-material"
+import FormDialog from "app/shared/components/FormDialog/FormDialog"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TextFieldForm from "src/app/shared/components/Form/TextFieldForm/TextFieldForm"
@@ -101,25 +98,26 @@ export function BranchForm({ open, clientId, branchId, onClose, onSaved }: Branc
   const isFormDisabled = isSubmitting || isLoadingForm
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle sx={{ pb: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {isEditing ? "Editar Sucursal" : "Agregar Nueva Sucursal"}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {isEditing
-            ? "Modifique la información de la sucursal y sus áreas."
-            : "Complete los campos y las áreas para registrar una nueva sucursal."}
-        </Typography>
-      </DialogTitle>
-
-      <DialogContent dividers>
+    <FormDialog
+      open={open}
+      onClose={handleClose}
+      title={isEditing ? "Editar sucursal" : "Nueva sucursal"}
+      subtitle={
+        isEditing
+          ? "Modifica la información de la sucursal y sus áreas."
+          : "Completa los datos y las áreas para registrar la sucursal."
+      }
+      onSubmit={handleSubmit(handleSaveBranchForm)}
+      submitLabel={isEditing ? "Guardar cambios" : "Crear sucursal"}
+      isSubmitting={isSubmitting}
+      isSubmitDisabled={isLoadingForm}
+    >
         {isLoadingForm ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
             <CircularProgress size={28} />
           </Box>
         ) : (
-          <form id="branch-form" onSubmit={handleSubmit(handleSaveBranchForm)}>
+          <>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextFieldForm<IBranchForm>
@@ -260,25 +258,8 @@ export function BranchForm({ open, clientId, branchId, onClose, onSaved }: Branc
                 )}
               </Grid>
             </Grid>
-          </form>
+          </>
         )}
-      </DialogContent>
-
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={handleClose} sx={pressFeedback}>
-          Cancelar
-        </Button>
-        <Button
-          type="submit"
-          form="branch-form"
-          variant="contained"
-          color="primary"
-          disabled={isFormDisabled}
-          sx={pressFeedback}
-        >
-          {isEditing ? "Actualizar" : "Guardar"}
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </FormDialog>
   )
 }

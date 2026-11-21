@@ -4,8 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQueryClient } from 'react-query';
 import dayjs from 'dayjs';
-import HeaderDialog from 'app/shared/components/DialogSkeleton/HeaderDialog/HeaderDialog';
-import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import { DateTimePickerField } from 'app/shared/components/DateTimePicker';
 import { displayToast } from 'app/core/feedback/toast';
 import { useMutationRescheduleOrder } from 'src/app/requests/orders/useMutationRescheduleOrder';
@@ -54,41 +53,30 @@ function RescheduleOrderDialog({ open, orderId, currentOrderDate, onClose }: Res
 	}
 
 	return (
-		<DialogSkeleton
+		<FormDialog
 			open={open}
-			header={
-				<HeaderDialog
-					title="Cambiar fecha de la orden"
-					onClickSecondaryButton={onClose}
-					onClickPrimaryButton={formHandler.handleSubmit(handleReschedule)}
+			onClose={onClose}
+			title="Cambiar fecha de la orden"
+			subtitle={currentOrderDate ? `Fecha actual: ${dayjs(currentOrderDate).format(DATE_TIME_FORMAT)}` : undefined}
+			onSubmit={formHandler.handleSubmit(handleReschedule)}
+			submitLabel="Cambiar fecha"
+			isSubmitting={isRescheduling}
+		>
+			<Stack spacing={2}>
+				<DateTimePickerField
+					control={formHandler.control}
+					name="date"
+					label="Nueva fecha"
+					disabled={isRescheduling}
 				/>
-			}
-			content={
-				<Stack spacing={2}>
-					{currentOrderDate && (
-						<Typography
-							variant="body2"
-							color="text.secondary"
-						>
-							Fecha actual: {dayjs(currentOrderDate).format(DATE_TIME_FORMAT)}
-						</Typography>
-					)}
-					<DateTimePickerField
-						control={formHandler.control}
-						name="date"
-						label="Nueva fecha"
-						disabled={isRescheduling}
-					/>
-					<Typography
-						variant="body2"
-						color="text.secondary"
-					>
-						Si la orden no se realizó, vuelve a quedar pendiente con la nueva fecha.
-					</Typography>
-				</Stack>
-			}
-			maxWidth="sm"
-		/>
+				<Typography
+					variant="caption"
+					color="text.secondary"
+				>
+					Si la orden no se realizó, vuelve a quedar pendiente con la nueva fecha.
+				</Typography>
+			</Stack>
+		</FormDialog>
 	);
 }
 

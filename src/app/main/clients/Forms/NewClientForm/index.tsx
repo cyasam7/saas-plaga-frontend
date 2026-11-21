@@ -1,8 +1,4 @@
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
   Grid,
   Typography,
@@ -13,6 +9,7 @@ import {
   Stack,
   alpha,
 } from "@mui/material"
+import FormDialog from "app/shared/components/FormDialog/FormDialog"
 import {
   Add,
   DeleteOutline,
@@ -377,20 +374,20 @@ export function NewClientForm({ open, onClose, onSubmit, defaultValues }: NewCli
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" scroll="paper">
-      <DialogTitle sx={{ pb: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {defaultValues ? "Editar cliente" : "Agregar nuevo cliente"}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {defaultValues
-            ? "Modifique los campos para actualizar la información del cliente."
-            : "Complete los campos para registrar un nuevo cliente en el sistema."}
-        </Typography>
-      </DialogTitle>
-
-      <DialogContent dividers>
-        <form id="new-client-form" onSubmit={handleSubmit(onFormSubmit)}>
+    <FormDialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      title={defaultValues ? "Editar cliente" : "Nuevo cliente"}
+      subtitle={
+        defaultValues
+          ? "Modifica los campos para actualizar la información del cliente."
+          : "Completa los campos para registrar un nuevo cliente."
+      }
+      onSubmit={handleSubmit(onFormSubmit)}
+      submitLabel={defaultValues ? "Guardar cambios" : "Crear cliente"}
+      isSubmitting={isSubmitting}
+    >
           <Stack spacing={3.5}>
             <Box>
               <SectionTitle>Tipo de cliente</SectionTitle>
@@ -531,16 +528,6 @@ export function NewClientForm({ open, onClose, onSubmit, defaultValues }: NewCli
               </Box>
             )}
           </Stack>
-        </form>
-      </DialogContent>
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={handleClose} sx={pressFeedback}>
-          Cancelar
-        </Button>
-        <Button type="submit" form="new-client-form" variant="contained" color="primary" sx={pressFeedback}>
-          Guardar
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </FormDialog>
   )
 }

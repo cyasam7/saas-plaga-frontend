@@ -149,8 +149,6 @@ export function NamedCatalogSection({
 				open={isFormDialogOpen}
 				selectedCatalogItem={selectedCatalogItem}
 				labels={labels}
-				Icon={Icon}
-				accentColor={accentColor}
 				onClose={handleCloseFormDialog}
 				onSubmit={handleSubmit}
 			/>

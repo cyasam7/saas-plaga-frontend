@@ -1,4 +1,4 @@
-import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton'
+import FormDialog from 'app/shared/components/FormDialog/FormDialog'
 import FormSaveMembership, { defaultValuesFormMembership } from '../FormMembership/FormSaveMembership'
 import { IDialogMembershipProps } from './DialogMembershipProps';
 import { IFormSaveMembershipData, schemaSaveMembership } from '../FormMembership/FormMembershipProps';
@@ -6,9 +6,6 @@ import { ICreateMembershipPayload, useMutationCreateMembership } from 'src/app/r
 import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { Box, Button } from '@mui/material';
-import { Stack } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
 
 const DialogMembership = (props: IDialogMembershipProps) => {
   const { open, onClose, onSubmit } = props;
@@ -48,7 +45,7 @@ const DialogMembership = (props: IDialogMembershipProps) => {
         }
       })
       onSubmit(data);
-      onClose();
+      handleCancel();
     } catch {
     }
   }
@@ -60,39 +57,22 @@ const DialogMembership = (props: IDialogMembershipProps) => {
 
 
   return (
-    <DialogSkeleton
-      header="Crear membresía"
-      content={
-        <Stack>
-          <FormSaveMembership
-            formHandler={formHandler}
-            onSubmit={handleSubmit}
-            onCancel={onClose}
-          />
-          <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleCancel}
-              disabled={formHandler.formState.isSubmitting}
-            >
-              Cancelar
-            </Button>
-            <LoadingButton
-              type="submit"
-              variant="contained"
-              color="primary"
-              loading={formHandler.formState.isSubmitting}
-              onClick={formHandler.handleSubmit(handleSubmit)}
-            >
-              Guardar
-            </LoadingButton>
-          </Box>
-        </Stack>
-      }
+    <FormDialog
       open={open}
-      maxWidth='md'
-    />
+      onClose={handleCancel}
+      maxWidth="md"
+      title="Nueva membresía"
+      subtitle="Crea la compañía, su espacio de trabajo y el usuario administrador."
+      onSubmit={formHandler.handleSubmit(handleSubmit)}
+      submitLabel="Crear membresía"
+      isSubmitting={formHandler.formState.isSubmitting}
+    >
+      <FormSaveMembership
+        formHandler={formHandler}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
+    </FormDialog>
   )
 }
 

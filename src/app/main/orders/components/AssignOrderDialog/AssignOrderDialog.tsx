@@ -1,8 +1,7 @@
 import React from 'react';
-import { FormControl, FormLabel, MenuItem, Stack, Typography } from '@mui/material';
+import { MenuItem, Stack, Typography } from '@mui/material';
 import TextFieldForm from 'app/shared/components/Form/TextFieldForm/TextFieldForm';
-import HeaderDialog from 'app/shared/components/DialogSkeleton/HeaderDialog/HeaderDialog';
-import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import { useForm } from 'react-hook-form';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import { useQueryClient } from 'react-query';
@@ -72,47 +71,42 @@ function AssignOrderDialog(props: IAssignOrderDialog) {
 	}
 
 	return (
-		<DialogSkeleton
+		<FormDialog
 			open={open}
-			header={
-				<HeaderDialog
-					title="Asignar orden de servicio"
-					onClickSecondaryButton={handleClose}
-					onClickPrimaryButton={formHandler.handleSubmit(onSubmit)}
-				/>
-			}
-			content={
-				<Stack spacing={2}>
-					<FormControl>
-						<FormLabel>Selecciona el trabajador para esta orden</FormLabel>
-						{!isLoading && (
-							<TextFieldForm
-								control={formHandler.control}
-								name="userId"
-								label=""
-								className="pt-8"
-								select
-								fullWidth
-							>
-								{fumigators.map((i) => (
-									<MenuItem
-										key={i.userId}
-										value={i.userId}
-										disabled={i.disabled}
-									>
-										{`${i.name}  ${i.disabled ? '(Falta configurar firma)' : ''}`}
-									</MenuItem>
-								))}
-							</TextFieldForm>
-						)}
-					</FormControl>
-					<Typography variant="body2" color="text.secondary">
-						Nota: Aquí aparecerán todos los trabajadores que tienen el rol de fumigador, si no aparece el trabajador que buscas, verifica que tenga configurada su firma.
-					</Typography>
-				</Stack>
-			}
-			maxWidth="sm"
-		/>
+			onClose={handleClose}
+			title="Asignar orden"
+			subtitle="Elige al fumigador que realizará el servicio."
+			onSubmit={formHandler.handleSubmit(onSubmit)}
+			submitLabel="Asignar"
+		>
+			<Stack spacing={2}>
+				<TextFieldForm
+					control={formHandler.control}
+					name="userId"
+					label="Fumigador"
+					size="small"
+					disabled={isLoading}
+					select
+					fullWidth
+				>
+					{fumigators.map((fumigator) => (
+						<MenuItem
+							key={fumigator.userId}
+							value={fumigator.userId}
+							disabled={fumigator.disabled}
+						>
+							{fumigator.disabled ? `${fumigator.name} (falta configurar firma)` : fumigator.name}
+						</MenuItem>
+					))}
+				</TextFieldForm>
+				<Typography
+					variant="caption"
+					color="text.secondary"
+				>
+					Solo aparecen usuarios con rol de fumigador. Si falta alguno, revisa que tenga su firma configurada.
+				</Typography>
+			</Stack>
+		</FormDialog>
 	);
 }
 

@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogContent, DialogTitle, MenuItem, Stack, Typography } from '@mui/material';
+import { MenuItem, Stack } from '@mui/material';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import { useForm } from 'react-hook-form';
 import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -77,72 +78,45 @@ function GenerateReportDialog(props: GenerateReportDialogProps) {
 	}
 
 	return (
-		<Dialog
+		<FormDialog
 			open={open}
-			maxWidth="sm"
-			fullWidth
+			onClose={handleOnClose}
+			title="Generar reporte"
+			subtitle="Descarga la orden de servicio o el certificado en PDF."
+			onSubmit={formHandler.handleSubmit(handleSubmit)}
+			submitLabel="Descargar PDF"
+			isSubmitting={isSubmitting}
 		>
-			<DialogTitle>
-				<Stack
-					direction="row"
-					justifyContent="space-between"
-					alignItems="center"
+			<Stack spacing={2}>
+				<TextFieldForm
+					control={formHandler.control}
+					label="Tipo de reporte"
+					name="typeReport"
+					size="small"
+					fullWidth
+					select
 				>
-					<Typography variant="h6">Generar reporte</Typography>
-					<Stack
-						direction="row"
-						spacing={2}
-					>
-						<Button
-							variant="outlined"
-							color="primary"
-							onClick={handleOnClose}
-							disabled={isSubmitting}
+					{Object.values(TypeReport).map((typeReport) => (
+						<MenuItem
+							key={typeReport}
+							value={typeReport}
 						>
-							Cerrar
-						</Button>
-						<Button
-							variant="contained"
-							color="primary"
-							disabled={isSubmitting}
-							onClick={formHandler.handleSubmit(handleSubmit)}
-						>
-							Descargar
-						</Button>
-					</Stack>
-				</Stack>
-			</DialogTitle>
-			<DialogContent>
-				<Stack
-					py={2}
-					spacing={2}
-				>
+							{mapTranslate[typeReport]}
+						</MenuItem>
+					))}
+				</TextFieldForm>
+				{formHandler.watch('typeReport') === TypeReport.CERTIFICATE && (
 					<TextFieldForm
+						type="number"
 						control={formHandler.control}
-						label="Tipo de reporte"
-						name="typeReport"
-						select
-					>
-						{Object.values(TypeReport).map((i) => (
-							<MenuItem
-								key={i}
-								value={i}
-							>
-								{mapTranslate[i]}
-							</MenuItem>
-						))}
-					</TextFieldForm>
-					{formHandler.watch('typeReport') === TypeReport.CERTIFICATE && (
-						<TextFieldForm
-							type="number"
-							control={formHandler.control}
-							label="Meses de validez del certificado"
-							name="months"
-						/>
-					)}
-				</Stack>
-			</DialogContent>
-		</Dialog>
+						label="Meses de validez del certificado"
+						name="months"
+						size="small"
+						fullWidth
+					/>
+				)}
+			</Stack>
+		</FormDialog>
 	);
 }
 

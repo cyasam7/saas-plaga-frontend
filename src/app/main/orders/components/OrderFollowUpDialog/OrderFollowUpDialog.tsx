@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import React from 'react';
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
@@ -70,66 +71,37 @@ function OrderFollowUpDialog(props: IOrderFollowUpDialogProps) {
 	}
 
 	return (
-		<Dialog
+		<FormDialog
 			open={open}
-			maxWidth="sm"
-			fullWidth
+			onClose={handleOnClose}
+			title="Orden de seguimiento"
+			subtitle="Programa la siguiente visita para este cliente."
+			onSubmit={formHandler.handleSubmit(handleSubmit)}
+			submitLabel="Programar seguimiento"
+			isSubmitting={formHandler.formState.isSubmitting}
 		>
-			<DialogTitle>
-				<Stack
-					direction="row"
-					justifyContent="space-between"
-					alignItems="center"
-				>
-					<Typography variant="h6">Order de seguimiento</Typography>
-					<Stack
-						direction="row"
-						spacing={2}
-					>
-						<Button
-							variant="outlined"
-							color="primary"
-							onClick={handleOnClose}
-							disabled={formHandler.formState.isSubmitting}
-						>
-							Cancelar
-						</Button>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={formHandler.handleSubmit(handleSubmit)}
-							disabled={formHandler.formState.isSubmitting}
-						>
-							Guardar
-						</Button>
-					</Stack>
-				</Stack>
-			</DialogTitle>
-			<DialogContent>
-				<Stack
-					py={2}
-					spacing={2}
-				>
-					<DateTimePickerField
-						control={formHandler.control}
-						name="date"
-						disabled={formHandler.formState.isSubmitting}
-						minDateTime={minimumFollowUpDate}
-					/>
-					<TextFieldForm
-						control={formHandler.control}
-						name="notes"
-						label="Descripción"
-						placeholder="Escribe una breve descripción de la orden"
-						disabled={formHandler.formState.isSubmitting}
-						required
-						fullWidth
-						multiline
-						rows={5}
-					/>
-				</Stack>
-			</DialogContent>
-		</Dialog>
+			<Stack spacing={2}>
+				<DateTimePickerField
+					control={formHandler.control}
+					name="date"
+					label="Fecha y hora"
+					disabled={formHandler.formState.isSubmitting}
+					minDateTime={minimumFollowUpDate}
+				/>
+				<TextFieldForm
+					control={formHandler.control}
+					name="notes"
+					label="Descripción"
+					placeholder="Escribe una breve descripción de la orden"
+					disabled={formHandler.formState.isSubmitting}
+					size="small"
+					required
+					fullWidth
+					multiline
+					rows={5}
+				/>
+			</Stack>
+		</FormDialog>
 	);
 }
 

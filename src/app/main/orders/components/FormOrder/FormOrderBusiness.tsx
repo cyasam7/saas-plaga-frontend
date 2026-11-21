@@ -4,10 +4,6 @@ import {
 	Box,
 	Button,
 	CircularProgress,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
 	Grid,
 	InputAdornment,
 	MenuItem,
@@ -15,6 +11,7 @@ import {
 	TextField
 } from '@mui/material';
 import { Add, LocationOn, Search, Store } from '@mui/icons-material';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import { UseFormReturn } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 import { displayToast } from 'app/core/feedback/toast';
@@ -356,24 +353,20 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 				/>
 			</Grid>
 
-			<Dialog
+			<FormDialog
 				open={addingLocation}
 				onClose={() => {
 					setAddingLocation(false);
 					setNewLocation(emptyNewLocation);
 				}}
-				maxWidth="sm"
-				fullWidth
-				PaperProps={{
-					sx: { borderRadius: 2 }
-				}}
+				title="Nueva ubicación"
+				subtitle="Se agrega a las ubicaciones del cliente."
+				onSubmit={handleCreateLocation}
+				submitLabel="Guardar ubicación"
+				isSubmitting={createLocation.isLoading}
+				isSubmitDisabled={!canAddLocation}
 			>
-				<DialogTitle sx={{ pb: 1 }}>Nueva ubicación</DialogTitle>
-				<DialogContent>
-					<Stack
-						spacing={2}
-						sx={{ mt: 1 }}
-					>
+					<Stack spacing={2}>
 						<TextField
 							size="small"
 							label="Nombre"
@@ -419,25 +412,7 @@ function FormOrderBusiness(props: IFormOrderBusinessProps) {
 							}
 						/>
 					</Stack>
-				</DialogContent>
-				<DialogActions sx={{ px: 3, pb: 2 }}>
-					<Button
-						onClick={() => {
-							setAddingLocation(false);
-							setNewLocation(emptyNewLocation);
-						}}
-					>
-						Cancelar
-					</Button>
-					<Button
-						onClick={handleCreateLocation}
-						disabled={!canAddLocation || createLocation.isLoading}
-						variant="contained"
-					>
-						{createLocation.isLoading ? 'Guardando…' : 'Guardar ubicación'}
-					</Button>
-				</DialogActions>
-			</Dialog>
+			</FormDialog>
 		</Grid>
 	);
 }

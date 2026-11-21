@@ -1,20 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import {
-	Box,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	IconButton,
-	Stack,
-	Typography
-} from '@mui/material';
-import { Close } from '@mui/icons-material';
 import { displayToast } from 'app/core/feedback/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { LoadingButton } from '@mui/lab';
 import FormOrder from '../FormOrder/FormOrder';
 import { EClientType, IFormCreatePest } from '../FormOrder/FormOrderProps';
 import { OrderDialogProps } from './OrderDialogProps';
@@ -23,7 +10,7 @@ import { useMutationCreateIndividualOrder } from 'src/app/requests/orders/useMut
 import { useMutationCreateBusinessOrder } from 'src/app/requests/orders/useMutationCreateBusinessOrder';
 import { createOrderSchema } from '../FormOrder/schema';
 import { defaultValuesOrder } from '../FormOrder/defaultValues';
-import { Transition } from './transition';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 
 function OrderDialog(props: OrderDialogProps) {
 	const { onCancel, onSubmit, open, shouldOpenDialogAssign } = props;
@@ -86,69 +73,21 @@ function OrderDialog(props: OrderDialogProps) {
 	const isSubmitting = formHandler.formState.isSubmitting;
 
 	return (
-		<Dialog
+		<FormDialog
 			open={open}
-			TransitionComponent={Transition}
+			onClose={handleCancel}
 			maxWidth="md"
-			fullWidth
-			PaperProps={{ sx: { borderRadius: 3 } }}
+			title="Nueva orden"
+			subtitle="Registra el cliente y los detalles del servicio."
+			onSubmit={formHandler.handleSubmit(handleSubmit)}
+			submitLabel="Crear orden"
+			isSubmitting={isSubmitting}
 		>
-			<DialogTitle sx={{ pb: 1.5 }}>
-				<Stack
-					direction="row"
-					justifyContent="space-between"
-					alignItems="flex-start"
-					spacing={2}
-				>
-					<Box>
-						<Typography
-							variant="h6"
-							sx={{ fontWeight: 700, lineHeight: 1.3 }}
-						>
-							Nueva orden
-						</Typography>
-						<Typography
-							variant="body2"
-							color="text.secondary"
-						>
-							Registra el cliente y los detalles del servicio.
-						</Typography>
-					</Box>
-					<IconButton
-						aria-label="Cerrar"
-						onClick={handleCancel}
-						disabled={isSubmitting}
-						sx={{ mt: -0.5, mr: -0.5 }}
-					>
-						<Close />
-					</IconButton>
-				</Stack>
-			</DialogTitle>
-			<DialogContent dividers>
-				<FormOrder
-					formHandler={formHandler}
-					disabled={isSubmitting}
-				/>
-			</DialogContent>
-			<DialogActions sx={{ px: 3, py: 2 }}>
-				<Button
-					color="primary"
-					variant="outlined"
-					disabled={isSubmitting}
-					onClick={handleCancel}
-				>
-					Cancelar
-				</Button>
-				<LoadingButton
-					color="primary"
-					variant="contained"
-					loading={isSubmitting}
-					onClick={formHandler.handleSubmit(handleSubmit)}
-				>
-					Crear orden
-				</LoadingButton>
-			</DialogActions>
-		</Dialog>
+			<FormOrder
+				formHandler={formHandler}
+				disabled={isSubmitting}
+			/>
+		</FormDialog>
 	);
 }
 

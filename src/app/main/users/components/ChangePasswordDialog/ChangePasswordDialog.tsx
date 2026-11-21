@@ -1,10 +1,9 @@
 import React from 'react';
-import { Button, Stack } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import { TextFieldPasswordForm } from 'app/shared/components/Form/TextFieldForm/PasswordInputForm';
 import { useMutationChangeUserPassword } from 'src/app/requests/users/useMutationChangeUserPassword';
 import { userKeys } from 'src/app/requests/users/keys';
@@ -64,53 +63,35 @@ function ChangePasswordDialog(props: IChangePasswordDialog) {
 	}
 
 	return (
-		<DialogSkeleton
+		<FormDialog
 			open={open}
 			onClose={handleClose}
 			maxWidth="xs"
-			header="Cambiar contraseña"
+			title="Cambiar contraseña"
 			subtitle="Mínimo 8 caracteres."
-			content={
-				<Stack spacing={2}>
-					<TextFieldPasswordForm
-						name="password"
-						label="Nueva contraseña"
-						control={formHandler.control}
-						size="small"
-						autoComplete="new-password"
-						fullWidth
-					/>
-					<TextFieldPasswordForm
-						name="confirmPassword"
-						label="Confirmar contraseña"
-						control={formHandler.control}
-						size="small"
-						autoComplete="new-password"
-						fullWidth
-					/>
-				</Stack>
-			}
-			actions={
-				<>
-					<Button
-						variant="outlined"
-						color="primary"
-						onClick={handleClose}
-						disabled={isChangingPassword}
-					>
-						Cancelar
-					</Button>
-					<LoadingButton
-						variant="contained"
-						color="primary"
-						loading={isChangingPassword}
-						onClick={formHandler.handleSubmit(onSubmit)}
-					>
-						Guardar
-					</LoadingButton>
-				</>
-			}
-		/>
+			onSubmit={formHandler.handleSubmit(onSubmit)}
+			submitLabel="Cambiar contraseña"
+			isSubmitting={isChangingPassword}
+		>
+			<Stack spacing={2}>
+				<TextFieldPasswordForm
+					name="password"
+					label="Nueva contraseña"
+					control={formHandler.control}
+					size="small"
+					autoComplete="new-password"
+					fullWidth
+				/>
+				<TextFieldPasswordForm
+					name="confirmPassword"
+					label="Confirmar contraseña"
+					control={formHandler.control}
+					size="small"
+					autoComplete="new-password"
+					fullWidth
+				/>
+			</Stack>
+		</FormDialog>
 	);
 }
 

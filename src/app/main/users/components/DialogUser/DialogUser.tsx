@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import DialogSkeleton from 'app/shared/components/DialogSkeleton/DialogSkeleton';
+import FormDialog from 'app/shared/components/FormDialog/FormDialog';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQueryGetUser } from 'src/app/requests/users/useQueryGetUser';
@@ -85,41 +83,22 @@ function DialogUser(props: IDialogUserProps) {
 	}
 
 	return (
-		<DialogSkeleton
+		<FormDialog
 			open={open}
 			onClose={handleClose}
-			maxWidth="sm"
-			header={isEditing ? 'Editar usuario' : 'Nuevo usuario'}
+			title={isEditing ? 'Editar usuario' : 'Nuevo usuario'}
 			subtitle={isEditing ? 'Actualiza los datos y el rol del usuario.' : 'Registra a un nuevo miembro de tu organización.'}
-			content={
-				<FormUser
-					loading={isEditing && isLoadingUser}
-					isEditing={isEditing}
-					hook={formHandler}
-				/>
-			}
-			actions={
-				<>
-					<Button
-						variant="outlined"
-						color="primary"
-						onClick={handleClose}
-						disabled={isSavingUser}
-					>
-						Cancelar
-					</Button>
-					<LoadingButton
-						variant="contained"
-						color="primary"
-						loading={isSavingUser}
-						disabled={isEditing && isLoadingUser}
-						onClick={formHandler.handleSubmit(handleSubmit)}
-					>
-						{isEditing ? 'Guardar cambios' : 'Crear usuario'}
-					</LoadingButton>
-				</>
-			}
-		/>
+			onSubmit={formHandler.handleSubmit(handleSubmit)}
+			submitLabel={isEditing ? 'Guardar cambios' : 'Crear usuario'}
+			isSubmitting={isSavingUser}
+			isSubmitDisabled={isEditing && isLoadingUser}
+		>
+			<FormUser
+				loading={isEditing && isLoadingUser}
+				isEditing={isEditing}
+				hook={formHandler}
+			/>
+		</FormDialog>
 	);
 }
 

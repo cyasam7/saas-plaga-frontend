@@ -60,7 +60,7 @@ describe("BranchForm", () => {
     vi.mocked(AxiosFetcher).mockImplementation((() => Promise.resolve({ id: "branch-new" })) as typeof AxiosFetcher)
     const { onSaved, onClose } = renderBranchForm("")
 
-    expect(screen.getByText("Agregar Nueva Sucursal")).toBeInTheDocument()
+    expect(screen.getByText("Nueva sucursal")).toBeInTheDocument()
     expect(screen.getByDisplayValue("Exterior")).toBeInTheDocument()
     expect(screen.getByDisplayValue("Interior")).toBeInTheDocument()
 
@@ -68,7 +68,7 @@ describe("BranchForm", () => {
     fireEvent.change(screen.getByLabelText(/Dirección completa/), { target: { value: "Av. Universidad 1330" } })
     fireEvent.change(screen.getByLabelText(/Teléfono del responsable/), { target: { value: "5555555555" } })
     fireEvent.click(screen.getByLabelText("Eliminar área 2"))
-    fireEvent.click(screen.getByRole("button", { name: "Guardar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Crear sucursal" }))
 
     await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1))
     // En alta no se consulta el formulario de una sucursal existente.
@@ -101,7 +101,7 @@ describe("BranchForm", () => {
     const areaNameInputs = screen.getAllByLabelText("Nombre del área")
     fireEvent.change(areaNameInputs[1], { target: { value: "Terraza" } })
 
-    fireEvent.click(screen.getByRole("button", { name: "Actualizar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }))
 
     await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1))
     expect(getWriteRequests()).toEqual([
@@ -126,7 +126,7 @@ describe("BranchForm", () => {
     await screen.findByDisplayValue("Cocina")
     fireEvent.click(screen.getByLabelText("Eliminar área 2"))
     fireEvent.click(screen.getByLabelText("Eliminar área 1"))
-    fireEvent.click(screen.getByRole("button", { name: "Actualizar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }))
 
     expect(await screen.findByText("Agregue al menos un área")).toBeInTheDocument()
     expect(getWriteRequests()).toHaveLength(0)
@@ -137,7 +137,7 @@ describe("BranchForm", () => {
     const { onSaved, onClose } = renderBranchForm("branch-1")
 
     await screen.findByDisplayValue("Cocina")
-    fireEvent.click(screen.getByRole("button", { name: "Actualizar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }))
 
     await waitFor(() => expect(getWriteRequests()).toHaveLength(1))
     expect(onSaved).not.toHaveBeenCalled()

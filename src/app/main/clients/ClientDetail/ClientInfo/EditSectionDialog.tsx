@@ -1,11 +1,5 @@
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
   Grid,
-  Typography,
   MenuItem,
 } from "@mui/material"
 import { useEffect } from "react"
@@ -15,15 +9,10 @@ import { z } from "zod"
 import TextFieldForm from "app/shared/components/Form/TextFieldForm/TextFieldForm"
 import PhoneInputForm from "app/shared/components/Form/PhoneInputForm/PhoneInputForm"
 import CheckboxForm from "app/shared/components/Form/CheckboxForm/CheckboxForm"
+import FormDialog from "app/shared/components/FormDialog/FormDialog"
 import { IGetClientResponse } from "src/app/requests/clients/useQueryGetClient"
 import { FormClientValues, baseClientObject } from "../../Forms/NewClientForm/types"
 import { clientToFormValues } from "../../Forms/NewClientForm/mapper"
-
-const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)"
-const pressFeedback = {
-  transition: `transform 160ms ${EASE_OUT}`,
-  "&:active": { transform: "scale(0.97)" },
-}
 
 export type ClientSection = "general" | "fiscal" | "business" | "contact"
 
@@ -95,14 +84,15 @@ export function EditSectionDialog({ open, section, client, onClose, onSave }: Ed
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle sx={{ pb: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          {SECTION_TITLES[section]}
-        </Typography>
-      </DialogTitle>
-      <DialogContent dividers>
-        <form id="edit-section-form" onSubmit={handleSubmit(onSubmit)}>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      title={SECTION_TITLES[section]}
+      subtitle="Los cambios se guardan en la ficha del cliente."
+      onSubmit={handleSubmit(onSubmit)}
+      submitLabel="Guardar cambios"
+      isSubmitting={isSubmitting}
+    >
           <Grid container spacing={2} sx={{ pt: 0.5 }}>
             {section === "general" && (
               <Grid item xs={12}>
@@ -232,24 +222,7 @@ export function EditSectionDialog({ open, section, client, onClose, onSave }: Ed
               </>
             )}
           </Grid>
-        </form>
-      </DialogContent>
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onClose} disabled={isSubmitting} sx={pressFeedback}>
-          Cancelar
-        </Button>
-        <Button
-          type="submit"
-          form="edit-section-form"
-          variant="contained"
-          color="primary"
-          disabled={isSubmitting}
-          sx={pressFeedback}
-        >
-          Guardar
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </FormDialog>
   )
 }
 

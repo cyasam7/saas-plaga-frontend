@@ -65,7 +65,7 @@ describe("EditSectionDialog", () => {
 
     const rfc = screen.getByLabelText("RFC") as HTMLInputElement
     fireEvent.change(rfc, { target: { value: "BBB020202BBB" } })
-    fireEvent.click(screen.getByRole("button", { name: "Guardar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }))
 
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1))
 
@@ -87,7 +87,7 @@ describe("EditSectionDialog", () => {
 
     const phone = document.querySelector('input[type="tel"]') as HTMLInputElement
     fireEvent.change(phone, { target: { value: "123" } })
-    fireEvent.click(screen.getByRole("button", { name: "Guardar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }))
 
     await waitFor(() => expect(screen.getByText("Ingrese un número de teléfono válido")).toBeInTheDocument())
     expect(onSave).not.toHaveBeenCalled()
