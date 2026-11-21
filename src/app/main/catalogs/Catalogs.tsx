@@ -10,13 +10,17 @@ import ServiceTypes from './components/ServiceTypes';
 import Products from './components/products/Products';
 import PestTypes from './components/PestTypes';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
+import useTabParam from 'src/app/shared/hooks/useTabParam';
 
+
+const CATALOG_TABS = ['service-types', 'application-types', 'products', 'pest-types'] as const;
 
 export default function CatalogsV2() {
-	const [tabValue, setTabValue] = React.useState(0);
+	const [activeTab, setActiveTab] = useTabParam(CATALOG_TABS);
+	const tabValue = CATALOG_TABS.indexOf(activeTab);
 
-	const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-		setTabValue(newValue);
+	const handleTabChange = (_event: React.SyntheticEvent, newTabIndex: number) => {
+		setActiveTab(CATALOG_TABS[newTabIndex]);
 	};
 
 	return (

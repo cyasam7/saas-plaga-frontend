@@ -1,19 +1,17 @@
 import { useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import useDebounce from 'src/app/shared/hooks/useDebounce';
+import useFilterParams from 'src/app/shared/hooks/useFilterParams';
+import useTabParam from 'src/app/shared/hooks/useTabParam';
 
 import { EOrdersDayFilter, EStatusOrder } from 'src/app/requests/orders/types';
 import { IOrdersDatagridPayload } from 'src/app/requests/orders/useQueryOrdersDatagrid';
 
-const DAY_FILTER_PARAM = 'dayFilter';
-const FUMIGATOR_PARAM = 'fumigatorId';
-const SEARCH_PARAM = 'search';
-const STATUS_PARAM = 'status';
-const CLIENT_PARAM = 'clientId';
 const SEARCH_DEBOUNCE_MS = 400;
 
-const DAY_FILTERS = Object.values(EOrdersDayFilter);
+/** Pestañas de día; la primera (ALL) es la de por defecto. */
+const DAY_FILTER_TABS = Object.values(EOrdersDayFilter);
+const ORDER_FILTER_KEYS = ['fumigatorId', 'search', 'status', 'clientId'] as const;
 
 export interface OrdersFilters {
 	dayFilter: EOrdersDayFilter;
@@ -36,11 +34,7 @@ interface IUseOrdersFilters {
 	clearFilters: () => void;
 }
 
-function parseDayFilter(value: string | null): EOrdersDayFilter {
-	return DAY_FILTERS.includes(value as EOrdersDayFilter) ? (value as EOrdersDayFilter) : EOrdersDayFilter.ALL;
-}
-
-function parseStatus(value: string | null): EStatusOrder | '' {
+function parseStatus(value: string): EStatusOrder | '' {
 	return Object.values(EStatusOrder).includes(value as EStatusOrder) ? (value as EStatusOrder) : '';
 }
 
@@ -49,46 +43,21 @@ function parseStatus(value: string | null): EStatusOrder | '' {
  * y el back/forward navega entre estados de filtro.
  */
 export function useOrdersFilters(): IUseOrdersFilters {
-	const [searchParams, setSearchParams] = useSearchParams();
+	const [dayFilter, setDayFilter] = useTabParam(DAY_FILTER_TABS);
+	const { filters: filterParams, setFilters, clearFilters } = useFilterParams(ORDER_FILTER_KEYS);
 
 	const filters = useMemo<OrdersFilters>(
-		() => ({
-			dayFilter: parseDayFilter(searchParams.get(DAY_FILTER_PARAM)),
-			fumigatorId: searchParams.get(FUMIGATOR_PARAM) ?? '',
-			search: searchParams.get(SEARCH_PARAM) ?? '',
-			status: parseStatus(searchParams.get(STATUS_PARAM)),
-			clientId: searchParams.get(CLIENT_PARAM) ?? ''
-		}),
-		[searchParams]
+		() => ({ ...filterParams, dayFilter, status: parseStatus(filterParams.status) }),
+		[filterParams, dayFilter]
 	);
 
 	const setFilter = useCallback<IUseOrdersFilters['setFilter']>(
 		(key, value) => {
-			const next = { ...filters, [key]: value };
-			const params = new URLSearchParams();
-
-			if (next.dayFilter !== EOrdersDayFilter.ALL) params.set(DAY_FILTER_PARAM, next.dayFilter);
-
-			if (next.fumigatorId) params.set(FUMIGATOR_PARAM, next.fumigatorId);
-
-			if (next.search) params.set(SEARCH_PARAM, next.search);
-
-			if (next.status) params.set(STATUS_PARAM, next.status);
-
-			if (next.clientId) params.set(CLIENT_PARAM, next.clientId);
-
-			setSearchParams(params, { replace: true });
+			if (key === 'dayFilter') setDayFilter(value as EOrdersDayFilter);
+			else setFilters({ [key]: value });
 		},
-		[filters, setSearchParams]
+		[setDayFilter, setFilters]
 	);
-
-	const clearFilters = useCallback(() => {
-		const params = new URLSearchParams();
-
-		if (filters.dayFilter !== EOrdersDayFilter.ALL) params.set(DAY_FILTER_PARAM, filters.dayFilter);
-
-		setSearchParams(params, { replace: true });
-	}, [filters.dayFilter, setSearchParams]);
 
 	// La búsqueda espera a que se deje de escribir para no pedir al API en cada tecla.
 	const { debounceValue: debouncedSearch } = useDebounce(filters.search, SEARCH_DEBOUNCE_MS);

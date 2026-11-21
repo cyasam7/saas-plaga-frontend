@@ -26,10 +26,16 @@ import { ClientCard } from '../../Cards/ClientCard';
 import PageContentCard from 'app/shared/components/PageContentCard/PageContentCard';
 import EmptyState from 'app/shared/components/EmptyState/EmptyState';
 import SearchField from 'app/shared/components/SearchField/SearchField';
+import useTabParam from 'src/app/shared/hooks/useTabParam';
+import useFilterParams from 'src/app/shared/hooks/useFilterParams';
+
+const CLIENT_TYPE_TABS: readonly ('all' | ClientType)[] = ['all', 'business', 'individual'];
+const CLIENT_FILTER_KEYS = ['search'] as const;
 
 export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'all' | ClientType>('all');
+  const { filters, setFilters } = useFilterParams(CLIENT_FILTER_KEYS);
+  const searchTerm = filters.search;
+  const [activeTab, setActiveTab] = useTabParam(CLIENT_TYPE_TABS);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [showSaveClientForm, setShowSaveClientForm] = useState(false);
@@ -64,8 +70,8 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
     setMenuAnchorEl(null);
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: 'all' | ClientType) => {
-    setActiveTab(newValue);
+  const handleTabChange = (_event: React.SyntheticEvent, newClientTypeTab: 'all' | ClientType) => {
+    setActiveTab(newClientTypeTab);
   };
 
   const handleEdit = () => {
@@ -119,7 +125,7 @@ export function ClientList({ clients, onSaveClient, onDeleteClient }: ClientList
                 placeholder="Buscar por nombre, correo o teléfono"
                 ariaLabel="Buscar clientes"
                 value={searchTerm}
-                onChange={setSearchTerm}
+                onChange={(nextSearchTerm) => setFilters({ search: nextSearchTerm })}
                 sx={{ width: { xs: '100%', sm: 300 } }}
               />
               <Tabs

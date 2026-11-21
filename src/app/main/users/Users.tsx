@@ -13,6 +13,7 @@ import { Add, Group, Visibility, HistoryEdu, NoteAlt, RemoveCircleOutline } from
 import { useMemo, useState } from 'react';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
+import useFilterParams from 'src/app/shared/hooks/useFilterParams';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsUsers } from './columns';
 import UsersFilters from './components/UsersFilters/UsersFilters';
@@ -23,15 +24,18 @@ import SimpleHeader from 'app/shared/components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
 
+const USER_FILTER_KEYS = ['search', 'isActive', 'roleCode'] as const;
+
 function Users() {
 	const { openDialog } = useGlobalDialog();
 	const [userId, setUserId] = useState('');
 	const [openSigner, setOpenSigner] = useState(false);
 	const [openPreviewSign, setOpenPreviewSign] = useState(false);
 	const [previewURL, setPreviewURL] = useState('');
-	const [search, setSearch] = useState('');
-	const [isActive, setIsActive] = useState<boolean | null>(null);
-	const [roleCode, setRoleCode] = useState('');
+	const { filters, setFilters, clearFilters } = useFilterParams(USER_FILTER_KEYS);
+	const { search, roleCode } = filters;
+	// En la URL: 'true' | 'false'; ausente = todos.
+	const isActive = filters.isActive === '' ? null : filters.isActive === 'true';
 	const { invalidate } = useQueryInvalidator();
 	const [openUserDialog, setOpenUserDialog] = useState(false);
 	const [openChangePassword, setOpenChangePassword] = useState(false);
@@ -184,12 +188,6 @@ function Users() {
 		return matchingUsers;
 	}, [search, isActive, roleCode, users]);
 
-	function handleClearFilters() {
-		setSearch('');
-		setIsActive(null);
-		setRoleCode('');
-	}
-
 	async function handleSubmitOnSign(signImage: Blob): Promise<void> {
 		const signFormData = new FormData();
 		signFormData.append('file', signImage, `${userId}-sign.png`);
@@ -280,10 +278,12 @@ function Users() {
 								search={search}
 								isActive={isActive}
 								roleCode={roleCode}
-								onChangeSearch={setSearch}
-								onChangeIsActive={setIsActive}
-								onChangeRoleCode={setRoleCode}
-								onClearFilters={handleClearFilters}
+								onChangeSearch={(nextSearch) => setFilters({ search: nextSearch })}
+								onChangeIsActive={(nextIsActive) =>
+									setFilters({ isActive: nextIsActive === null ? '' : String(nextIsActive) })
+								}
+								onChangeRoleCode={(nextRoleCode) => setFilters({ roleCode: nextRoleCode })}
+								onClearFilters={clearFilters}
 							/>
 						}
 						footer={

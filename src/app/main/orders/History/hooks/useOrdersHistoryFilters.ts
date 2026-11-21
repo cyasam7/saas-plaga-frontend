@@ -1,19 +1,42 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback, useMemo } from 'react';
 
 import useDebounce from 'src/app/shared/hooks/useDebounce';
+import useFilterParams from 'src/app/shared/hooks/useFilterParams';
+import { EClientType } from 'src/app/requests/clients/types';
+import { EStatusOrder } from 'src/app/requests/orders/types';
 
-import { EMPTY_FILTERS, filtersToParams, OrdersHistoryFilters, parseFiltersFromParams } from '../helpers';
+import { HISTORY_STATUSES, OrdersHistoryFilters } from '../helpers';
 
 const SEARCH_DEBOUNCE_MS = 400;
+const HISTORY_FILTER_KEYS = ['dateFrom', 'dateTo', 'status', 'clientType', 'fumigatorId', 'search'] as const;
+
+type HistoryFilterParams = Record<(typeof HISTORY_FILTER_KEYS)[number], string>;
 
 interface IUseOrdersHistoryFilters {
+	/** Valores inmediatos para los inputs. */
 	filters: OrdersHistoryFilters;
-	/** Valor inmediato del input de búsqueda (la URL se actualiza con debounce). */
-	searchInput: string;
-	setSearchInput: (value: string) => void;
+	/** Lo que se manda al API: igual que `filters` pero con la búsqueda con debounce. */
+	queryFilters: OrdersHistoryFilters;
+	hasActiveFilters: boolean;
 	setFilter: <K extends keyof OrdersHistoryFilters>(key: K, value: OrdersHistoryFilters[K]) => void;
 	clearFilters: () => void;
+}
+
+/** Convierte los query params a filtros tipados, descartando valores inválidos. */
+function parseHistoryFilters(filterParams: HistoryFilterParams): OrdersHistoryFilters {
+	const status = filterParams.status
+		.split(',')
+		.filter((statusValue): statusValue is EStatusOrder => HISTORY_STATUSES.includes(statusValue as EStatusOrder));
+	const isValidClientType = Object.values(EClientType).includes(filterParams.clientType as EClientType);
+
+	return {
+		dateFrom: filterParams.dateFrom || null,
+		dateTo: filterParams.dateTo || null,
+		status,
+		clientType: isValidClientType ? (filterParams.clientType as EClientType) : null,
+		fumigatorId: filterParams.fumigatorId,
+		search: filterParams.search
+	};
 }
 
 /**
@@ -21,40 +44,25 @@ interface IUseOrdersHistoryFilters {
  * y el back/forward navega entre estados de filtro.
  */
 export function useOrdersHistoryFilters(): IUseOrdersHistoryFilters {
-	const [searchParams, setSearchParams] = useSearchParams();
+	const { filters: filterParams, setFilters, clearFilters, hasActiveFilters } = useFilterParams(HISTORY_FILTER_KEYS);
 
-	const filters = useMemo(() => parseFiltersFromParams(searchParams), [searchParams]);
-
-	const [searchInput, setSearchInput] = useState<string>(filters.search);
-	const { debounceValue } = useDebounce(searchInput, SEARCH_DEBOUNCE_MS);
-
-	const writeFilters = useCallback(
-		(next: OrdersHistoryFilters) => {
-			setSearchParams(filtersToParams(next), { replace: true });
-		},
-		[setSearchParams]
-	);
+	const filters = useMemo(() => parseHistoryFilters(filterParams), [filterParams]);
 
 	const setFilter = useCallback<IUseOrdersHistoryFilters['setFilter']>(
 		(key, value) => {
-			writeFilters({ ...filters, [key]: value });
+			const paramValue = Array.isArray(value) ? value.join(',') : (value ?? '');
+			setFilters({ [key]: paramValue });
 		},
-		[filters, writeFilters]
+		[setFilters]
 	);
 
-	const clearFilters = useCallback(() => {
-		setSearchInput('');
-		writeFilters(EMPTY_FILTERS);
-	}, [writeFilters]);
+	// La búsqueda espera a que se deje de escribir para no pedir al API en cada tecla.
+	const { debounceValue: debouncedSearch } = useDebounce(filters.search, SEARCH_DEBOUNCE_MS);
+	const search = (debouncedSearch ?? filters.search).trim();
 
-	// El texto solo llega a la URL (y por lo tanto al backend) cuando el usuario deja de escribir.
-	useEffect(() => {
-		if (debounceValue === null || debounceValue === filters.search) return;
+	const queryFilters = useMemo(() => ({ ...filters, search }), [filters, search]);
 
-		writeFilters({ ...filters, search: debounceValue });
-	}, [debounceValue, filters, writeFilters]);
-
-	return { filters, searchInput, setSearchInput, setFilter, clearFilters };
+	return { filters, queryFilters, hasActiveFilters, setFilter, clearFilters };
 }
 
 export default useOrdersHistoryFilters;

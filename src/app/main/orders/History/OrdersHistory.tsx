@@ -15,15 +15,14 @@ import { columnsOrdersHistory } from './columns';
 import GenerateReportDialog from '../components/GenerateReportDialog/GenerateReportDialog';
 import OrderDetailDialog from './components/OrderDetailDialog/OrderDetailDialog';
 import HistoryFilters from './components/HistoryFilters/HistoryFilters';
-import { hasActiveFilters } from './helpers';
 import useOrdersHistory from './hooks/useOrdersHistory';
 import useOrdersHistoryFilters from './hooks/useOrdersHistoryFilters';
 
 const CAN_GENERATE_REPORT_STATUSES = [EStatusOrder.DONE, EStatusOrder.FINISHED];
 
 function OrdersHistory() {
-	const { filters, searchInput, setSearchInput, setFilter, clearFilters } = useOrdersHistoryFilters();
-	const { rows, totalCount, isLoading, isFetchingNextPage, hasNextPage, sentinelRef } = useOrdersHistory(filters);
+	const { filters, queryFilters, hasActiveFilters, setFilter, clearFilters } = useOrdersHistoryFilters();
+	const { rows, totalCount, isLoading, isFetchingNextPage, hasNextPage, sentinelRef } = useOrdersHistory(queryFilters);
 	const [orderId, setOrderId] = useState<string>('');
 	const [openDownloadReport, setOpenDownloadReport] = useState<boolean>(false);
 	const [openDetail, setOpenDetail] = useState<boolean>(false);
@@ -98,9 +97,7 @@ function OrdersHistory() {
 						filters={
 							<HistoryFilters
 								filters={filters}
-								searchInput={searchInput}
-								hasActiveFilters={hasActiveFilters(filters)}
-								onSearchInputChange={setSearchInput}
+								hasActiveFilters={hasActiveFilters}
 								onFilterChange={setFilter}
 								onClear={clearFilters}
 							/>

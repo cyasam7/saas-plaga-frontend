@@ -13,7 +13,6 @@ import {
   Delete,
 } from "@mui/icons-material"
 import { useNavigate, useParams } from "react-router"
-import { useSearchParams } from "react-router-dom"
 import DetailTabs from "./DetailTabs"
 import ClientInfo from "./ClientInfo"
 import { BranchForm } from "../Forms/BranchForm"
@@ -26,7 +25,12 @@ import { HistoryTab } from "./Tabs/History"
 import { BranchesTab } from "./Tabs/Branches"
 import PageHeader from "../PageHeader"
 import { FormClientValues } from "../Forms/NewClientForm/types"
+import useTabParam from "src/app/shared/hooks/useTabParam"
 
+type ClientDetailTab = "branches" | "history"
+
+const BUSINESS_CLIENT_TABS: readonly ClientDetailTab[] = ["branches", "history"]
+const INDIVIDUAL_CLIENT_TABS: readonly ClientDetailTab[] = ["history"]
 
 export function ClientDetail() {
   const { openDialog } = useGlobalDialog();
@@ -55,28 +59,19 @@ export function ClientDetail() {
     refetch: refetchBranches,
   } = useQueryBranches({ clientId }, isBusiness)
 
-  const [searchParams, setSearchParams] = useSearchParams()
   const [isBranchFormOpen, setIsBranchFormOpen] = useState(false)
   const [currentBranch, setCurrentBranch] = useState<IBranchesResponse[number] | null>(null)
   // Vacío = alta de sucursal; con id = edición.
   const [editingBranchId, setEditingBranchId] = useState("")
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
 
-  // Tab selection is driven by the `tabSelected` query param so it is linkable and
-  // survives refresh/back-navigation. Available tabs depend on the client type.
-  const tabKeys = isBusiness ? ["branches", "history"] : ["history"]
-  const activeTab = Math.max(0, tabKeys.indexOf(searchParams.get("tabSelected") ?? ""))
-  const resolvedTab = tabKeys[activeTab]
+  // Las pestañas disponibles dependen del tipo de cliente.
+  const tabKeys = isBusiness ? BUSINESS_CLIENT_TABS : INDIVIDUAL_CLIENT_TABS
+  const [resolvedTab, setResolvedTab] = useTabParam(tabKeys)
+  const activeTab = tabKeys.indexOf(resolvedTab)
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        next.set("tabSelected", tabKeys[newValue])
-        return next
-      },
-      { replace: true }
-    )
+  const handleTabChange = (_: React.SyntheticEvent, newTabIndex: number) => {
+    setResolvedTab(tabKeys[newTabIndex])
   }
 
   const handleAddBranch = () => {

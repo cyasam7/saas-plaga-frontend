@@ -17,18 +17,14 @@ const clientTypeOptions = [
 
 export interface HistoryFiltersProps {
 	filters: OrdersHistoryFilters;
-	searchInput: string;
 	hasActiveFilters: boolean;
-	onSearchInputChange: (value: string) => void;
 	onFilterChange: <K extends keyof OrdersHistoryFilters>(key: K, value: OrdersHistoryFilters[K]) => void;
 	onClear: () => void;
 }
 
 function HistoryFilters({
 	filters,
-	searchInput,
 	hasActiveFilters,
-	onSearchInputChange,
 	onFilterChange,
 	onClear
 }: HistoryFiltersProps) {
@@ -47,8 +43,8 @@ function HistoryFilters({
 			<SearchField
 				placeholder="Buscar folio, cliente, teléfono, dirección o fumigador"
 				ariaLabel="Buscar en el historial de órdenes"
-				value={searchInput}
-				onChange={onSearchInputChange}
+				value={filters.search}
+				onChange={(search) => onFilterChange('search', search)}
 				sx={{ flex: { md: '1 1 260px' }, minWidth: { md: 240 } }}
 			/>
 
