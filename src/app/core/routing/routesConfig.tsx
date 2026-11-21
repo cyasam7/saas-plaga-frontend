@@ -11,6 +11,7 @@ import CatalogsConfig from 'src/app/main/catalogs/CatalogsConfig';
 import ClientsAppConfig from 'src/app/main/clients/ClientsAppConfig';
 import AppConfigurationsConfig from 'src/app/main/app-config/AppConfig-Config';
 import UsersConfig from 'src/app/main/users/UsersConfig';
+import CompanyBranchesConfig from 'src/app/main/company-branches/CompanyBranchesConfig';
 import forgotPasswordPagesConfig from 'src/app/main/forgot-password/forgotPasswordPagesConfig';
 import InspectionConfig from 'src/app/main/inspection/InspectionConfig';
 import MembershipConfig from 'src/app/main/memberships/MembershipConfig';
@@ -31,6 +32,7 @@ const routeConfigs: IRouteConfig[] = [
 	ClientsAppConfig,
 	AppConfigurationsConfig,
 	UsersConfig,
+	CompanyBranchesConfig,
 	InspectionConfig,
 	MembershipConfig,
 	RedirectionConfig

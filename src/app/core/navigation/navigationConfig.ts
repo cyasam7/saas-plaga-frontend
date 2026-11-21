@@ -1,9 +1,11 @@
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import PersonPinTwoToneIcon from '@mui/icons-material/PersonPinTwoTone';
+import CardMembershipOutlinedIcon from '@mui/icons-material/CardMembershipOutlined';
+import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
+import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { INavItem } from './types';
 
 /**
@@ -19,7 +21,7 @@ const navigationConfig: INavItem[] = [
 				id: 'membership',
 				title: 'Membresías',
 				type: 'item',
-				icon: PeopleOutlineIcon,
+				icon: CardMembershipOutlinedIcon,
 				auth: ['admin'],
 				url: '/membership'
 			},
@@ -27,7 +29,7 @@ const navigationConfig: INavItem[] = [
 				id: 'users',
 				title: 'Trabajadores',
 				type: 'item',
-				icon: PeopleOutlineIcon,
+				icon: EngineeringOutlinedIcon,
 				auth: ['staff'],
 				url: '/users'
 			},
@@ -36,7 +38,7 @@ const navigationConfig: INavItem[] = [
 				title: 'Clientes',
 				type: 'item',
 				auth: ['staff', 'coordinator'],
-				icon: PersonPinTwoToneIcon,
+				icon: ContactsOutlinedIcon,
 				url: '/clients'
 			}
 		]
@@ -52,7 +54,7 @@ const navigationConfig: INavItem[] = [
 				title: 'Panel de órdenes',
 				type: 'item',
 				auth: ['staff', 'coordinator'],
-				icon: DashboardOutlinedIcon,
+				icon: AssignmentOutlinedIcon,
 				url: '/orders',
 				end: true
 			},
@@ -73,11 +75,19 @@ const navigationConfig: INavItem[] = [
 		type: 'group',
 		children: [
 			{
+				id: 'company-branches',
+				title: 'Sucursales',
+				type: 'item',
+				icon: StorefrontOutlinedIcon,
+				auth: ['staff'],
+				url: '/company-branches'
+			},
+			{
 				id: 'catalogs',
 				title: 'Catálogos',
 				type: 'item',
 				auth: ['staff'],
-				icon: ArchiveOutlinedIcon,
+				icon: CategoryOutlinedIcon,
 				url: '/catalogs'
 			},
 			{
@@ -85,7 +95,7 @@ const navigationConfig: INavItem[] = [
 				title: 'Reportes',
 				type: 'item',
 				auth: ['staff'],
-				icon: AssessmentOutlinedIcon,
+				icon: DescriptionOutlinedIcon,
 				url: '/configuration/reports'
 			}
 		]
