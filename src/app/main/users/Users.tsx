@@ -3,7 +3,6 @@ import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 import { Button, Stack, Typography } from '@mui/material';
 import PageContentCard from 'app/shared/components/PageContentCard/PageContentCard';
 import EmptyState from 'app/shared/components/EmptyState/EmptyState';
-import { LIST_DATA_GRID_SX } from 'src/app/shared/constants/dataGrid';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { useQueryUsersDatagrid, IUsersDatagridResponse } from 'src/app/requests/users/useQueryUsersDatagrid';
 import { useMutationDeleteUser } from 'src/app/requests/users/useMutationDeleteUser';
@@ -14,8 +13,10 @@ import { useMemo, useState } from 'react';
 import { useGlobalDialog } from 'app/shared/components/GlobalDialog/GlobalDialogContext';
 import useQueryInvalidator from 'src/app/shared/hooks/useQueryInvalidator';
 import useFilterParams from 'src/app/shared/hooks/useFilterParams';
+import useTabParam from 'src/app/shared/hooks/useTabParam';
 import { displayToast } from 'app/core/feedback/toast';
 import { columnsUsers } from './columns';
+import { USER_ROLE_TAB_KEYS, USER_ROLE_TABS } from './utils';
 import UsersFilters from './components/UsersFilters/UsersFilters';
 import DialogUser from './components/DialogUser/DialogUser';
 import DialogSigner from '../../shared/components/DialogSigner/DialogSigner';
@@ -23,8 +24,9 @@ import SignViewer from './components/SignViewer/SignViewer';
 import SimpleHeader from 'app/shared/components/SimpleHeader';
 import ChangePasswordDialog from './components/ChangePasswordDialog/ChangePasswordDialog';
 import SyncLockIcon from '@mui/icons-material/SyncLock';
+import { LIST_DATA_GRID_SX } from 'src/app/shared/constants/dataGrid';
 
-const USER_FILTER_KEYS = ['search', 'isActive', 'roleCode'] as const;
+const USER_FILTER_KEYS = ['search', 'isActive'] as const;
 
 function Users() {
 	const { openDialog } = useGlobalDialog();
@@ -33,7 +35,9 @@ function Users() {
 	const [openPreviewSign, setOpenPreviewSign] = useState(false);
 	const [previewURL, setPreviewURL] = useState('');
 	const { filters, setFilters, clearFilters } = useFilterParams(USER_FILTER_KEYS);
-	const { search, roleCode } = filters;
+	const { search } = filters;
+	const [roleTab, setRoleTab] = useTabParam(USER_ROLE_TAB_KEYS);
+	const roleCode = USER_ROLE_TABS.find((userRoleTab) => userRoleTab.value === roleTab)?.roleCode ?? '';
 	// En la URL: 'true' | 'false'; ausente = todos.
 	const isActive = filters.isActive === '' ? null : filters.isActive === 'true';
 	const { invalidate } = useQueryInvalidator();
@@ -272,17 +276,17 @@ function Users() {
 						url={previewURL}
 						onClose={handleClosePreviewSigner}
 					/>
-					<PageContentCard
+					<PageContentCard sx={{ height: 'calc(100vh - 240px)' }}
 						filters={
 							<UsersFilters
 								search={search}
 								isActive={isActive}
-								roleCode={roleCode}
+								roleTab={roleTab}
 								onChangeSearch={(nextSearch) => setFilters({ search: nextSearch })}
 								onChangeIsActive={(nextIsActive) =>
 									setFilters({ isActive: nextIsActive === null ? '' : String(nextIsActive) })
 								}
-								onChangeRoleCode={(nextRoleCode) => setFilters({ roleCode: nextRoleCode })}
+								onChangeRoleTab={setRoleTab}
 								onClearFilters={clearFilters}
 							/>
 						}
@@ -296,7 +300,6 @@ function Users() {
 								</Typography>
 							)
 						}
-						sx={{ flex: 1, minHeight: 0 }}
 					>
 						{filteredUsers.length === 0 && !isLoading ? (
 							<EmptyState
@@ -310,16 +313,17 @@ function Users() {
 							/>
 						) : (
 							<DataGrid
-								autoHeight
 								hideFooter
 								getRowId={(user) => user.userId}
 								rows={filteredUsers}
 								loading={isLoading}
 								columns={columns}
 								density="comfortable"
-								getRowHeight={() => 'auto'}
 								disableRowSelectionOnClick
-								sx={LIST_DATA_GRID_SX}
+								pageSizeOptions={[5, 10, 25]}
+								getRowHeight={() => 'auto'}
+								sx={{ ...LIST_DATA_GRID_SX, flex: 1, minHeight: 0 }}
+
 							/>
 						)}
 					</PageContentCard>

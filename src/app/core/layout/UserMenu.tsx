@@ -13,6 +13,14 @@ import { useAuth } from 'src/app/core/auth/AuthRouteProvider';
 /**
  * Toolbar button with the signed-in user's name/role and a sign-out menu.
  */
+/** Nombre visible de cada rol de plantilla (`toTemplateRole` en AuthRouteProvider). */
+const ROLE_LABEL_BY_TEMPLATE_ROLE: Record<string, string> = {
+	admin: 'Super Admin',
+	staff: 'Administrador',
+	coordinator: 'Coordinador',
+	fumigador: 'Fumigador'
+};
+
 function UserMenu() {
 	const { user } = useAuth();
 	const { signOut } = useAuth();
@@ -45,10 +53,10 @@ function UserMenu() {
 						{user.data.displayName}
 					</Typography>
 					<Typography
-						className="text-11 font-medium capitalize"
+						className="text-11 font-medium"
 						color="text.secondary"
 					>
-						{user.role?.toString()}
+						{ROLE_LABEL_BY_TEMPLATE_ROLE[user.role?.toString() ?? ''] ?? user.role?.toString()}
 					</Typography>
 				</div>
 

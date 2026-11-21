@@ -2,7 +2,7 @@ import { ERoleCode } from 'src/app/requests/users/types';
 
 export const ROLE_CATALOG = [
 	{
-		name: 'Admin',
+		name: 'Super Admin',
 		value: ERoleCode.SUPER_ADMIN
 	},
 	{
